@@ -399,6 +399,12 @@ class Device(object):
         * **(str):** Estimated self-test completion time if a test is started.
         Otherwise 'None'.
         """
+        # Lets call get_selftest_result() here since it does an update() and
+        # checks for an existing selftest is running or not, this way the user
+        # can issue a test from the cli and this can still pick that up
+        # Also note that we do not need to obtain the results from this as the
+        # data is already stored in the Device class object's variables
+        self.get_selftest_result()
         if self._test_running:
             return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
         test_type = test_type.lower()
