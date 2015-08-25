@@ -208,10 +208,7 @@ class Device(object):
         # SCSI devices might be SCSI, SAS or SAT
         # ATA device might be ATA or SATA
         if self.interface in ['scsi', 'ata']:
-            if self.interface == 'scsi':
-                test = 'sat'
-            else:
-                test = 'sata'
+            test = 'sat' if self.interface == 'scsi' else 'sata'
             # Look for a SATA PHY to detect SAT and SATA
             cmd = Popen('smartctl -d {0} -l sataphy /dev/{1}'.format(
                 smartctl_type[test], self.name), shell=True, stdout=PIPE, stderr=PIPE)
@@ -404,7 +401,7 @@ class Device(object):
         """
         if self._test_running:
             return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
-        if test_type.lower() in ['short', 'long', 'conveyance']:
+        if test_type.lower() in ['short', 'long', 'conveyance', 'offline']:
             if (test_type.lower() == 'conveyance' and smartctl_type[self.interface] == 'scsi'):
                 return (2, "Cannot perform 'conveyance' test on SAS/SCSI devices.", None)
             cmd = Popen(
