@@ -401,11 +401,17 @@ class Device(object):
         """
         if self._test_running:
             return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
-        if test_type.lower() in ['short', 'long', 'conveyance', 'offline']:
-            if (test_type.lower() == 'conveyance' and smartctl_type[self.interface] == 'scsi'):
-                return (2, "Cannot perform 'conveyance' test on SAS/SCSI devices.", None)
+        test_type = test_type.lower()
+        interface = smartctl_type[self.interface]
+        if test_type in ['short', 'long', 'conveyance', 'offline']:
+            # Note have not included 'offline' test for scsi as it runs in the foregorund
+            # mode. While this may be beneficial to us in someways it is against the
+            # general layout and patter that the other tests issued using pySMART are followed
+            # hence not doing it currently
+            if (test_type in ['conveyance', 'offline'] and interface == 'scsi'):
+                return (2, "Cannot perform '{0}' test on SAS/SCSI devices".format(test_type), None)
             cmd = Popen(
-                'smartctl -d {0} -t {1} /dev/{2}'.format(smartctl_type[self.interface], test_type, self.name),
+                'smartctl -d {0} -t {1} /dev/{2}'.format(interface, test_type, self.name),
                 shell=True, stdout=PIPE, stderr=PIPE)
             _stdout, _stderr = cmd.communicate()
             _success = False
