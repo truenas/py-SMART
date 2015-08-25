@@ -38,6 +38,7 @@ from .utils import *
 # Calling path_append before executing anything else in the file
 path_append()
 
+
 class Device(object):
     """
     Represents any device attached to an internal storage interface, such as a
@@ -138,8 +139,8 @@ class Device(object):
         proprietary.
         """
         if self.name is None:
-            warnings.warn("\nDevice '{0}' does not exist! "
-                          "This object should be destroyed.".format(name))
+            warnings.warn(
+                "\nDevice '{0}' does not exist! This object should be destroyed.".format(name))
             return
         # If no interface type was provided, scan for the device
         elif self.interface is None:
@@ -152,8 +153,8 @@ class Device(object):
                 # Disambiguate the generic interface to a specific type
                 self._classify()
             else:
-                warnings.warn("\nDevice '{0}' does not exist! "
-                              "This object should be destroyed.".format(name))
+                warnings.warn(
+                    "\nDevice '{0}' does not exist! This object should be destroyed.".format(name))
                 return
         # If a valid device was detected, populate its information
         if self.interface is not None:
@@ -190,12 +191,10 @@ class Device(object):
         if self.tests is not None:
             if smartctl_type[self.interface] == 'scsi':
                 print("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
-                    'ID', 'Test Description', 'Status', 'Hours',
-                    '1st_Error@LBA', '[SK  ASC  ASCQ]'))
+                    'ID', 'Test Description', 'Status', 'Hours', '1st_Error@LBA', '[SK  ASC  ASCQ]'))
             else:
                 print("{0:3}{1:17}{2:30}{3:5}{4:7}{5:17}".format(
-                    'ID', 'Test_Description', 'Status', 'Left', 'Hours',
-                    '1st_Error@LBA'))
+                    'ID', 'Test_Description', 'Status', 'Left', 'Hours', '1st_Error@LBA'))
             for test in self.tests:
                 print(test)
         else:
@@ -215,24 +214,23 @@ class Device(object):
                 test = 'sata'
             # Look for a SATA PHY to detect SAT and SATA
             cmd = Popen('smartctl -d {0} -l sataphy /dev/{1}'.format(
-                smartctl_type[test], self.name), shell=True,
-                        stdout=PIPE, stderr=PIPE)
+                smartctl_type[test], self.name), shell=True, stdout=PIPE, stderr=PIPE)
             _stdout, _stderr = cmd.communicate()
             if 'GP Log 0x11' in _stdout.split('\n')[3]:
                 self.interface = test
         # If device type is still SCSI (not changed to SAT above), then
         # check for a SAS PHY
         if self.interface == 'scsi':
-            cmd = Popen('smartctl -d scsi -l sasphy /dev/{0}'.format(
-                self.name), shell=True, stdout=PIPE, stderr=PIPE)
+            cmd = Popen('smartctl -d scsi -l sasphy /dev/{0}'.format(self.name),
+                        shell=True, stdout=PIPE, stderr=PIPE)
             _stdout, _stderr = cmd.communicate()
             if 'SAS SSP' in _stdout.split('\n')[4]:
                 self.interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
             # For these, see if smartmontools reports a transport protocol.
             else:
-                cmd = Popen('smartctl -d scsi -a /dev/{0}'.format(
-                    self.name), shell=True, stdout=PIPE, stderr=PIPE)
+                cmd = Popen('smartctl -d scsi -a /dev/{0}'.format(self.name),
+                            shell=True, stdout=PIPE, stderr=PIPE)
                 _stdout, _stderr = cmd.communicate()
                 for line in _stdout.split('\n'):
                     if 'Transport protocol' in line and 'SAS' in line:
@@ -282,8 +280,7 @@ class Device(object):
         # Check whether the list got longer (ie: new entry)
         if self.tests is not None and len(self.tests) != _len:
             # If so, for ATA, return the newest test result
-            if not ('in progress' in self.tests[0].status or
-                    'NOW' in self.tests[0].hours):
+            if not ('in progress' in self.tests[0].status or 'NOW' in self.tests[0].hours):
                 self._test_running = False
                 self._test_ECD = None
                 if output == 'str':
@@ -295,10 +292,10 @@ class Device(object):
         elif _len == maxlog:
             # If not, because it's max size already, check for new entries
             if ((_first_entry.type != self.tests[0].type or
-                    _first_entry.hours != self.tests[0].hours or
-                    _last_entry.type != self.tests[len(self.tests) - 1].type or
-                    _last_entry.hours != self.tests[len(self.tests) - 1].hours)
-                and not 'NOW' in self.tests[0].hours):
+                 _first_entry.hours != self.tests[0].hours or
+                 _last_entry.type != self.tests[len(self.tests) - 1].type or
+                 _last_entry.hours != self.tests[len(self.tests) - 1].hours)
+                    and 'NOW' not in self.tests[0].hours):
                 self._test_running = False
                 self._test_ECD = None
                 if output == 'str':
@@ -320,16 +317,14 @@ class Device(object):
                         else:
                             return (0, self.tests[0], None)
                     else:
-                        return (1, 'Self-test in progress. Please wait.',
-                                self._test_ECD)
+                        return (1, 'Self-test in progress. Please wait.', self._test_ECD)
                 else:
                     return (2, 'No new self-test results found.', None)
         else:
             # If log is still empty, or did not get longer, see whether we
             # know of a running test.
             if self._test_running:
-                if (not ('in progress' in self.tests[0].status or
-                         'NOW' in self.tests[0].hours) and
+                if (not ('in progress' in self.tests[0].status or 'NOW' in self.tests[0].hours) and
                         smartctl_type[self.interface] == 'scsi'):
                     self._test_running = False
                     self._test_ECD = None
@@ -359,23 +354,23 @@ class Device(object):
         if smartctl_type[self.interface] == 'scsi':
             return
         for attr in self.attributes:
+            warn_str = ""
             if attr is not None:
                 if attr.when_failed == 'In_the_past':
-                    self.messages.append("".join(
-                        [attr.name, " failed in the past with value ",
-                         attr.worst, ". [Threshold: ", attr.thresh, ']']))
+                    warn_str = "{0} failed in the past with value {1}. [Threshold: {2}]".format(
+                        attr.name, attr.worst, attr.thresh)
+                    self.messages.append(warn_str)
                     if not self.assessment == 'FAIL':
                         self.assessment = 'WARN'
                 elif attr.when_failed == 'FAILING_NOW':
+                    warn_str = "{0} is failing now with value {1}. [Threshold: {2}]".format(
+                        attr.name, attr.value, attr.thresh)
                     self.assessment = 'FAIL'
-                    self.messages.append("".join(
-                        [attr.name, " is failing now with value ",
-                         attr.value, ". [Threshold: ", attr.thresh, ']']))
+                    self.messages.append(warn_str)
                 elif not attr.when_failed == '-':
-                    self.messages.append("".join(
-                        [attr.name, " says it failed '", attr.when_failed,
-                         "'. [V=", attr.value, ",W=", attr.worst, ",T=",
-                         attr.thresh, ']']))
+                    warn_str = "{0} says it failed '{1}'. [V={2},W={3},T={4}]".format(
+                        attr.name, attr.when_failed, attr.value, attr.worst, attr.thresh)
+                    self.messages.append(warn_str)
                     if not self.assessment == 'FAIL':
                         self.assessment = 'WARN'
 
@@ -408,16 +403,13 @@ class Device(object):
         Otherwise 'None'.
         """
         if self._test_running:
-            return (1, 'Self-test already in progress. Please wait.',
-                    self._test_ECD)
+            return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
         if test_type.lower() in ['short', 'long', 'conveyance']:
-            if (test_type.lower() == 'conveyance' and
-                    smartctl_type[self.interface] == 'scsi'):
-                return (2, "Cannot perform 'conveyance' test on SAS/SCSI "
-                        "devices.", None)
-            cmd = Popen('smartctl -d {0} -t {1} /dev/{2}'.format(
-                smartctl_type[self.interface], test_type, self.name),
-                        shell=True, stdout=PIPE, stderr=PIPE)
+            if (test_type.lower() == 'conveyance' and smartctl_type[self.interface] == 'scsi'):
+                return (2, "Cannot perform 'conveyance' test on SAS/SCSI devices.", None)
+            cmd = Popen(
+                'smartctl -d {0} -t {1} /dev/{2}'.format(smartctl_type[self.interface], test_type, self.name),
+                shell=True, stdout=PIPE, stderr=PIPE)
             _stdout, _stderr = cmd.communicate()
             _success = False
             _running = False
@@ -433,14 +425,11 @@ class Device(object):
                 return (0, "Self-test started successfully", self._test_ECD)
             else:
                 if _running:
-                    return (1, 'Self-test already in progress. Please wait.',
-                            self._test_ECD)
+                    return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
                 else:
-                    return (3, 'Unspecified Error. Self-test not started.',
-                            None)
+                    return (3, 'Unspecified Error. Self-test not started.', None)
         else:
-            return (2, "Unknown test type '{0}' requested.".format(test_type),
-                    None)
+            return (2, "Unknown test type '{0}' requested.".format(test_type), None)
 
     def update(self):
         """
@@ -449,16 +438,15 @@ class Device(object):
         Can be called at any time to refresh the `pySMART.device.Device`
         object's data content.
         """
-        cmd = Popen('smartctl -d {0} -a /dev/{1}'.format(
-            smartctl_type[self.interface], self.name), shell=True,
-                    stdout=PIPE, stderr=PIPE)
+        cmd = Popen('smartctl -d {0} -a /dev/{1}'.format(smartctl_type[self.interface], self.name),
+                    shell=True, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = cmd.communicate()
         parse_self_tests = False
         parse_ascq = False
         self.tests = []
         for line in _stdout.split('\n'):
             if line.strip() == '':  # Blank line stops sub-captures
-                if parse_self_tests == True:
+                if parse_self_tests is True:
                     parse_self_tests = False
                     if len(self.tests) == 0:
                         self.tests = None
@@ -480,9 +468,8 @@ class Device(object):
                     sense = line_[0]
                     ASC = line_[1]
                     ASCQ = line_[2][:-1]
-                    self.tests.append(Test_Entry(
-                        format, num, test_type, status, hours, LBA,
-                        segment=segment, sense=sense, ASC=ASC, ASCQ=ASCQ))
+                    self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA,
+                                      segment=segment, sense=sense, ASC=ASC, ASCQ=ASCQ))
                 else:
                     format = 'ata'
                     test_type = line[5:25].rstrip()
@@ -490,9 +477,7 @@ class Device(object):
                     remain = line[54:58].lstrip().rstrip()
                     hours = line[60:68].lstrip().rstrip()
                     LBA = line[77:].rstrip()
-                    self.tests.append(Test_Entry(
-                        format, num, test_type, status, hours, LBA,
-                        remain=remain))
+                    self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA,remain=remain))
             # Basic device information parsing
             if 'Model Family' in line:
                 self._guess_SMART_type(line.lower())
@@ -524,10 +509,7 @@ class Device(object):
                     self.smart_enabled = True
                 elif 'Disabled' in line:
                     self.smart_enabled = False
-                elif (
-                      'Available' in line or
-                      'device has SMART capability' in line
-                     ):
+                elif ('Available' in line or 'device has SMART capability' in line):
                     self.smart_capable = True
             if 'does not support SMART' in line:
                 self.smart_capable = False
@@ -538,8 +520,7 @@ class Device(object):
                 elif 'rpm' in line:
                     self.is_ssd = False
                     try:
-                        self.rotation_rate = int(
-                            line.split(':')[1].lstrip().rstrip()[:-4])
+                        self.rotation_rate = int(line.split(':')[1].lstrip().rstrip()[:-4])
                     except ValueError:
                         # Cannot parse the RPM? Assigning None instead
                         self.rotation_rate = None
@@ -561,7 +542,7 @@ class Device(object):
                 # Replace multiple space separators with a single space, then
                 # tokenize the string on space delimiters
                 line_ = ' '.join(line.split()).split(' ')
-                if not '' in line_:
+                if '' not in line_:
                     self.attributes[int(line_[0])] = Attribute(
                         line_[0], line_[1], line[2], line_[3], line_[4],
                         line_[5], line_[6], line_[7], line_[8], line_[9])
@@ -580,7 +561,7 @@ class Device(object):
                     self.diags['Start_Stop_Pct_Left'] = '-'
             if 'Accumulated start-stop cycles' in line:
                 self.diags['Start_Stop_Cycles'] = line.split(':')[1].strip()
-                if not 'Start_Stop_Pct_Left' in self.diags:
+                if 'Start_Stop_Pct_Left' not in self.diags:
                     self.diags['Start_Stop_Pct_Left'] = str(int(round(
                         100 - (int(self.diags['Start_Stop_Cycles']) /
                                int(self.diags['Start_Stop_Spec'])), 0))) + '%'
@@ -590,7 +571,7 @@ class Device(object):
                     self.diags['Load_Cycle_Pct_Left'] = '-'
             if 'Accumulated load-unload cycles' in line:
                 self.diags['Load_Cycle_Count'] = line.split(':')[1].strip()
-                if not 'Load_Cycle_Pct_Left' in self.diags:
+                if 'Load_Cycle_Pct_Left' not in self.diags:
                     self.diags['Load_Cycle_Pct_Left'] = str(int(round(
                         100 - (int(self.diags['Load_Cycle_Count']) /
                                int(self.diags['Load_Cycle_Spec'])), 0))) + '%'
@@ -598,12 +579,10 @@ class Device(object):
                 self.diags['Reallocated_Sector_Ct'] = line.split(':')[1].strip()
             if 'read:' in line and smartctl_type[self.interface] == 'scsi':
                 line_ = ' '.join(line.split()).split(' ')
-                if (line_[1] == '0' and line_[2] == '0' and
-                        line_[3] == '0' and line_[4] == '0'):
+                if (line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0'):
                     self.diags['Corrected_Reads'] = '0'
                 elif line_[4] == '0':
-                    self.diags['Corrected_Reads'] = str(
-                        int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diags['Corrected_Reads'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
                 else:
                     self.diags['Corrected_Reads'] = line_[4]
                 self.diags['Reads_GB'] = line_[6]
@@ -614,8 +593,7 @@ class Device(object):
                         line_[3] == '0' and line_[4] == '0'):
                     self.diags['Corrected_Writes'] = '0'
                 elif line_[4] == '0':
-                    self.diags['Corrected_Writes'] = str(
-                        int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diags['Corrected_Writes'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
                 else:
                     self.diags['Corrected_Writes'] = line_[4]
                 self.diags['Writes_GB'] = line_[6]
@@ -626,8 +604,7 @@ class Device(object):
                         line_[3] == '0' and line_[4] == '0'):
                     self.diags['Corrected_Verifies'] = '0'
                 elif line_[4] == '0':
-                    self.diags['Corrected_Verifies'] = str(
-                        int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diags['Corrected_Verifies'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
                 else:
                     self.diags['Corrected_Verifies'] = line_[4]
                 self.diags['Verifies_GB'] = line_[6]
@@ -652,18 +629,16 @@ class Device(object):
                          'Start_Stop_Pct_Left', 'Load_Cycle_Pct_Left',
                          'Power_On_Hours', 'Life_Left', 'Non-Medium_Errors',
                          'Reads_GB', 'Writes_GB', 'Verifies_GB']:
-                if not diag in self.diags:
+                if diag not in self.diags:
                     self.diags[diag] = '-'
             # If not obtained above, make a direct attempt to extract power on
             # hours from the background scan results log.
             if self.diags['Power_On_Hours'] == '-':
-                cmd = Popen('smartctl -d scsi -l background /dev/{1}'.format(
-                    smartctl_type[self.interface], self.name), shell=True,
-                            stdout=PIPE, stderr=PIPE)
+                cmd = Popen('smartctl -d scsi -l background /dev/{1}'.format(smartctl_type[self.interface], self.name),
+                            shell=True, stdout=PIPE, stderr=PIPE)
                 _stdout, _stderr = cmd.communicate()
                 for line in _stdout.split('\n'):
                     if 'power on time' in line:
-                        self.diags['Power_On_Hours'] = line.split(
-                            ':')[1].split(' ')[1]
+                        self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
 
 __all__ = ['Device']
