@@ -28,6 +28,7 @@ Methods are provided for initiating self tests and querying their results.
 from __future__ import print_function
 import re  # Don't delete this 'un-used' import
 from subprocess import Popen, PIPE
+from time import time, strptime, mktime
 import warnings
 
 # pySMART module imports
@@ -129,6 +130,11 @@ class Device(object):
         self._test_ECD = None
         """
         **(str):** Estimated completion time of the running SMART selftest.
+        Not provided by SAS/SCSI devices.
+        """
+        self._test_remaining = None
+        """
+        **(float):** Estimate remaining percantage of the running SMART selftest.
         Not provided by SAS/SCSI devices.
         """
         self.diags = {}
@@ -330,8 +336,7 @@ class Device(object):
                     else:
                         return (0, self.tests[0], None)
                 else:
-                    return (1, 'Self-test in progress. Please wait.',
-                            self._test_ECD)
+                    return (1, 'Self-test in progress. Please wait.', self._test_ECD)
             else:
                 return (2, 'No new self-test results found.', None)
 
@@ -371,7 +376,7 @@ class Device(object):
                     if not self.assessment == 'FAIL':
                         self.assessment = 'WARN'
 
-    def run_selftest(self, test_type):
+    def run_selftest(self, test_type, ETA_type='date'):
         """
         Instructs a device to begin a SMART self-test. All tests are run in
         'offline' / 'background' mode, allowing normal use of the device while
@@ -388,6 +393,15 @@ class Device(object):
             * **conveyance** - Brief test used to identify damage incurred in
             shipping. Generally takes 5 minutes or less. **This test is not
             supported by SAS or SCSI devices.**
+            * **offline** - Runs SMART Immediate Offline Test. The effects of
+            this test are visible only in that it updates the SMART Attribute
+            values, and if errors are found they will appear in the SMART error
+            log, visible with the '-l error' option to smartctl. **This test is
+            not supported by SAS or SCSI devices in pySMART use cli smartctl for
+            running 'offline' selftest (runs in foreground) on scsi devices.**
+            * **ETA_type** - Format to return the estimated completion time/date
+            in. Default is 'date'. One could otherwise specidy 'seconds'.
+            Again only for ATA devices.
 
         ##Returns:
         * **(int):** Return status code.  One of the following:
@@ -396,7 +410,11 @@ class Device(object):
             * 2 - Unknown or illegal test type requested.
             * 3 - Unspecified smartctl error. Self-test not initiated.
         * **(str):** Return status message.
-        * **(str):** Estimated self-test completion time if a test is started.
+        * **(str)/(float):** Estimated self-test completion time if a test is started.
+        The optional argument of 'ETA_type' (see above) controls the return type.
+        if 'ETA_type' == 'date' then a date string is returned else seconds(float)
+        is returned.
+        Note: The self-test completion time can only be obtained for ata devices.
         Otherwise 'None'.
         """
         # Lets call get_selftest_result() here since it does an update() and
@@ -428,8 +446,17 @@ class Device(object):
                     self._test_running = True
                 if 'aborting current test' in line:
                     _running = True
+                    if interface != 'scsi':
+                        try:
+                            self._test_remaining = int(line.split("(")[-1].split("%")[0])
+                        except ValueError:
+                            pass
+
                 if _success and 'complete after' in line:
                     self._test_ECD = line[25:].rstrip()
+                    if ETA_type == 'seconds':
+                        self._test_ECD = mktime(strptime(self._test_ECD, "%a %b %d %H:%M:%S %Y")) - time()
+                    self._test_remaining = 100
             if _success:
                 return (0, "Self-test started successfully", self._test_ECD)
             else:
@@ -486,7 +513,11 @@ class Device(object):
                     remain = line[54:58].lstrip().rstrip()
                     hours = line[60:68].lstrip().rstrip()
                     LBA = line[77:].rstrip()
-                    self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA,remain=remain))
+                    self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA, remain=remain))
+            # For some reason smartctl does not show a currently running test in the
+            # Test log so i just have to catch it this way i guess!
+            if 'Self-test execution status' and 'progress' in line:
+                self._test_running = True
             # Basic device information parsing
             if 'Model Family' in line:
                 self._guess_SMART_type(line.lower())
@@ -508,10 +539,7 @@ class Device(object):
                 # Since this line repeats twice the above method is flawed
                 # Lets try the following instead, it is a bit redundant but
                 # more robust.
-                if (
-                    'Unavailable' in line or
-                    'device lacks SMART capability' in line
-                   ):
+                if ('Unavailable' in line or'device lacks SMART capability' in line):
                     self.smart_capable = False
                     self.smart_enabled = False
                 elif 'Enabled' in line:
@@ -555,7 +583,7 @@ class Device(object):
                     self.attributes[int(line_[0])] = Attribute(
                         line_[0], line_[1], line[2], line_[3], line_[4],
                         line_[5], line_[6], line_[7], line_[8], line_[9])
-            if 'Description' in line and '(hours)' in line:
+            if 'Test_Description' in line and '(hours)' in line:
                 parse_self_tests = True  # Set flag to capture test entries
             if 'No self-tests have been logged' in line:
                 self.tests = None
