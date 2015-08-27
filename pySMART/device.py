@@ -257,7 +257,7 @@ class Device(object):
         * **(`Test_Entry` or str):** Most recent `Test_Entry` object (or
         optionally it's string representation) if new data exists.  Status
         message string on failure.
-        * **(str):** Estimated completion time of a test in-progess, if known.
+        * **(int):** Estimate progress percantage of the running SMART selftest, if known.
         Otherwise 'None'.
         """
         # SCSI self-test logs hold 20 entries while ATA logs hold 21
@@ -279,69 +279,34 @@ class Device(object):
         else:
             _len = 0
         self.update()
+        # Since I have changed the update() parsing to DTRT to pickup currently
+        # running selftests we can now purely rely on that for self._test_running
+        # Thus check for that variable first and return if it is True with appropos message.
+        if self._test_running is True:
+            return (1, 'Self-test in progress. Please wait.', self._test_progress)
         # Check whether the list got longer (ie: new entry)
         if self.tests is not None and len(self.tests) != _len:
             # If so, for ATA, return the newest test result
-            if not ('in progress' in self.tests[0].status or 'NOW' in self.tests[0].hours):
-                self._test_running = False
-                self._test_progress = None
-                self._test_ECD = None
-                if output == 'str':
-                    return (0, str(self.tests[0]), None)
-                else:
-                    return (0, self.tests[0], None)
+            if output == 'str':
+                return (0, str(self.tests[0]), None)
             else:
-                self._test_running = True
+                return (0, self.tests[0], None)
         elif _len == maxlog:
             # If not, because it's max size already, check for new entries
-            if ((_first_entry.type != self.tests[0].type or
-                 _first_entry.hours != self.tests[0].hours or
-                 _last_entry.type != self.tests[len(self.tests) - 1].type or
-                 _last_entry.hours != self.tests[len(self.tests) - 1].hours)
-                    and 'NOW' not in self.tests[0].hours):
-                self._test_running = False
-                self._test_ECD = None
-                self._test_progress = None
+            if (
+                _first_entry.type != self.tests[0].type or
+                _first_entry.hours != self.tests[0].hours or
+                _last_entry.type != self.tests[len(self.tests) - 1].type or
+                _last_entry.hours != self.tests[len(self.tests) - 1].hours
+               ):
                 if output == 'str':
                     return (0, str(self.tests[0]), None)
                 else:
                     return (0, self.tests[0], None)
             else:
-                if 'NOW' in self.tests[0].hours:
-                    self._test_running = True
-                # If nothing new was found, see if we know of a running test.
-                if self._test_running:
-                    if (not ('in progress' in self.tests[0].status or
-                             'NOW' in self.tests[0].hours) and
-                            smartctl_type[self.interface] == 'scsi'):
-                        self._test_running = False
-                        self._test_progress = None
-                        self._test_ECD = None
-                        if output == 'str':
-                            return (0, str(self.tests[0]), None)
-                        else:
-                            return (0, self.tests[0], None)
-                    else:
-                        return (1, 'Self-test in progress. Please wait.', self._test_ECD)
-                else:
-                    return (2, 'No new self-test results found.', None)
-        else:
-            # If log is still empty, or did not get longer, see whether we
-            # know of a running test.
-            if self._test_running:
-                if (not ('in progress' in self.tests[0].status or 'NOW' in self.tests[0].hours) and
-                        smartctl_type[self.interface] == 'scsi'):
-                    self._test_running = False
-                    self._test_ECD = None
-                    self._test_progress = None
-                    if output == 'str':
-                        return (0, str(self.tests[0]), None)
-                    else:
-                        return (0, self.tests[0], None)
-                else:
-                    return (1, 'Self-test in progress. Please wait.', self._test_ECD)
-            else:
                 return (2, 'No new self-test results found.', None)
+        else:
+            return (2, 'No new self-test results found.', None)
 
     def _guess_SMART_type(self, line):
         """
