@@ -347,6 +347,22 @@ class Device(object):
                     if not self.assessment == 'FAIL':
                         self.assessment = 'WARN'
 
+    def abort_selftest(self):
+        """
+        Aborts non-captive SMART Self Tests.   Note  that    this  command
+        will  abort the Offline Immediate Test routine only if your disk
+        has the "Abort Offline collection upon new command"  capability.
+
+        ##Args: Nothing (just aborts directly)
+
+        ##Returns:
+        * **(int):** The returncode of calling `smartctl -X device_path`
+        """
+        cmd = Popen('smartctl -d {0} -X /dev/{1}'.format(smartctl_type[self.interface], self.name),
+                    shell=True, stdout=PIPE, stderr=PIPE)
+        cmd.wait()
+        return cmd.returncode
+
     def run_selftest(self, test_type, ETA_type='date'):
         """
         Instructs a device to begin a SMART self-test. All tests are run in
