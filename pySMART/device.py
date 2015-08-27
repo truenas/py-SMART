@@ -28,7 +28,7 @@ Methods are provided for initiating self tests and querying their results.
 from __future__ import print_function
 import re  # Don't delete this 'un-used' import
 from subprocess import Popen, PIPE
-from time import time, strptime, mktime
+from time import time, strptime, mktime, sleep
 import warnings
 
 # pySMART module imports
@@ -254,6 +254,7 @@ class Device(object):
             * 0 - Success. Object (or optionally, string rep) is attached.
             * 1 - Self-test in progress. Must wait for it to finish.
             * 2 - No new test results.
+            * 3 - The Self-test was Aborted by host
         * **(`Test_Entry` or str):** Most recent `Test_Entry` object (or
         optionally it's string representation) if new data exists.  Status
         message string on failure.
@@ -287,10 +288,11 @@ class Device(object):
         # Check whether the list got longer (ie: new entry)
         if self.tests is not None and len(self.tests) != _len:
             # If so, for ATA, return the newest test result
+            selftest_return_value = 0 if 'Aborted' not in self.tests[0].status else 3
             if output == 'str':
-                return (0, str(self.tests[0]), None)
+                return (selftest_return_value, str(self.tests[0]), None)
             else:
-                return (0, self.tests[0], None)
+                return (selftest_return_value, self.tests[0], None)
         elif _len == maxlog:
             # If not, because it's max size already, check for new entries
             if (
@@ -299,10 +301,11 @@ class Device(object):
                 _last_entry.type != self.tests[len(self.tests) - 1].type or
                 _last_entry.hours != self.tests[len(self.tests) - 1].hours
                ):
+                selftest_return_value = 0 if self.tests[0].status != 'Aborted by host' else 3
                 if output == 'str':
-                    return (0, str(self.tests[0]), None)
+                    return (selftest_return_value, str(self.tests[0]), None)
                 else:
-                    return (0, self.tests[0], None)
+                    return (selftest_return_value, self.tests[0], None)
             else:
                 return (2, 'No new self-test results found.', None)
         else:
@@ -392,7 +395,7 @@ class Device(object):
         # data is already stored in the Device class object's variables
         self.get_selftest_result()
         if self._test_running:
-            return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
+            return (1, 'Self-test in progress. Please wait.', self._test_ECD)
         test_type = test_type.lower()
         interface = smartctl_type[self.interface]
         if test_type in ['short', 'long', 'conveyance', 'offline']:
@@ -433,6 +436,93 @@ class Device(object):
                     return (3, 'Unspecified Error. Self-test not started.', None)
         else:
             return (2, "Unknown test type '{0}' requested.".format(test_type), None)
+
+    def run_selftest_and_wait(self, test_type, output=None, polling=5, progress_handler=None):
+        """
+        This is essentially a wrapper around run_selftest() such that we
+        call self.run_selftest() and wait on the running selftest till
+        it finished before returning.
+        The above holds true for all pySMART supported tests with the
+        exception of the 'offline' test (ATA only) as it immediately
+        returns, since the entire test only affects the smart error log
+        (if any errors found) and updates the SMART attributes. Other
+        than that it is not visibile anywhere else, so we start it and
+        simply return.
+        ##Args:
+        * **test_type (str):** The type of test to run. Accepts the following
+        (not case sensitive):
+            * **short** - Brief electo-mechanical functionality check.
+            Generally takes 2 minutes or less.
+            * **long** - Thorough electro-mechanical functionality check,
+            including complete recording media scan. Generally takes several
+            hours.
+            * **conveyance** - Brief test used to identify damage incurred in
+            shipping. Generally takes 5 minutes or less. **This test is not
+            supported by SAS or SCSI devices.**
+            * **offline** - Runs SMART Immediate Offline Test. The effects of
+            this test are visible only in that it updates the SMART Attribute
+            values, and if errors are found they will appear in the SMART error
+            log, visible with the '-l error' option to smartctl. **This test is
+            not supported by SAS or SCSI devices in pySMART use cli smartctl for
+            running 'offline' selftest (runs in foreground) on scsi devices.**
+            * **ETA_type** - Format to return the estimated completion time/date
+            in. Default is 'date'. One could otherwise specidy 'seconds'.
+            Again only for ATA devices.
+        * **output (str, optional):** If set to 'str', the string
+            representation of the most recent test result will be returned,
+            instead of a `Test_Entry` object.
+        * **polling (int, default=5):** The time duration to sleep for between
+            checking for test_results and progress.
+        * **progress_handler (function, optional):** This if provided is called
+            with self._test_progress as the supplied argument everytime a poll to
+            check the status of the selftest is done.
+        ##Returns:
+        * **(int):** Return status code.  One of the following:
+            * 0 - Self-test executed and finished successfully
+            * 1 - Previous self-test running. Must wait for it to finish.
+            * 2 - Unknown or illegal test type requested.
+            * 3 - The Self-test was Aborted by host
+            * 4 - Unspecified smartctl error. Self-test not initiated.
+        * **(`Test_Entry` or str):** Most recent `Test_Entry` object (or
+        optionally it's string representation) if new data exists.  Status
+        message string on failure.
+        """
+        test_initiation_result = self.run_selftest(test_type)
+        if test_initiation_result[0] != 0:
+            return test_initiation_result[:2]
+        if test_type == 'offline':
+            # Since this test is not logged anywhere in the smart test log
+            # lemme just go ahead and make a test_entry for it!
+            # Note giving it num = 0 since I do not want to conflict with the test log
+            local_test_entry = Test_Entry(
+                'ata', 0, 'SMART Immediate Offline Test', 'Started: Successfully',
+                self.attributes[9].raw, '-')
+            if output == 'str':
+                local_test_entry = str(local_test_entry)
+            selftest_results = (0, local_test_entry)
+            self._test_running = False
+        else:
+            # Lets set the default result just in case shit happens!
+            selftest_results = (3, 'Unspecified Error. Self-test not run.', None)
+        # if not then the test initiated correctly and we can start the polling.
+        # For now default 'polling' value is 5 seconds if not specified by the user
+        while self._test_running:
+            selftest_results = self.get_selftest_result(output=output)
+            if selftest_results[0] != 1:
+                # the selftest is run and finished lets return with the results
+                break
+            # Otherwise see if we are provided with the progress_handler to update progress
+            if progress_handler is not None:
+                progress_handler(selftest_results[2] if selftest_results[2] is not None else 50)
+            # Now sleep 'polling' seconds before checking the progress again
+            sleep(polling)
+        # Now if (selftes_results[0] == 2) i.e No new selftest (because the same
+        # selftest was run twice within the last hour) but we know for a fact that
+        # we just ran a new selftest then just return the latest entry in self.tests
+        if selftest_results[0] == 2:
+            selftest_return_value = 0 if 'Aborted' not in self.tests[0].status else 3
+            return (selftest_return_value, str(self.tests[0]) if output == 'str' else self.tests[0])
+        return selftest_results[:2]
 
     def update(self):
         """
