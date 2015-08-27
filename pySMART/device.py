@@ -608,7 +608,7 @@ class Device(object):
                     self.attributes[int(line_[0])] = Attribute(
                         line_[0], line_[1], line[2], line_[3], line_[4],
                         line_[5], line_[6], line_[7], line_[8], line_[9])
-            if 'Test_Description' in line and '(hours)' in line:
+            if 'Description' in line and '(hours)' in line:
                 parse_self_tests = True  # Set flag to capture test entries
             if 'No self-tests have been logged' in line:
                 self.tests = None
