@@ -132,10 +132,9 @@ class Device(object):
         **(str):** Estimated completion time of the running SMART selftest.
         Not provided by SAS/SCSI devices.
         """
-        self._test_remaining = None
+        self._test_progress = None
         """
-        **(float):** Estimate remaining percantage of the running SMART selftest.
-        Not provided by SAS/SCSI devices.
+        **(int):** Estimate progress percantage of the running SMART selftest.
         """
         self.diags = {}
         """
@@ -285,6 +284,7 @@ class Device(object):
             # If so, for ATA, return the newest test result
             if not ('in progress' in self.tests[0].status or 'NOW' in self.tests[0].hours):
                 self._test_running = False
+                self._test_progress = None
                 self._test_ECD = None
                 if output == 'str':
                     return (0, str(self.tests[0]), None)
@@ -301,6 +301,7 @@ class Device(object):
                     and 'NOW' not in self.tests[0].hours):
                 self._test_running = False
                 self._test_ECD = None
+                self._test_progress = None
                 if output == 'str':
                     return (0, str(self.tests[0]), None)
                 else:
@@ -314,6 +315,7 @@ class Device(object):
                              'NOW' in self.tests[0].hours) and
                             smartctl_type[self.interface] == 'scsi'):
                         self._test_running = False
+                        self._test_progress = None
                         self._test_ECD = None
                         if output == 'str':
                             return (0, str(self.tests[0]), None)
@@ -331,6 +333,7 @@ class Device(object):
                         smartctl_type[self.interface] == 'scsi'):
                     self._test_running = False
                     self._test_ECD = None
+                    self._test_progress = None
                     if output == 'str':
                         return (0, str(self.tests[0]), None)
                     else:
@@ -446,17 +449,16 @@ class Device(object):
                     self._test_running = True
                 if 'aborting current test' in line:
                     _running = True
-                    if interface != 'scsi':
-                        try:
-                            self._test_remaining = int(line.split("(")[-1].split("%")[0])
-                        except ValueError:
-                            pass
+                    try:
+                        self._test_progress = 100 - int(line.split("(")[-1].split("%")[0])
+                    except ValueError:
+                        pass
 
                 if _success and 'complete after' in line:
                     self._test_ECD = line[25:].rstrip()
                     if ETA_type == 'seconds':
                         self._test_ECD = mktime(strptime(self._test_ECD, "%a %b %d %H:%M:%S %Y")) - time()
-                    self._test_remaining = 100
+                    self._test_progress = 0
             if _success:
                 return (0, "Self-test started successfully", self._test_ECD)
             else:
@@ -478,8 +480,11 @@ class Device(object):
                     shell=True, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = cmd.communicate()
         parse_self_tests = False
+        parse_running_test = False
         parse_ascq = False
         self.tests = []
+        self._test_running = False
+        self._test_progress = None
         for line in _stdout.split('\n'):
             if line.strip() == '':  # Blank line stops sub-captures
                 if parse_self_tests is True:
@@ -514,10 +519,30 @@ class Device(object):
                     hours = line[60:68].lstrip().rstrip()
                     LBA = line[77:].rstrip()
                     self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA, remain=remain))
-            # For some reason smartctl does not show a currently running test in the
-            # Test log so i just have to catch it this way i guess!
-            if 'Self-test execution status' and 'progress' in line:
-                self._test_running = True
+            # For some reason smartctl does not show a currently running test
+            # for 'ATA' in the Test log so i just have to catch it this way i guess!
+            # For 'scsi' i still do it since it is the only place I get % remaining in scsi
+            if 'Self-test execution status' in line:
+                if 'progress' in line:
+                    self._test_running = True
+                    # for ATA the "%" remaining is on the next line
+                    # thus set the parse_running_test flag and move on
+                    parse_running_test = True
+                    continue
+                elif '%' in line:
+                    # for scsi the progress is on the same line
+                    # so we can just parse it and move on
+                    self._test_running = True
+                    try:
+                        self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
+                    except ValueError:
+                        pass
+            if parse_running_test is True:
+                try:
+                    self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
+                except ValueError:
+                    pass
+                parse_running_test = False
             # Basic device information parsing
             if 'Model Family' in line:
                 self._guess_SMART_type(line.lower())
@@ -677,5 +702,10 @@ class Device(object):
                 for line in _stdout.split('\n'):
                     if 'power on time' in line:
                         self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
+        # Now that we have finished the update routine, if we did not find a runnning selftest
+        # nuke the self._test_ECD and self._test_progress
+        if self._test_running is False:
+            self._test_ECD = None
+            self._test_progress = None
 
 __all__ = ['Device']
