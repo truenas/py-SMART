@@ -170,6 +170,43 @@ class Device(object):
         return "<%s device on /dev/%s mod:%s sn:%s>" % (
             self.interface.upper(), self.name, self.model, self.serial)
 
+    def smart_toggle(self, action):
+        """
+        A basic function to enable/disable SMART on device.
+
+        ##Args:
+        * **action (str):** Can be either 'on'(for enabling) or 'off'(for disabling).
+
+        ##Returns"
+        * **(bool):** Return True (if action succeded) else False
+        * **(str):** None if option succeded else contains the error message.
+        """
+        # Lets make the action verb all lower case
+        action_lower = action.lower()
+        if action_lower not in ['on', 'off']:
+            return (False, 'Unsupported action {0}'.format(action))
+        # Now lets check if the device's smart enabled status is already that of what
+        # the supplied action is intending it to be. If so then just return successfully
+        if self.smart_enabled:
+            if action_lower == 'on':
+                return (True, None)
+        else:
+            if action_lower == 'off':
+                return (True, None)
+        cmd = Popen(
+            'smartctl -d {0} -s {1} {2}'.format(smartctl_type[self.interface], action_lower, self.name),
+            shell=True, stdout=PIPE, stderr=PIPE)
+        _stdout, _stderr = cmd.communicate()
+        if cmd.returncode != 0:
+            return (False, _stdout + _stderr)
+        # if everything worked out so far lets perform an update() and check the result
+        self.update()
+        if action_lower == 'off' and self.smart_enabled:
+            return (False, 'Failed to turn SMART off.')
+        if action_lower == 'on' and not self.smart_enabled:
+            return (False, 'Failed to turn SMART on.')
+        return (True, None)
+
     def all_attributes(self):
         """
         Prints the entire SMART attribute table, in a format similar to
