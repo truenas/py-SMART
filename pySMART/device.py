@@ -116,6 +116,24 @@ class Device(object):
         attribute #, values are set to 'None' for attributes not suported by
         this device.
         """
+        self.test_capabilities = {
+            'offline': False,       # SMART execute Offline immediate (ATA only)
+            'short': True,          # SMART short Self-test
+            'long': True,           # SMART long Self-test
+            'conveyance': False,    # SMART Conveyance Self-Test (ATA only)
+            'selective': False,     # SMART Selective Self-Test (ATA only)
+        }
+        # Note have not included 'offline' test for scsi as it runs in the foregorund
+        # mode. While this may be beneficial to us in someways it is against the
+        # general layout and pattern that the other tests issued using pySMART are
+        # followed hence not doing it currently
+        """
+        **(dict): ** This dictionary contains key == 'Test Name' and
+        value == 'True/False' of self-tests that this device is capable of.
+        """
+        # Note: The above are just default values and can/will be changed
+        # upon update() when the attributes and type of the disk is actually
+        # determined.
         self.tests = []
         """
         **(list of `Log_Entry`):** Contains the complete SMART self-test log
@@ -275,6 +293,42 @@ class Device(object):
                     if 'Transport protocol' in line and 'SAS' in line:
                         self.interface = 'sas'
 
+    def _guess_SMART_type(self, line):
+        """
+        This function is not used in the generic wrapper, however the header
+        is defined so that it can be monkey-patched by another application.
+        """
+        pass
+
+    def _make_SMART_warnings(self):
+        """
+        Parses an ATA/SATA SMART table for attributes with the 'when_failed'
+        value set. Generates an warning message for any such attributes and
+        updates the self-assessment value if necessary.
+        """
+        if smartctl_type[self.interface] == 'scsi':
+            return
+        for attr in self.attributes:
+            warn_str = ""
+            if attr is not None:
+                if attr.when_failed == 'In_the_past':
+                    warn_str = "{0} failed in the past with value {1}. [Threshold: {2}]".format(
+                        attr.name, attr.worst, attr.thresh)
+                    self.messages.append(warn_str)
+                    if not self.assessment == 'FAIL':
+                        self.assessment = 'WARN'
+                elif attr.when_failed == 'FAILING_NOW':
+                    warn_str = "{0} is failing now with value {1}. [Threshold: {2}]".format(
+                        attr.name, attr.value, attr.thresh)
+                    self.assessment = 'FAIL'
+                    self.messages.append(warn_str)
+                elif not attr.when_failed == '-':
+                    warn_str = "{0} says it failed '{1}'. [V={2},W={3},T={4}]".format(
+                        attr.name, attr.when_failed, attr.value, attr.worst, attr.thresh)
+                    self.messages.append(warn_str)
+                    if not self.assessment == 'FAIL':
+                        self.assessment = 'WARN'
+
     def get_selftest_result(self, output=None):
         """
         Refreshes a device's `pySMART.device.Device.tests` attribute to obtain
@@ -348,42 +402,6 @@ class Device(object):
         else:
             return (2, 'No new self-test results found.', None)
 
-    def _guess_SMART_type(self, line):
-        """
-        This function is not used in the generic wrapper, however the header
-        is defined so that it can be monkey-patched by another application.
-        """
-        pass
-
-    def _make_SMART_warnings(self):
-        """
-        Parses an ATA/SATA SMART table for attributes with the 'when_failed'
-        value set. Generates an warning message for any such attributes and
-        updates the self-assessment value if necessary.
-        """
-        if smartctl_type[self.interface] == 'scsi':
-            return
-        for attr in self.attributes:
-            warn_str = ""
-            if attr is not None:
-                if attr.when_failed == 'In_the_past':
-                    warn_str = "{0} failed in the past with value {1}. [Threshold: {2}]".format(
-                        attr.name, attr.worst, attr.thresh)
-                    self.messages.append(warn_str)
-                    if not self.assessment == 'FAIL':
-                        self.assessment = 'WARN'
-                elif attr.when_failed == 'FAILING_NOW':
-                    warn_str = "{0} is failing now with value {1}. [Threshold: {2}]".format(
-                        attr.name, attr.value, attr.thresh)
-                    self.assessment = 'FAIL'
-                    self.messages.append(warn_str)
-                elif not attr.when_failed == '-':
-                    warn_str = "{0} says it failed '{1}'. [V={2},W={3},T={4}]".format(
-                        attr.name, attr.when_failed, attr.value, attr.worst, attr.thresh)
-                    self.messages.append(warn_str)
-                    if not self.assessment == 'FAIL':
-                        self.assessment = 'WARN'
-
     def abort_selftest(self):
         """
         Aborts non-captive SMART Self Tests.   Note  that    this  command
@@ -431,7 +449,7 @@ class Device(object):
         * **(int):** Return status code.  One of the following:
             * 0 - Self-test initiated successfully
             * 1 - Previous self-test running. Must wait for it to finish.
-            * 2 - Unknown or illegal test type requested.
+            * 2 - Unknown or unsupported (by the device) test type requested.
             * 3 - Unspecified smartctl error. Self-test not initiated.
         * **(str):** Return status message.
         * **(str)/(float):** Estimated self-test completion time if a test is started.
@@ -451,44 +469,44 @@ class Device(object):
             return (1, 'Self-test in progress. Please wait.', self._test_ECD)
         test_type = test_type.lower()
         interface = smartctl_type[self.interface]
-        if test_type in ['short', 'long', 'conveyance', 'offline']:
-            # Note have not included 'offline' test for scsi as it runs in the foregorund
-            # mode. While this may be beneficial to us in someways it is against the
-            # general layout and patter that the other tests issued using pySMART are followed
-            # hence not doing it currently
-            if (test_type in ['conveyance', 'offline'] and interface == 'scsi'):
-                return (2, "Cannot perform '{0}' test on SAS/SCSI devices".format(test_type), None)
-            cmd = Popen(
-                'smartctl -d {0} -t {1} /dev/{2}'.format(interface, test_type, self.name),
-                shell=True, stdout=PIPE, stderr=PIPE)
-            _stdout, _stderr = cmd.communicate()
-            _success = False
-            _running = False
-            for line in _stdout.split('\n'):
-                if 'has begun' in line:
-                    _success = True
-                    self._test_running = True
-                if 'aborting current test' in line:
-                    _running = True
-                    try:
-                        self._test_progress = 100 - int(line.split("(")[-1].split("%")[0])
-                    except ValueError:
-                        pass
-
-                if _success and 'complete after' in line:
-                    self._test_ECD = line[25:].rstrip()
-                    if ETA_type == 'seconds':
-                        self._test_ECD = mktime(strptime(self._test_ECD, "%a %b %d %H:%M:%S %Y")) - time()
-                    self._test_progress = 0
-            if _success:
-                return (0, "Self-test started successfully", self._test_ECD)
-            else:
-                if _running:
-                    return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
-                else:
-                    return (3, 'Unspecified Error. Self-test not started.', None)
-        else:
+        try:
+            if not self.test_capabilities[test_type]:
+                return (
+                    2,
+                    "Device {0} does not support the '{1}' test ".format(self.name, test_type),
+                    None
+                )
+        except KeyError:
             return (2, "Unknown test type '{0}' requested.".format(test_type), None)
+        cmd = Popen(
+            'smartctl -d {0} -t {1} /dev/{2}'.format(interface, test_type, self.name),
+            shell=True, stdout=PIPE, stderr=PIPE)
+        _stdout, _stderr = cmd.communicate()
+        _success = False
+        _running = False
+        for line in _stdout.split('\n'):
+            if 'has begun' in line:
+                _success = True
+                self._test_running = True
+            if 'aborting current test' in line:
+                _running = True
+                try:
+                    self._test_progress = 100 - int(line.split("(")[-1].split("%")[0])
+                except ValueError:
+                    pass
+
+            if _success and 'complete after' in line:
+                self._test_ECD = line[25:].rstrip()
+                if ETA_type == 'seconds':
+                    self._test_ECD = mktime(strptime(self._test_ECD, "%a %b %d %H:%M:%S %Y")) - time()
+                self._test_progress = 0
+        if _success:
+            return (0, "Self-test started successfully", self._test_ECD)
+        else:
+            if _running:
+                return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
+            else:
+                return (3, 'Unspecified Error. Self-test not started.', None)
 
     def run_selftest_and_wait(self, test_type, output=None, polling=5, progress_handler=None):
         """
@@ -584,7 +602,8 @@ class Device(object):
         Can be called at any time to refresh the `pySMART.device.Device`
         object's data content.
         """
-        cmd = Popen('smartctl -d {0} -a /dev/{1}'.format(smartctl_type[self.interface], self.name),
+        interface = smartctl_type[self.interface]
+        cmd = Popen('smartctl -d {0} -a /dev/{1}'.format(interface, self.name),
                     shell=True, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = cmd.communicate()
         parse_self_tests = False
@@ -606,7 +625,7 @@ class Device(object):
                 message += ' ' + line.lstrip().rstrip()
             if parse_self_tests:
                 num = line[1:3]
-                if smartctl_type[self.interface] == 'scsi':
+                if interface == 'scsi':
                     format = 'scsi'
                     test_type = line[5:23].rstrip()
                     status = line[23:46].rstrip()
@@ -626,31 +645,8 @@ class Device(object):
                     remain = line[54:58].lstrip().rstrip()
                     hours = line[60:68].lstrip().rstrip()
                     LBA = line[77:].rstrip()
-                    self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA, remain=remain))
-            # For some reason smartctl does not show a currently running test
-            # for 'ATA' in the Test log so i just have to catch it this way i guess!
-            # For 'scsi' i still do it since it is the only place I get % remaining in scsi
-            if 'Self-test execution status' in line:
-                if 'progress' in line:
-                    self._test_running = True
-                    # for ATA the "%" remaining is on the next line
-                    # thus set the parse_running_test flag and move on
-                    parse_running_test = True
-                    continue
-                elif '%' in line:
-                    # for scsi the progress is on the same line
-                    # so we can just parse it and move on
-                    self._test_running = True
-                    try:
-                        self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
-                    except ValueError:
-                        pass
-            if parse_running_test is True:
-                try:
-                    self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
-                except ValueError:
-                    pass
-                parse_running_test = False
+                    self.tests.append(
+                        Test_Entry(format, num, test_type, status, hours, LBA, remain=remain))
             # Basic device information parsing
             if 'Model Family' in line:
                 self._guess_SMART_type(line.lower())
@@ -707,6 +703,19 @@ class Device(object):
                     self.assessment = 'FAIL'
                     parse_ascq = True  # Set flag to capture status message
                     message = line.split(':')[1].lstrip().rstrip()
+            # Parse SMART test capabilities (ATA only)
+            # Note: SCSI does not list this but and allows for only 'offline', 'short' and 'long'
+            if 'SMART execute Offline immediate' in line:
+                self.test_capabilities['offline'] = False if 'No' in line else True
+            if 'Self-test supported' in line:
+                self.test_capabilities['short'] = False if 'No' in line else True
+                self.test_capabilities['short'] = False if 'No' in line else True
+            if 'Conveyance Self-test supported' in line:
+                self.test_capabilities['conveyance'] = False if 'No' in line else True
+            # Note: Currently I have not added any support in pySMART for selective Self-tests
+            # Thus commenting it out
+            # if 'Selective Self-test supported' in line:
+            #     self.test_capabilities['selective'] = False if 'No' in line else True
             # SMART Attribute table parsing
             if '0x0' in line and '_' in line:
                 # Replace multiple space separators with a single space, then
@@ -716,6 +725,30 @@ class Device(object):
                     self.attributes[int(line_[0])] = Attribute(
                         line_[0], line_[1], line[2], line_[3], line_[4],
                         line_[5], line_[6], line_[7], line_[8], line_[9])
+            # For some reason smartctl does not show a currently running test
+            # for 'ATA' in the Test log so I just have to catch it this way i guess!
+            # For 'scsi' I still do it since it is the only place I get % remaining in scsi
+            if 'Self-test execution status' in line:
+                if 'progress' in line:
+                    self._test_running = True
+                    # for ATA the "%" remaining is on the next line
+                    # thus set the parse_running_test flag and move on
+                    parse_running_test = True
+                    continue
+                elif '%' in line:
+                    # for scsi the progress is on the same line
+                    # so we can just parse it and move on
+                    self._test_running = True
+                    try:
+                        self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
+                    except ValueError:
+                        pass
+            if parse_running_test is True:
+                try:
+                    self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
+                except ValueError:
+                    pass
+                parse_running_test = False
             if 'Description' in line and '(hours)' in line:
                 parse_self_tests = True  # Set flag to capture test entries
             if 'No self-tests have been logged' in line:
@@ -747,7 +780,7 @@ class Device(object):
                                int(self.diags['Load_Cycle_Spec'])), 0))) + '%'
             if 'Elements in grown defect list' in line:
                 self.diags['Reallocated_Sector_Ct'] = line.split(':')[1].strip()
-            if 'read:' in line and smartctl_type[self.interface] == 'scsi':
+            if 'read:' in line and interface == 'scsi':
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0'):
                     self.diags['Corrected_Reads'] = '0'
@@ -757,7 +790,7 @@ class Device(object):
                     self.diags['Corrected_Reads'] = line_[4]
                 self.diags['Reads_GB'] = line_[6]
                 self.diags['Uncorrected_Reads'] = line_[7]
-            if 'write:' in line and smartctl_type[self.interface] == 'scsi':
+            if 'write:' in line and interface == 'scsi':
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
                         line_[3] == '0' and line_[4] == '0'):
@@ -768,7 +801,7 @@ class Device(object):
                     self.diags['Corrected_Writes'] = line_[4]
                 self.diags['Writes_GB'] = line_[6]
                 self.diags['Uncorrected_Writes'] = line_[7]
-            if 'verify:' in line and smartctl_type[self.interface] == 'scsi':
+            if 'verify:' in line and interface == 'scsi':
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
                         line_[3] == '0' and line_[4] == '0'):
@@ -783,7 +816,7 @@ class Device(object):
                 self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
             if 'Accumulated power on time' in line:
                 self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
-        if not smartctl_type[self.interface] == 'scsi':
+        if not interface == 'scsi':
             # Parse the SMART table for below-threshold attributes and create
             # corresponding warnings for non-SCSI disks
             self._make_SMART_warnings()
@@ -804,8 +837,9 @@ class Device(object):
             # If not obtained above, make a direct attempt to extract power on
             # hours from the background scan results log.
             if self.diags['Power_On_Hours'] == '-':
-                cmd = Popen('smartctl -d scsi -l background /dev/{1}'.format(smartctl_type[self.interface], self.name),
-                            shell=True, stdout=PIPE, stderr=PIPE)
+                cmd = Popen(
+                    'smartctl -d scsi -l background /dev/{1}'.format(interface, self.name),
+                    shell=True, stdout=PIPE, stderr=PIPE)
                 _stdout, _stderr = cmd.communicate()
                 for line in _stdout.split('\n'):
                     if 'power on time' in line:
