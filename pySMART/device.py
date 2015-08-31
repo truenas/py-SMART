@@ -536,9 +536,6 @@ class Device(object):
             log, visible with the '-l error' option to smartctl. **This test is
             not supported by SAS or SCSI devices in pySMART use cli smartctl for
             running 'offline' selftest (runs in foreground) on scsi devices.**
-            * **ETA_type** - Format to return the estimated completion time/date
-            in. Default is 'date'. One could otherwise specidy 'seconds'.
-            Again only for ATA devices.
         * **output (str, optional):** If set to 'str', the string
             representation of the most recent test result will be returned,
             instead of a `Test_Entry` object.
