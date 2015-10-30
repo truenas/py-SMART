@@ -170,7 +170,7 @@ class Device(object):
             _grep = 'find' if OS == 'Windows' else 'grep'
             cmd = Popen('smartctl --scan-open | {0} "{1}"'.format(
                 _grep, self.name), shell=True, stdout=PIPE, stderr=PIPE)
-            _stdout, _stderr = cmd.communicate()
+            _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
             if _stdout != '':
                 self.interface = _stdout.split(' ')[2]
                 # Disambiguate the generic interface to a specific type
@@ -214,7 +214,7 @@ class Device(object):
         cmd = Popen(
             'smartctl -d {0} -s {1} {2}'.format(smartctl_type[self.interface], action_lower, self.name),
             shell=True, stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = cmd.communicate()
+        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         if cmd.returncode != 0:
             return (False, _stdout + _stderr)
         # if everything worked out so far lets perform an update() and check the result
@@ -272,7 +272,7 @@ class Device(object):
             # Look for a SATA PHY to detect SAT and SATA
             cmd = Popen('smartctl -d {0} -l sataphy /dev/{1}'.format(
                 smartctl_type[test], self.name), shell=True, stdout=PIPE, stderr=PIPE)
-            _stdout, _stderr = cmd.communicate()
+            _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
             if 'GP Log 0x11' in _stdout.split('\n')[3]:
                 self.interface = test
         # If device type is still SCSI (not changed to SAT above), then
@@ -280,7 +280,7 @@ class Device(object):
         if self.interface == 'scsi':
             cmd = Popen('smartctl -d scsi -l sasphy /dev/{0}'.format(self.name),
                         shell=True, stdout=PIPE, stderr=PIPE)
-            _stdout, _stderr = cmd.communicate()
+            _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
             if 'SAS SSP' in _stdout.split('\n')[4]:
                 self.interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
@@ -288,7 +288,7 @@ class Device(object):
             else:
                 cmd = Popen('smartctl -d scsi -a /dev/{0}'.format(self.name),
                             shell=True, stdout=PIPE, stderr=PIPE)
-                _stdout, _stderr = cmd.communicate()
+                _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
                 for line in _stdout.split('\n'):
                     if 'Transport protocol' in line and 'SAS' in line:
                         self.interface = 'sas'
@@ -481,7 +481,7 @@ class Device(object):
         cmd = Popen(
             'smartctl -d {0} -t {1} /dev/{2}'.format(interface, test_type, self.name),
             shell=True, stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = cmd.communicate()
+        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         _success = False
         _running = False
         for line in _stdout.split('\n'):
@@ -602,7 +602,7 @@ class Device(object):
         interface = smartctl_type[self.interface]
         cmd = Popen('smartctl -d {0} -a /dev/{1}'.format(interface, self.name),
                     shell=True, stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = cmd.communicate()
+        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         parse_self_tests = False
         parse_running_test = False
         parse_ascq = False
@@ -837,7 +837,7 @@ class Device(object):
                 cmd = Popen(
                     'smartctl -d scsi -l background /dev/{1}'.format(interface, self.name),
                     shell=True, stdout=PIPE, stderr=PIPE)
-                _stdout, _stderr = cmd.communicate()
+                _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
                 for line in _stdout.split('\n'):
                     if 'power on time' in line:
                         self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
