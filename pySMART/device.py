@@ -41,15 +41,18 @@ path_append()
 
 
 class Device(object):
+
     """
     Represents any device attached to an internal storage interface, such as a
     hard drive or DVD-ROM, and detected by smartmontools. Includes eSATA
     (considered SATA) but excludes other external devices (USB, Firewire).
     """
-    def __init__(self, name, interface=None):
+
+    def __init__(self, name, interface=None, abridged=False):
         """Instantiates and initializes the `pySMART.device.Device`."""
         assert interface is None or interface.lower() in [
             'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi']
+        self.abridged = abridged
         self.name = name.replace('/dev/', '')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
@@ -163,7 +166,8 @@ class Device(object):
         """
         if self.name is None:
             warnings.warn(
-                "\nDevice '{0}' does not exist! This object should be destroyed.".format(name))
+                "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
+            )
             return
         # If no interface type was provided, scan for the device
         elif self.interface is None:
@@ -177,7 +181,8 @@ class Device(object):
                 self._classify()
             else:
                 warnings.warn(
-                    "\nDevice '{0}' does not exist! This object should be destroyed.".format(name))
+                    "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
+                )
                 return
         # If a valid device was detected, populate its information
         if self.interface is not None:
@@ -600,8 +605,14 @@ class Device(object):
         object's data content.
         """
         interface = smartctl_type[self.interface]
-        cmd = Popen('smartctl -d {0} -a /dev/{1}'.format(interface, self.name),
-                    shell=True, stdout=PIPE, stderr=PIPE)
+        cmd = Popen(
+            'smartctl -d {0} {1} /dev/{2}'.format(
+                interface, '- i' if self.abridged else '- a', self.name
+            ),
+            shell=True,
+            stdout=PIPE,
+            stderr=PIPE
+        )
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         parse_self_tests = False
         parse_running_test = False
