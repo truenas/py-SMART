@@ -656,15 +656,19 @@ class Device(object):
                     self.tests.append(
                         Test_Entry(format, num, test_type, status, hours, LBA, remain=remain))
             # Basic device information parsing
-            if 'Model Family' in line:
-                self._guess_SMART_type(line.lower())
             if 'Device Model' in line or 'Product' in line:
                 self.model = line.split(':')[1].lstrip().rstrip()
                 self._guess_SMART_type(line.lower())
-            if 'Serial Number' in line or 'Serial number' in line:
-                self.serial = line.split(':')[1].split()[0].rstrip()
+                continue
+            if 'Model Family' in line:
+                self._guess_SMART_type(line.lower())
+                continue
             if 'LU WWN' in line:
                 self._guess_SMART_type(line.lower())
+                continue
+            if 'Serial Number' in line or 'Serial number' in line:
+                self.serial = line.split(':')[1].split()[0].rstrip()
+                continue
             if 'Firmware Version' in line or 'Revision' in line:
                 self.firmware = line.split(':')[1].lstrip().rstrip()
             if 'User Capacity' in line:
@@ -676,7 +680,7 @@ class Device(object):
                 # Since this line repeats twice the above method is flawed
                 # Lets try the following instead, it is a bit redundant but
                 # more robust.
-                if ('Unavailable' in line or'device lacks SMART capability' in line):
+                if ('Unavailable' in line or 'device lacks SMART capability' in line):
                     self.smart_capable = False
                     self.smart_enabled = False
                 elif 'Enabled' in line:
@@ -685,9 +689,11 @@ class Device(object):
                     self.smart_enabled = False
                 elif ('Available' in line or 'device has SMART capability' in line):
                     self.smart_capable = True
+                continue
             if 'does not support SMART' in line:
                 self.smart_capable = False
                 self.smart_enabled = False
+                continue
             if 'Rotation Rate' in line:
                 if 'Solid State Device' in line:
                     self.is_ssd = True
@@ -698,6 +704,7 @@ class Device(object):
                     except ValueError:
                         # Cannot parse the RPM? Assigning None instead
                         self.rotation_rate = None
+                continue
 
             if 'SMART overall-health self-assessment' in line:  # ATA devices
                 if line.split(':')[1].strip() == 'PASSED':
