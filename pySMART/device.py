@@ -170,7 +170,9 @@ class Device(object):
             )
             return
         # If no interface type was provided, scan for the device
-        elif self.interface is None:
+        # Lets do this only for the non-abridged case
+        # (we can work with no interface for abridged case)
+        elif self.interface is None and not self.abridged:
             _grep = 'find' if OS == 'Windows' else 'grep'
             cmd = Popen('smartctl --scan-open | {0} "{1}"'.format(
                 _grep, self.name), shell=True, stdout=PIPE, stderr=PIPE)
@@ -185,7 +187,9 @@ class Device(object):
                 )
                 return
         # If a valid device was detected, populate its information
-        if self.interface is not None:
+        # OR
+        # proceed anyways without interface type for abridged case
+        if self.interface is not None or self.abridged:
             self.update()
 
     def __repr__(self):
@@ -604,15 +608,26 @@ class Device(object):
         Can be called at any time to refresh the `pySMART.device.Device`
         object's data content.
         """
-        interface = smartctl_type[self.interface]
+        interface = None if self.abridged else smartctl_type[self.interface]
         cmd = Popen(
-            'smartctl -d {0} {1} /dev/{2}'.format(
-                interface, '- i' if self.abridged else '- a', self.name
+            'smartctl {0} /dev/{1}'.format(
+                '-i' if self.abridged else '-d {0} -a'.format(interface), self.name
             ),
             shell=True,
             stdout=PIPE,
             stderr=PIPE
         )
+        # cmd = Popen(
+        #     [
+        #         '/usr/local/sbin/smartctl',
+        #         '-d',
+        #         interface,
+        #         '-i' if self.abridged else '-a',
+        #         '/dev/{0}'.format(self.name)
+        #     ],
+        #     stdout=PIPE,
+        #     stderr=PIPE
+        # )
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         parse_self_tests = False
         parse_running_test = False
@@ -620,7 +635,9 @@ class Device(object):
         self.tests = []
         self._test_running = False
         self._test_progress = None
-        for line in _stdout.split('\n'):
+        # Lets skip the first couple of non-useful lines
+        _stdout = _stdout.split('\n')[4:]
+        for line in _stdout:
             if line.strip() == '':  # Blank line stops sub-captures
                 if parse_self_tests is True:
                     parse_self_tests = False
@@ -831,34 +848,35 @@ class Device(object):
                 self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
             if 'Accumulated power on time' in line:
                 self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
-        if not interface == 'scsi':
-            # Parse the SMART table for below-threshold attributes and create
-            # corresponding warnings for non-SCSI disks
-            self._make_SMART_warnings()
-        else:
-            # For SCSI disks, any diagnostic attribute which was not captured
-            # above gets set to '-' to indicate unsupported/unavailable.
-            for diag in ['Corrected_Reads', 'Corrected_Writes',
-                         'Corrected_Verifies', 'Uncorrected_Reads',
-                         'Uncorrected_Writes', 'Uncorrected_Verifies',
-                         'Reallocated_Sector_Ct',
-                         'Start_Stop_Spec', 'Start_Stop_Cycles',
-                         'Load_Cycle_Spec', 'Load_Cycle_Count',
-                         'Start_Stop_Pct_Left', 'Load_Cycle_Pct_Left',
-                         'Power_On_Hours', 'Life_Left', 'Non-Medium_Errors',
-                         'Reads_GB', 'Writes_GB', 'Verifies_GB']:
-                if diag not in self.diags:
-                    self.diags[diag] = '-'
-            # If not obtained above, make a direct attempt to extract power on
-            # hours from the background scan results log.
-            if self.diags['Power_On_Hours'] == '-':
-                cmd = Popen(
-                    'smartctl -d scsi -l background /dev/{1}'.format(interface, self.name),
-                    shell=True, stdout=PIPE, stderr=PIPE)
-                _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-                for line in _stdout.split('\n'):
-                    if 'power on time' in line:
-                        self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
+        if not self.abridged:
+            if not interface == 'scsi':
+                # Parse the SMART table for below-threshold attributes and create
+                # corresponding warnings for non-SCSI disks
+                self._make_SMART_warnings()
+            else:
+                # For SCSI disks, any diagnostic attribute which was not captured
+                # above gets set to '-' to indicate unsupported/unavailable.
+                for diag in ['Corrected_Reads', 'Corrected_Writes',
+                             'Corrected_Verifies', 'Uncorrected_Reads',
+                             'Uncorrected_Writes', 'Uncorrected_Verifies',
+                             'Reallocated_Sector_Ct',
+                             'Start_Stop_Spec', 'Start_Stop_Cycles',
+                             'Load_Cycle_Spec', 'Load_Cycle_Count',
+                             'Start_Stop_Pct_Left', 'Load_Cycle_Pct_Left',
+                             'Power_On_Hours', 'Life_Left', 'Non-Medium_Errors',
+                             'Reads_GB', 'Writes_GB', 'Verifies_GB']:
+                    if diag not in self.diags:
+                        self.diags[diag] = '-'
+                # If not obtained above, make a direct attempt to extract power on
+                # hours from the background scan results log.
+                if self.diags['Power_On_Hours'] == '-':
+                    cmd = Popen(
+                        'smartctl -d scsi -l background /dev/{1}'.format(interface, self.name),
+                        shell=True, stdout=PIPE, stderr=PIPE)
+                    _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+                    for line in _stdout.split('\n'):
+                        if 'power on time' in line:
+                            self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress
         if self._test_running is False:
