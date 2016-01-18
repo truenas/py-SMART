@@ -30,6 +30,7 @@ import re  # Don't delete this 'un-used' import
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
 import warnings
+import threading
 
 # pySMART module imports
 from .attribute import Attribute
@@ -186,16 +187,51 @@ class Device(object):
                     "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
                 )
                 return
+        # If we are in abridged mode then start a parallel subprocess call
+        # obtaining the SMART Health status (since in abdriged mode `smartctl -i`
+        # does not get us the SMART Health info) whilst doing self.update()
+        if self.abridged:
+            t1 = threading.Thread(target=self.smart_health_assement)
+            t1.start()
+            self.update()
+            t1.join()
+        # OR if in unabridged mode, then....
         # If a valid device was detected, populate its information
-        # OR
-        # proceed anyways without interface type for abridged case
-        if self.interface is not None or self.abridged:
+        elif self.interface is not None:
             self.update()
 
     def __repr__(self):
         """Define a basic representation of the class object."""
         return "<%s device on /dev/%s mod:%s sn:%s>" % (
             self.interface.upper(), self.name, self.model, self.serial)
+
+    def smart_health_assement(self):
+        """
+        This function gets the SMART Health Status of the disk (IF the disk
+        is SMART capable and smart is enabled on it).
+        This function is to be used only in abridged mode and not otherwise,
+        since in non-abridged mode update gets this information anyways.
+        """
+        cmd = Popen(
+            'smartctl --health /dev/{0}'.format(self.name),
+            shell=True,
+            stdout=PIPE,
+            stderr=PIPE
+        )
+        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+        _stdout = _stdout.split('\n')
+        line = _stdout[4]  # We only need this line
+        if 'SMART overall-health self-assessment' in line:  # ATA devices
+            if line.split(':')[1].strip() == 'PASSED':
+                self.assessment = 'PASS'
+            else:
+                self.assessment = 'FAIL'
+        if 'SMART Health Status' in line:  # SCSI devices
+            if line.split(':')[1].strip() == 'OK':
+                self.assessment = 'PASS'
+            else:
+                self.assessment = 'FAIL'
+        return
 
     def smart_toggle(self, action):
         """
