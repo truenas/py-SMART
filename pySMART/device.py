@@ -251,7 +251,7 @@ class Device(object):
             if action_lower == 'off':
                 return (True, None)
         cmd = Popen(
-            'smartctl -d {0} -s {1} {2}'.format(smartctl_type[self.interface], action_lower, self.name),
+            'smartctl -s {0} {1}'.format(action_lower, os.path.join('/dev/', self.name)),
             shell=True, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         if cmd.returncode != 0:
