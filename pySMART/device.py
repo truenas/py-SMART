@@ -35,10 +35,7 @@ import warnings
 # pySMART module imports
 from .attribute import Attribute
 from .test_entry import Test_Entry
-from .utils import *
-
-# Calling path_append before executing anything else in the file
-path_append()
+from .utils import smartctl_type
 
 
 def smart_health_assement(disk_name):
@@ -88,8 +85,6 @@ class Device(object):
         **(str):** Device's hardware ID, without the '/dev/' prefix.
         (ie: sda (Linux), pd0 (Windows))
         """
-        if self.name[:2].lower() == 'pd':
-            self.name = pd_to_sd(self.name[2:])
         self.model = None
         """**(str):** Device's model number."""
         self.serial = None
@@ -203,9 +198,12 @@ class Device(object):
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
-            _grep = 'find' if OS == 'Windows' else 'grep'
-            cmd = Popen('smartctl --scan-open | {0} "{1}"'.format(
-                _grep, self.name), shell=True, stdout=PIPE, stderr=PIPE)
+            cmd = Popen(
+                'smartctl --scan-open | grep "{0}"'.format(self.name),
+                shell=True,
+                stdout=PIPE,
+                stderr=PIPE
+            )
             _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
             if _stdout != '':
                 self.interface = _stdout.split(' ')[2]

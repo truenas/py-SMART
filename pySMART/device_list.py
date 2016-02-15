@@ -29,10 +29,6 @@ from subprocess import Popen, PIPE
 
 # pySMART module imports
 from .device import Device
-from .utils import OS, rescan_device_busses, path_append
-
-# Calling path_append before executing anything else in the file
-path_append()
 
 
 class DeviceList(object):
@@ -94,10 +90,6 @@ class DeviceList(object):
         Scans system busses for attached devices and add them to the
         `DeviceList` as `Device` objects.
         """
-        # On Windows machines we should re-initialize the system busses
-        # before scanning for disks
-        if OS == 'Windows':
-            rescan_device_busses()
         cmd = Popen(['/usr/local/sbin/smartctl', '--scan-open'], stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = cmd.communicate()
         for line in _stdout.split('\n'):
