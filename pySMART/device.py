@@ -489,7 +489,7 @@ class Device(object):
                     '-d',
                     smartctl_type[self.interface],
                     '-X',
-                    os.path.join("/dev/", disk_name),
+                    os.path.join("/dev/", self.name),
                 ],
                 stdout=PIPE,
                 stderr=PIPE
