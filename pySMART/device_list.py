@@ -35,6 +35,7 @@ class DeviceList(object):
     """
     Represents a list of all the storage devices connected to this computer.
     """
+
     def __init__(self, init=True):
         """
         Instantiates and optionally initializes the `DeviceList`.

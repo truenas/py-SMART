@@ -292,7 +292,13 @@ class Device(object):
         if self.tests is not None:
             if smartctl_type[self.interface] == 'scsi':
                 print("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
-                    'ID', 'Test Description', 'Status', 'Hours', '1st_Error@LBA', '[SK  ASC  ASCQ]'))
+                    'ID',
+                    'Test Description',
+                    'Status',
+                    'Hours',
+                    '1st_Error@LBA',
+                    '[SK  ASC  ASCQ]'
+                ))
             else:
                 print("{0:3}{1:17}{2:30}{3:5}{4:7}{5:17}".format(
                     'ID', 'Test_Description', 'Status', 'Left', 'Hours', '1st_Error@LBA'))
@@ -461,7 +467,7 @@ class Device(object):
                 _first_entry.hours != self.tests[0].hours or
                 _last_entry.type != self.tests[len(self.tests) - 1].type or
                 _last_entry.hours != self.tests[len(self.tests) - 1].hours
-               ):
+            ):
                 selftest_return_value = 0 if self.tests[0].status != 'Aborted by host' else 3
                 if output == 'str':
                     return (selftest_return_value, str(self.tests[0]), None)
@@ -484,16 +490,16 @@ class Device(object):
         * **(int):** The returncode of calling `smartctl -X device_path`
         """
         cmd = Popen(
-                [
-                    '/usr/local/sbin/smartctl',
-                    '-d',
-                    smartctl_type[self.interface],
-                    '-X',
-                    os.path.join("/dev/", self.name),
-                ],
-                stdout=PIPE,
-                stderr=PIPE
-            )
+            [
+                '/usr/local/sbin/smartctl',
+                '-d',
+                smartctl_type[self.interface],
+                '-X',
+                os.path.join("/dev/", self.name),
+            ],
+            stdout=PIPE,
+            stderr=PIPE
+        )
         cmd.wait()
         return cmd.returncode
 
@@ -558,17 +564,17 @@ class Device(object):
         except KeyError:
             return (2, "Unknown test type '{0}' requested.".format(test_type), None)
         cmd = Popen(
-                [
-                    '/usr/local/sbin/smartctl',
-                    '-d',
-                    interface,
-                    '-t',
-                    test_type,
-                    os.path.join('/dev/', self.name)
-                ],
-                stdout=PIPE,
-                stderr=PIPE
-            )
+            [
+                '/usr/local/sbin/smartctl',
+                '-d',
+                interface,
+                '-t',
+                test_type,
+                os.path.join('/dev/', self.name)
+            ],
+            stdout=PIPE,
+            stderr=PIPE
+        )
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         _success = False
         _running = False
@@ -699,23 +705,12 @@ class Device(object):
                 '-a',
                 os.path.join('/dev/', self.name)
             ]
-        interface = None
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
-        # cmd = Popen(
-        #     [
-        #         '/usr/local/sbin/smartctl',
-        #         '-d',
-        #         interface,
-        #         '-i' if self.abridged else '-a',
-        #         '/dev/{0}'.format(self.name)
-        #     ],
-        #     stdout=PIPE,
-        #     stderr=PIPE
-        # )
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         parse_self_tests = False
         parse_running_test = False
         parse_ascq = False
+        message = ''
         self.tests = []
         self._test_running = False
         self._test_progress = None
@@ -745,8 +740,18 @@ class Device(object):
                     sense = line_[0]
                     ASC = line_[1]
                     ASCQ = line_[2][:-1]
-                    self.tests.append(Test_Entry(format, num, test_type, status, hours, LBA,
-                                      segment=segment, sense=sense, ASC=ASC, ASCQ=ASCQ))
+                    self.tests.append(Test_Entry(
+                        format,
+                        num,
+                        test_type,
+                        status,
+                        hours,
+                        LBA,
+                        segment=segment,
+                        sense=sense,
+                        ASC=ASC,
+                        ASCQ=ASCQ
+                    ))
                 else:
                     format = 'ata'
                     test_type = line[5:25].rstrip()
@@ -755,7 +760,8 @@ class Device(object):
                     hours = line[60:68].lstrip().rstrip()
                     LBA = line[77:].rstrip()
                     self.tests.append(
-                        Test_Entry(format, num, test_type, status, hours, LBA, remain=remain))
+                        Test_Entry(format, num, test_type, status, hours, LBA, remain=remain)
+                    )
             # Basic device information parsing
             if 'Device Model' in line or 'Product' in line:
                 self.model = line.split(':')[1].lstrip().rstrip()

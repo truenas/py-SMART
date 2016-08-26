@@ -27,8 +27,8 @@ class Test_Entry(object):
     log entry. This data is intended to exactly mirror that obtained through
     smartctl.
     """
-    def __init__(self, format, num, test_type, status, hours, LBA, remain=None,
-                 segment=None, sense=None, ASC=None, ASCQ=None):
+
+    def __init__(self, format, num, test_type, status, hours, LBA, remain=None, segment=None, sense=None, ASC=None, ASCQ=None):
         self._format = format
         """
         **(str):** Indicates whether this entry was taken from an 'ata' or
@@ -108,7 +108,14 @@ class Test_Entry(object):
             # 'Segment' could not be fit on the 80-char line. It's of limited
             # utility anyway due to it's manufacturer-proprietary nature...
             return ("{0:>2} {1:17}{2:23}{3:7}{4:14}[{5:4}{6:5}{7:4}]".format(
-                        self.num, self.type, self.status, self.hours,
-                        self.LBA, self.sense, self.ASC, self.ASCQ))
+                self.num,
+                self.type,
+                self.status,
+                self.hours,
+                self.LBA,
+                self.sense,
+                self.ASC,
+                self.ASCQ
+            ))
 
 __all__ = ['Test_Entry']

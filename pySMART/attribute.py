@@ -27,8 +27,8 @@ class Attribute(object):
     in a `Device`'s SMART table. This data is intended to exactly mirror that
     obtained through smartctl.
     """
-    def __init__(self, num, name, flags, value, worst, thresh, attr_type,
-                 updated, when_failed, raw):
+
+    def __init__(self, num, name, flags, value, worst, thresh, attr_type, updated, when_failed, raw):
         self.num = num
         """**(str):** Attribute's ID as a decimal value (1-255)."""
         self.name = name
@@ -71,7 +71,15 @@ class Attribute(object):
         print the value of `pySMART.attribute.Attribute.flags_hex`.
         """
         return "{0:>3} {1:24}{2:4}{3:4}{4:4}{5:9}{6:8}{7:12}{8}".format(
-            self.num, self.name, self.value, self.worst, self.thresh,
-            self.type, self.updated, self.when_failed, self.raw)
+            self.num,
+            self.name,
+            self.value,
+            self.worst,
+            self.thresh,
+            self.type,
+            self.updated,
+            self.when_failed,
+            self.raw
+        )
 
 __all__ = ['Attribute']
