@@ -364,7 +364,7 @@ class Device(object):
                     stdout=PIPE,
                     stderr=PIPE
                 )
-                _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+                _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
                 for line in _stdout.split('\n'):
                     if 'Transport protocol' in line and 'SAS' in line:
                         self.interface = 'sas'
@@ -706,7 +706,7 @@ class Device(object):
                 os.path.join('/dev/', self.name)
             ]
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+        _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
         parse_self_tests = False
         parse_running_test = False
         parse_ascq = False
