@@ -199,16 +199,27 @@ class Device(object):
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
             cmd = Popen(
-                'smartctl --scan-open | grep "{0}"'.format(self.name),
-                shell=True,
+                ['/usr/local/sbin/smartctl', '-d', 'test', os.path.join('/dev/', self.name)],
                 stdout=PIPE,
                 stderr=PIPE
             )
             _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
             if _stdout != '':
-                self.interface = _stdout.split(' ')[2]
+                # I do not like this parsing logic but it works for now!
+                # just for reference _stdout.split('\n') gets us
+                # something like
+                # [
+                #     ...copyright string...,
+                #     '',
+                #     "/dev/ada2: Device of type 'atacam' [ATA] detected",
+                #     "/dev/ada2: Device of type 'atacam' [ATA] opened",
+                #     ''
+                # ]
+                # The above example should be enough for anyone to understand the line below
+                self.interface = _stdout.split('\n')[-2].split("'")[1]
+                # TODO: Uncomment the classify call if we ever find out that we need it
                 # Disambiguate the generic interface to a specific type
-                self._classify()
+                # self._classify()
             else:
                 warnings.warn(
                     "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
@@ -453,34 +464,31 @@ class Device(object):
         if self._test_running is True:
             return (1, 'Self-test in progress. Please wait.', self._test_progress)
         # Check whether the list got longer (ie: new entry)
-        if self.tests is not None and len(self.tests) != _len:
-            # If so, for ATA, return the newest test result
-            selftest_return_value = 0 if 'Aborted' not in self.tests[0].status else 3
-            if output == 'str':
-                return (selftest_return_value, str(self.tests[0]), None)
-            else:
-                return (selftest_return_value, self.tests[0], None)
-        elif _len == maxlog:
-            # If not, because it's max size already, check for new entries
-            if (
-                _first_entry.type != self.tests[0].type or
-                _first_entry.hours != self.tests[0].hours or
-                _last_entry.type != self.tests[len(self.tests) - 1].type or
-                _last_entry.hours != self.tests[len(self.tests) - 1].hours
-            ):
-                selftest_return_value = 0 if self.tests[0].status != 'Aborted by host' else 3
-                if output == 'str':
-                    return (selftest_return_value, str(self.tests[0]), None)
-                else:
-                    return (selftest_return_value, self.tests[0], None)
-            else:
-                return (2, 'No new self-test results found.', None)
+        # If so return the newest test result
+        # If not, because it's max size already, check for new entries
+        if (
+            (self.tests is not None and len(self.tests) != _len) or
+            (
+                len == maxlog and
+                (
+                    _first_entry.type != self.tests[0].type or
+                    _first_entry.hours != self.tests[0].hours or
+                    _last_entry.type != self.tests[len(self.tests) - 1].type or
+                    _last_entry.hours != self.tests[len(self.tests) - 1].hours
+                )
+            )
+        ):
+            return (
+                0 if 'Aborted' not in self.tests[0].status else 3,
+                str(self.tests[0]) if output == 'str' else self.tests[0],
+                None
+            )
         else:
             return (2, 'No new self-test results found.', None)
 
     def abort_selftest(self):
         """
-        Aborts non-captive SMART Self Tests.   Note  that    this  command
+        Aborts non-captive SMART Self Tests.   Note that this command
         will  abort the Offline Immediate Test routine only if your disk
         has the "Abort Offline collection upon new command"  capability.
 
