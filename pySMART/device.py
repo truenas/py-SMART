@@ -260,7 +260,7 @@ class Device(object):
             'firmware': self.firmware,
             'smart_capable': self.smart_capable,
             'smart_enabled': self.smart_enabled,
-            'assessment': self.assessment,
+            'smart_status': self.assessment,
             'messages': self.messages,
             'test_capabilities': self.test_capabilities.copy(),
             'tests': self.tests[:] if self.tests else None,
