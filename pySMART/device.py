@@ -78,7 +78,7 @@ class Device(object):
     def __init__(self, name, interface=None, abridged=False):
         """Instantiates and initializes the `pySMART.device.Device`."""
         assert interface is None or interface.lower() in [
-            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi']
+            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam']
         self.abridged = abridged
         self.name = name.replace('/dev/', '')
         """
