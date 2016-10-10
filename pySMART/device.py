@@ -239,7 +239,7 @@ class Device(object):
             self.serial
         )
 
-    def __getstate__(self):
+    def __getstate__(self, all_info=True):
         """
         Allows us to send a pySMART Device object over a serializable
         medium which uses json (or the likes of json) payloads
@@ -248,14 +248,9 @@ class Device(object):
             current_drive_temp = int(self.attributes[194].raw)
         except:
             current_drive_temp = None
-        return {
+        state_dict = {
             'interface': 'UNKNOWN INTERFACE' if self.abridged else self.interface,
-            'name': self.name,
-            'path': os.path.join('/dev/', self.name),
             'model': self.model,
-            'serial': self.serial,
-            'is_ssd': self.is_ssd,
-            'rotation_rate': self.rotation_rate,
             'capacity': self.capacity,
             'firmware': self.firmware,
             'smart_capable': self.smart_capable,
@@ -268,6 +263,15 @@ class Device(object):
             'temperature': current_drive_temp,
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes]
         }
+        if all_info:
+            state_dict.update({
+                'name': self.name,
+                'path': os.path.join('/dev/', self.name),
+                'serial': self.serial,
+                'is_ssd': self.is_ssd,
+                'rotation_rate': self.rotation_rate
+            })
+        return state_dict
 
     def smart_toggle(self, action):
         """
