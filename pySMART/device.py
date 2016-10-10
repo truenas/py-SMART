@@ -232,8 +232,12 @@ class Device(object):
 
     def __repr__(self):
         """Define a basic representation of the class object."""
-        return "<%s device on /dev/%s mod:%s sn:%s>" % (
-            self.interface.upper(), self.name, self.model, self.serial)
+        return "<{0} device on /dev/{1} mod:{2} sn:{3}>".format(
+            self.interface.upper() if self.interface else 'UNKNOWN INTERFACE',
+            self.name,
+            self.model,
+            self.serial
+        )
 
     def smart_toggle(self, action):
         """
