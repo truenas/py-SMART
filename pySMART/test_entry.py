@@ -89,6 +89,24 @@ class Test_Entry(object):
         failure. Set to '-' otherwise.
         """
 
+    def __getstate__(self):
+        try:
+            num = int(self.num)
+        except:
+            num = None
+        return {
+            'num': num,
+            'type': self.type,
+            'status': self.status,
+            'hours': self.hours,
+            'lba': self.LBA,
+            'remain': self.remain,
+            'segment': self.segment,
+            'sense': self.sense,
+            'asc': self.ASC,
+            'ascq': self.ASCQ
+        }
+
     def __repr__(self):
         """Define a basic representation of the class object."""
         return "<SMART Self-test [%s|%s] hrs:%s LBA:%s>" % (

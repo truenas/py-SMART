@@ -257,7 +257,7 @@ class Device(object):
             'smart_status': self.assessment,
             'messages': self.messages,
             'test_capabilities': self.test_capabilities.copy(),
-            'tests': self.tests[:] if self.tests else None,
+            'tests': [t.__getstate__() for t in self.tests] if self.tests else None,
             'diagnostics': self.diags.copy(),
             'temperature': current_drive_temp,
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes]
