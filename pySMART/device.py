@@ -251,7 +251,6 @@ class Device(object):
         state_dict = {
             'interface': 'UNKNOWN INTERFACE' if self.abridged else self.interface,
             'model': self.model,
-            'capacity': self.capacity,
             'firmware': self.firmware,
             'smart_capable': self.smart_capable,
             'smart_enabled': self.smart_enabled,
@@ -269,7 +268,8 @@ class Device(object):
                 'path': os.path.join('/dev/', self.name),
                 'serial': self.serial,
                 'is_ssd': self.is_ssd,
-                'rotation_rate': self.rotation_rate
+                'rotation_rate': self.rotation_rate,
+                'capacity': self.capacity
             })
         return state_dict
 
