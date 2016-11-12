@@ -216,7 +216,13 @@ class Device(object):
                 #     ''
                 # ]
                 # The above example should be enough for anyone to understand the line below
-                self.interface = _stdout.split('\n')[-2].split("'")[1]
+                try:
+                    self.interface = _stdout.split('\n')[-2].split("'")[1]
+                except:
+                    # for whatever reason we could not get the interface type
+                    # we should mark this as an `abbridged` case and move on
+                    self.interface = None
+                    self.abbridged = True
                 # TODO: Uncomment the classify call if we ever find out that we need it
                 # Disambiguate the generic interface to a specific type
                 # self._classify()
