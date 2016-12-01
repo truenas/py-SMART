@@ -1038,7 +1038,7 @@ class Device(object):
                         if 'power on time' in line:
                             self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
         # map temperature
-        if self.temperature is None and self.attributes[194]:
+        if self.temperature is None:
             # in this case the disk is probably ata
             try:
                 self.temperature = int(self.attributes[194].raw)
