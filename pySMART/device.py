@@ -189,6 +189,11 @@ class Device(object):
         SAS and SCSI devices, since ATA/SATA SMART attributes are manufacturer
         proprietary.
         """
+        self.temperature = None
+        """
+        **(int or None): Since SCSI disks do not report attributes like ATA ones
+        we need to grep/regex the shit outta the normal "smartctl -a" output
+        """
         if self.name is None:
             warnings.warn(
                 "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
@@ -250,10 +255,6 @@ class Device(object):
         Allows us to send a pySMART Device object over a serializable
         medium which uses json (or the likes of json) payloads
         """
-        try:
-            current_drive_temp = int(self.attributes[194].raw)
-        except:
-            current_drive_temp = None
         state_dict = {
             'interface': 'UNKNOWN INTERFACE' if self.abridged else self.interface,
             'model': self.model,
@@ -265,7 +266,7 @@ class Device(object):
             'test_capabilities': self.test_capabilities.copy(),
             'tests': [t.__getstate__() for t in self.tests] if self.tests else None,
             'diagnostics': self.diags.copy(),
-            'temperature': current_drive_temp,
+            'temperature': self.temperature,
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes]
         }
         if all_info:
@@ -745,6 +746,9 @@ class Device(object):
         Can be called at any time to refresh the `pySMART.device.Device`
         object's data content.
         """
+        # set temperature back to None so that if update() is called more than once
+        # any logic that relies on self.temperature to be None to rescan it works.it
+        self.temperature = None
         if self.abridged:
             interface = None
             popen_list = ['/usr/local/sbin/smartctl', '-i', os.path.join('/dev/', self.name)]
@@ -990,6 +994,11 @@ class Device(object):
                 self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
             if 'Accumulated power on time' in line:
                 self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
+            if 'Current Drive Temperature' in line:
+                try:
+                    self.temperature = int(line.split(':')[-1].strip().split()[0])
+                except ValueError:
+                    pass
         if not self.abridged:
             if not interface == 'scsi':
                 # Parse the SMART table for below-threshold attributes and create
@@ -1028,6 +1037,13 @@ class Device(object):
                     for line in _stdout.split('\n'):
                         if 'power on time' in line:
                             self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
+        # map temperature
+        if self.temperature is None:
+            # in this case the disk is probably ata
+            try:
+                self.temperature = int(self.attributes[194].raw)
+            except ValueError:
+                pass
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress
         if self._test_running is False:
