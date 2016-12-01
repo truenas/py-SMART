@@ -1042,7 +1042,7 @@ class Device(object):
             # in this case the disk is probably ata
             try:
                 self.temperature = int(self.attributes[194].raw)
-            except ValueError:
+            except (ValueError, AttributeError):
                 pass
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress
