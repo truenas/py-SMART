@@ -746,6 +746,9 @@ class Device(object):
         Can be called at any time to refresh the `pySMART.device.Device`
         object's data content.
         """
+        # set temperature back to None so that if update() is called more than once
+        # any logic that relies on self.temperature to be None to rescan it works.it
+        self.temperature = None
         if self.abridged:
             interface = None
             popen_list = ['/usr/local/sbin/smartctl', '-i', os.path.join('/dev/', self.name)]
@@ -994,7 +997,7 @@ class Device(object):
             if 'Current Drive Temperature' in line:
                 try:
                     self.temperature = int(line.split(':')[-1].strip().split()[0])
-                except:
+                except ValueError:
                     pass
         if not self.abridged:
             if not interface == 'scsi':
@@ -1039,7 +1042,7 @@ class Device(object):
             # in this case the disk is probably ata
             try:
                 self.temperature = int(self.attributes[194].raw)
-            except:
+            except ValueError:
                 pass
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress
