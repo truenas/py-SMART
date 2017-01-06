@@ -345,7 +345,7 @@ class Device(object):
         Prints the entire SMART self-test log, in a format similar to
         the output of smartctl.
         """
-        if self.tests is not None:
+        if self.tests:
             if smartctl_type[self.interface] == 'scsi':
                 print("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
@@ -496,7 +496,7 @@ class Device(object):
         # result greatly diminishes the chances that two sets of two tests each
         # were run within an hour of themselves, but with 16-17 other tests run
         # in between them.
-        if self.tests is not None:
+        if self.tests:
             _first_entry = self.tests[0]
             _len = len(self.tests)
             _last_entry = self.tests[_len - 1]
