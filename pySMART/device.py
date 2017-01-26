@@ -83,7 +83,7 @@ class Device(object):
         assert interface is None or interface.lower() in [
             'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam']
         self.abridged = abridged
-        self.smart_options = smart_options
+        self.smart_options = smart_options.split(' ')
         self.name = name.replace('/dev/', '')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
@@ -758,7 +758,7 @@ class Device(object):
             interface = None
             popen_list = [
                 '/usr/local/sbin/smartctl',
-                self.smart_options,
+                *self.smart_options,
                 '-i',
                 os.path.join('/dev/', self.name)]
         else:
@@ -767,10 +767,11 @@ class Device(object):
                 '/usr/local/sbin/smartctl',
                 '-d',
                 interface,
-                self.smart_options,
+                *self.smart_options,
                 '-a',
                 os.path.join('/dev/', self.name)
             ]
+        popen_list = list(filter(None, popen_list))
         logger.debug("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
