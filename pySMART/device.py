@@ -83,7 +83,7 @@ class Device(object):
         assert interface is None or interface.lower() in [
             'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam']
         self.abridged = abridged
-        self.smart_options = smart_options.split(' ')
+        self.smart_options = smart_options.split(' ') if smart_options else ['']
         self.name = name.replace('/dev/', '')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
