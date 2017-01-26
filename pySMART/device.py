@@ -78,11 +78,12 @@ class Device(object):
     (considered SATA) but excludes other external devices (USB, Firewire).
     """
 
-    def __init__(self, name, interface=None, abridged=False):
+    def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
         assert interface is None or interface.lower() in [
             'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam']
         self.abridged = abridged
+        self.smart_options = smart_options
         self.name = name.replace('/dev/', '')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
@@ -755,16 +756,22 @@ class Device(object):
         self.temperature = None
         if self.abridged:
             interface = None
-            popen_list = ['/usr/local/sbin/smartctl', '-i', os.path.join('/dev/', self.name)]
+            popen_list = [
+                '/usr/local/sbin/smartctl',
+                self.smart_options,
+                '-i',
+                os.path.join('/dev/', self.name)]
         else:
             interface = smartctl_type[self.interface]
             popen_list = [
                 '/usr/local/sbin/smartctl',
                 '-d',
                 interface,
+                self.smart_options,
                 '-a',
                 os.path.join('/dev/', self.name)
             ]
+        logger.debug("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
         parse_self_tests = False
