@@ -256,7 +256,7 @@ class Device(object):
         medium which uses json (or the likes of json) payloads
         """
         state_dict = {
-            'interface': 'UNKNOWN INTERFACE' if self.abridged else self.interface,
+            'interface': self.interface if self.interface else 'UNKNOWN INTERFACE',
             'model': self.model,
             'firmware': self.firmware,
             'smart_capable': self.smart_capable,
