@@ -27,6 +27,7 @@ Methods are provided for initiating self tests and querying their results.
 # Python built-ins
 from __future__ import print_function
 import os
+import logging
 import re  # Don't delete this 'un-used' import
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
@@ -36,6 +37,8 @@ import warnings
 from .attribute import Attribute
 from .test_entry import Test_Entry
 from .utils import smartctl_type
+
+logger = logging.getLogger('pySMART')
 
 
 def smart_health_assement(disk_name):
@@ -203,6 +206,7 @@ class Device(object):
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
+            logger.debug("Determining interface of disk: {0}".format(self.name))
             cmd = Popen(
                 ['/usr/local/sbin/smartctl', '-d', 'test', os.path.join('/dev/', self.name)],
                 stdout=PIPE,
