@@ -23,6 +23,7 @@ by the other submodules of the `pySMART` package.
 smartctl_type = {
     'ata': 'ata',
     'csmi': 'ata',
+    'nvme': 'nvme',
     'sas': 'scsi',
     'sat': 'sat',
     'sata': 'ata',
