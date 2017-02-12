@@ -27,6 +27,7 @@ Methods are provided for initiating self tests and querying their results.
 # Python built-ins
 from __future__ import print_function
 import os
+import logging
 import re  # Don't delete this 'un-used' import
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
@@ -36,6 +37,8 @@ import warnings
 from .attribute import Attribute
 from .test_entry import Test_Entry
 from .utils import smartctl_type
+
+logger = logging.getLogger('pySMART')
 
 
 def smart_health_assement(disk_name):
@@ -75,11 +78,12 @@ class Device(object):
     (considered SATA) but excludes other external devices (USB, Firewire).
     """
 
-    def __init__(self, name, interface=None, abridged=False):
+    def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
         assert interface is None or interface.lower() in [
             'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam']
         self.abridged = abridged
+        self.smart_options = smart_options.split(' ') if smart_options else ['']
         self.name = name.replace('/dev/', '')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
@@ -203,6 +207,7 @@ class Device(object):
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
+            logger.debug("Determining interface of disk: {0}".format(self.name))
             cmd = Popen(
                 ['/usr/local/sbin/smartctl', '-d', 'test', os.path.join('/dev/', self.name)],
                 stdout=PIPE,
@@ -256,7 +261,7 @@ class Device(object):
         medium which uses json (or the likes of json) payloads
         """
         state_dict = {
-            'interface': 'UNKNOWN INTERFACE' if self.abridged else self.interface,
+            'interface': self.interface if self.interface else 'UNKNOWN INTERFACE',
             'model': self.model,
             'firmware': self.firmware,
             'smart_capable': self.smart_capable,
@@ -345,7 +350,7 @@ class Device(object):
         Prints the entire SMART self-test log, in a format similar to
         the output of smartctl.
         """
-        if self.tests is not None:
+        if self.tests:
             if smartctl_type[self.interface] == 'scsi':
                 print("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
@@ -496,7 +501,7 @@ class Device(object):
         # result greatly diminishes the chances that two sets of two tests each
         # were run within an hour of themselves, but with 16-17 other tests run
         # in between them.
-        if self.tests is not None:
+        if self.tests:
             _first_entry = self.tests[0]
             _len = len(self.tests)
             _last_entry = self.tests[_len - 1]
@@ -751,16 +756,23 @@ class Device(object):
         self.temperature = None
         if self.abridged:
             interface = None
-            popen_list = ['/usr/local/sbin/smartctl', '-i', os.path.join('/dev/', self.name)]
+            popen_list = [
+                '/usr/local/sbin/smartctl',
+                *self.smart_options,
+                '-i',
+                os.path.join('/dev/', self.name)]
         else:
             interface = smartctl_type[self.interface]
             popen_list = [
                 '/usr/local/sbin/smartctl',
                 '-d',
                 interface,
+                *self.smart_options,
                 '-a',
                 os.path.join('/dev/', self.name)
             ]
+        popen_list = list(filter(None, popen_list))
+        logger.debug("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
         parse_self_tests = False
