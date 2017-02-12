@@ -81,8 +81,8 @@ class Device(object):
     def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
         assert interface is None or interface.lower() in [
-            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam']
-        self.abridged = abridged
+            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'UNKNOWN INTERFACE']
+        self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
         self.smart_options = smart_options.split(' ') if smart_options else ['']
         self.name = name.replace('/dev/', '')
         """
@@ -93,7 +93,7 @@ class Device(object):
         """**(str):** Device's model number."""
         self.serial = None
         """**(str):** Device's serial number."""
-        self.interface = interface
+        self.interface = None if interface == 'UNKNOWN INTERFACE' else interface
         """
         **(str):** Device's interface type. Must be one of:
             * **ATA** - Advanced Technology Attachment
