@@ -207,7 +207,7 @@ class Device(object):
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
-            logger.debug("Determining interface of disk: {0}".format(self.name))
+            logger.trace("Determining interface of disk: {0}".format(self.name))
             cmd = Popen(
                 ['/usr/local/sbin/smartctl', '-d', 'test', os.path.join('/dev/', self.name)],
                 stdout=PIPE,
@@ -772,7 +772,7 @@ class Device(object):
                 os.path.join('/dev/', self.name)
             ]
         popen_list = list(filter(None, popen_list))
-        logger.debug("Executing the following cmd: {0}".format(popen_list))
+        logger.trace("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
         parse_self_tests = False

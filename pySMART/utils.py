@@ -20,6 +20,62 @@ This module contains generic utilities and configuration information for use
 by the other submodules of the `pySMART` package.
 """
 
+import logging
+import logging.handlers
+import os
+import io
+import traceback
+
+
+_srcfile = __file__
+TRACE = logging.DEBUG - 5
+
+
+class TraceLogger(logging.Logger):
+    def __init__(self, name):
+        logging.Logger.__init__(self, name)
+        logging.addLevelName(TRACE, 'TRACE')
+        return
+
+    def trace(self, msg, *args, **kwargs):
+        self.log(TRACE, msg, *args, **kwargs)
+
+    def findCaller(self, stack_info=False):
+        """
+        Overload built-in findCaller method
+        to omit not only logging/__init__.py but also the current file
+        """
+        f = logging.currentframe()
+        # On some versions of IronPython, currentframe() returns None if
+        # IronPython isn't run with -X:Frames.
+        if f is not None:
+            f = f.f_back
+        rv = "(unknown file)", 0, "(unknown function)", None
+        while hasattr(f, "f_code"):
+            co = f.f_code
+            filename = os.path.normcase(co.co_filename)
+            if filename in (logging._srcfile, _srcfile):
+                f = f.f_back
+                continue
+            sinfo = None
+            if stack_info:
+                sio = io.StringIO()
+                sio.write('Stack (most recent call last):\n')
+                traceback.print_stack(f, file=sio)
+                sinfo = sio.getvalue()
+                if sinfo[-1] == '\n':
+                    sinfo = sinfo[:-1]
+                sio.close()
+            rv = (co.co_filename, f.f_lineno, co.co_name, sinfo)
+            break
+        return rv
+
+
+def configure_trace_logging():
+    if getattr(logging.handlers.logging.getLoggerClass(), 'trace', None) is None:
+        logging.setLoggerClass(TraceLogger)
+
+
 smartctl_type = {
     'ata': 'ata',
     'csmi': 'ata',
