@@ -36,7 +36,7 @@ import warnings
 # pySMART module imports
 from .attribute import Attribute
 from .test_entry import Test_Entry
-from .utils import smartctl_type
+from .utils import smartctl_type, SMARTCTL_PATH
 
 logger = logging.getLogger('pySMART')
 
@@ -50,7 +50,7 @@ def smart_health_assement(disk_name):
     """
     assessment = None
     cmd = Popen(
-        ['/usr/local/sbin/smartctl', '--health', os.path.join('/dev/', disk_name)],
+        [SMARTCTL_PATH, '--health', os.path.join('/dev/', disk_name.replace('nvd','nvme'))],
         stdout=PIPE,
         stderr=PIPE,
     )
@@ -81,10 +81,11 @@ class Device(object):
     def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
         assert interface is None or interface.lower() in [
-            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'UNKNOWN INTERFACE']
+            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'UNKNOWN INTERFACE'
+        ]
         self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
         self.smart_options = smart_options.split(' ') if smart_options else ['']
-        self.name = name.replace('/dev/', '')
+        self.name = name.replace('/dev/', '').replace('nvd', 'nvme')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
         (ie: sda (Linux), pd0 (Windows))
@@ -209,7 +210,7 @@ class Device(object):
         elif self.interface is None and not self.abridged:
             logger.trace("Determining interface of disk: {0}".format(self.name))
             cmd = Popen(
-                ['/usr/local/sbin/smartctl', '-d', 'test', os.path.join('/dev/', self.name)],
+                [SMARTCTL_PATH, '-d', 'test', os.path.join('/dev/', self.name)],
                 stdout=PIPE,
                 stderr=PIPE
             )
@@ -310,7 +311,7 @@ class Device(object):
                 return (True, None)
         cmd = Popen(
             [
-                '/usr/local/sbin/smartctl',
+                SMARTCTL_PATH,
                 '-s',
                 action_lower,
                 os.path.join('/dev/', self.name)
@@ -380,7 +381,7 @@ class Device(object):
             # Look for a SATA PHY to detect SAT and SATA
             cmd = Popen(
                 [
-                    '/usr/local/sbin/smartctl',
+                    SMARTCTL_PATH,
                     '-d',
                     smartctl_type[test],
                     '-l',
@@ -398,7 +399,7 @@ class Device(object):
         if self.interface == 'scsi':
             cmd = Popen(
                 [
-                    '/usr/local/sbin/smartctl',
+                    SMARTCTL_PATH,
                     '-d',
                     'scsi',
                     '-l',
@@ -416,7 +417,7 @@ class Device(object):
             else:
                 cmd = Popen(
                     [
-                        '/usr/local/sbin/smartctl',
+                        SMARTCTL_PATH,
                         '-d',
                         'scsi',
                         '-a',
@@ -549,7 +550,7 @@ class Device(object):
         """
         cmd = Popen(
             [
-                '/usr/local/sbin/smartctl',
+                SMARTCTL_PATH,
                 '-d',
                 smartctl_type[self.interface],
                 '-X',
@@ -623,7 +624,7 @@ class Device(object):
             return (2, "Unknown test type '{0}' requested.".format(test_type), None)
         cmd = Popen(
             [
-                '/usr/local/sbin/smartctl',
+                SMARTCTL_PATH,
                 '-d',
                 interface,
                 '-t',
@@ -757,14 +758,15 @@ class Device(object):
         if self.abridged:
             interface = None
             popen_list = [
-                '/usr/local/sbin/smartctl',
+                SMARTCTL_PATH,
                 *self.smart_options,
                 '-i',
-                os.path.join('/dev/', self.name)]
+                os.path.join('/dev/', self.name)
+            ]
         else:
             interface = smartctl_type[self.interface]
             popen_list = [
-                '/usr/local/sbin/smartctl',
+                SMARTCTL_PATH,
                 '-d',
                 interface,
                 *self.smart_options,
@@ -831,7 +833,7 @@ class Device(object):
                         Test_Entry(format, num, test_type, status, hours, LBA, remain=remain)
                     )
             # Basic device information parsing
-            if 'Device Model' in line or 'Product' in line:
+            if 'Device Model' in line or 'Product' in line or 'Model Number' in line:
                 self.model = line.split(':')[1].lstrip().rstrip()
                 self._guess_SMART_type(line.lower())
                 continue
@@ -907,7 +909,7 @@ class Device(object):
             # if 'Selective Self-test supported' in line:
             #     self.test_capabilities['selective'] = False if 'No' in line else True
             # SMART Attribute table parsing
-            if '0x0' in line and '_' in line:
+            if '0x0' in line and '_' in line and not interface=='nvme':
                 # Replace multiple space separators with a single space, then
                 # tokenize the string on space delimiters
                 line_ = ' '.join(line.split()).split(' ')
@@ -1006,7 +1008,7 @@ class Device(object):
                 self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
             if 'Accumulated power on time' in line:
                 self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
-            if 'Current Drive Temperature' in line:
+            if 'Current Drive Temperature' in line or ('Temperature' in line and interface =='nvme'):
                 try:
                     self.temperature = int(line.split(':')[-1].strip().split()[0])
                 except ValueError:
@@ -1035,7 +1037,7 @@ class Device(object):
                 if self.diags['Power_On_Hours'] == '-':
                     cmd = Popen(
                         [
-                            '/usr/local/sbin/smartctl',
+                            SMARTCTL_PATH,
                             '-d',
                             'scsi',
                             '-l',
