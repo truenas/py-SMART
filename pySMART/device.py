@@ -1055,7 +1055,10 @@ class Device(object):
         if self.temperature is None:
             # in this case the disk is probably ata
             try:
-                self.temperature = int(self.attributes[194].raw)
+                # Some disks report temperature to attribute number 190 ('Airflow_Temperature_Cel')
+                # see https://bugs.freenas.org/issues/20860
+                temp_attr = self.attributes[194] or self.attributes[190]
+                self.temperature = int(temp_attr.raw)
             except (ValueError, AttributeError):
                 pass
         # Now that we have finished the update routine, if we did not find a runnning selftest
