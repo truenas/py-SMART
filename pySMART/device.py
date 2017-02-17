@@ -132,7 +132,7 @@ class Device(object):
         **(list of str):** Contains any SMART warnings or other error messages
         reported by the device (ie: ASCQ codes).
         """
-        self.is_ssd = None
+        self.is_ssd = True if 'nvme' in self.name else False
         """
         **(bool):** True if this device is a Solid State Drive.
         False otherwise.
