@@ -113,12 +113,12 @@ class Device(object):
         """**(str):** Device's user capacity."""
         self.firmware = None
         """**(str):** Device's firmware version."""
-        self.smart_capable = False
+        self.smart_capable = True if 'nvme' in self.name else False
         """
         **(bool):** True if the device has SMART Support Available.
         False otherwise. This is useful for VMs amongst other things.
         """
-        self.smart_enabled = False
+        self.smart_enabled = True if 'nvme' in self.name else False
         """
         **(bool):** True if the device supports SMART (or SCSI equivalent) and
         has the feature set enabled. False otherwise.
@@ -151,8 +151,8 @@ class Device(object):
         """
         self.test_capabilities = {
             'offline': False,       # SMART execute Offline immediate (ATA only)
-            'short': True,          # SMART short Self-test
-            'long': True,           # SMART long Self-test
+            'short': False if 'nvme' in self.name else True,  # SMART short Self-test
+            'long': False if 'nvme' in self.name else True,   # SMART long Self-test
             'conveyance': False,    # SMART Conveyance Self-Test (ATA only)
             'selective': False,     # SMART Selective Self-Test (ATA only)
         }
@@ -298,6 +298,7 @@ class Device(object):
         * **(str):** None if option succeded else contains the error message.
         """
         # Lets make the action verb all lower case
+        assert self.interface != 'nvme', "NVME devices do not currently support toggling SMART enabled"
         action_lower = action.lower()
         if action_lower not in ['on', 'off']:
             return (False, 'Unsupported action {0}'.format(action))
