@@ -303,7 +303,7 @@ class Device(object):
         """
         # Lets make the action verb all lower case
         if self.interface == 'nvme':
-            raise ValueError("NVME devices do not currently support toggling SMART enabled")
+            return (False, "NVME devices do not currently support toggling SMART enabled")
         action_lower = action.lower()
         if action_lower not in ['on', 'off']:
             return (False, 'Unsupported action {0}'.format(action))
