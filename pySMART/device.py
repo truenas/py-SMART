@@ -83,7 +83,7 @@ class Device(object):
         if not (
             interface is None or
             interface.lower() in [
-                'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'UNKNOWN INTERFACE'
+                'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'unknown interface'
             ]
         ):
             raise ValueError('Unknown interface: {0} specified for {1}'.format(interface, name))
