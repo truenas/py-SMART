@@ -80,9 +80,13 @@ class Device(object):
 
     def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
-        assert interface is None or interface.lower() in [
-            'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'UNKNOWN INTERFACE'
-        ]
+        if not (
+            interface is None or
+            interface.lower() in [
+                'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'UNKNOWN INTERFACE'
+            ]
+        ):
+            raise ValueError('Unknown interface: {0} specified for {1}'.format(interface, name))
         self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
         self.smart_options = smart_options.split(' ') if smart_options else ['']
         self.name = name.replace('/dev/', '').replace('nvd', 'nvme')
@@ -298,7 +302,8 @@ class Device(object):
         * **(str):** None if option succeded else contains the error message.
         """
         # Lets make the action verb all lower case
-        assert self.interface != 'nvme', "NVME devices do not currently support toggling SMART enabled"
+        if self.interface == 'nvme':
+            raise ValueError("NVME devices do not currently support toggling SMART enabled")
         action_lower = action.lower()
         if action_lower not in ['on', 'off']:
             return (False, 'Unsupported action {0}'.format(action))
