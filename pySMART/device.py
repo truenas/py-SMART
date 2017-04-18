@@ -764,21 +764,18 @@ class Device(object):
         if self.abridged:
             interface = None
             popen_list = [
-                SMARTCTL_PATH,
-                *self.smart_options,
-                '-i',
-                os.path.join('/dev/', self.name)
-            ]
+                SMARTCTL_PATH]
+            popen_list.extend(self.smart_options)
+            popen_list.extend(['-i', os.path.join('/dev/', self.name)])
         else:
             interface = smartctl_type[self.interface]
             popen_list = [
                 SMARTCTL_PATH,
                 '-d',
-                interface,
-                *self.smart_options,
-                '-a',
-                os.path.join('/dev/', self.name)
-            ]
+                interface]
+            popen_list.extend(self.smart_options)
+            popen_list.extend(['-a', os.path.join('/dev/', self.name)])
+
         popen_list = list(filter(None, popen_list))
         logger.trace("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
