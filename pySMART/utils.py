@@ -86,7 +86,7 @@ smartctl_type = {
     'scsi': 'scsi',
     'atacam': 'atacam'
 }
-SMARTCTL_PATH = '/usr/local/sbin/smartctl'
+SMARTCTL_PATH = '/usr/sbin/smartctl'
 """
 **(dict of str):** Contains actual interface types (ie: sas, csmi) as keys and
 the corresponding smartctl interface type (ie: scsi, ata) as values.
