@@ -93,7 +93,7 @@ class DeviceList(object):
         `DeviceList` as `Device` objects.
         """
         cmd = Popen([SMARTCTL_PATH, '--scan-open'], stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = cmd.communicate()
+        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         for line in _stdout.split('\n'):
             if not ('failed:' in line or line == ''):
                 name = line.split(' ')[0].replace('/dev/', '')
