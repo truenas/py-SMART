@@ -32,14 +32,13 @@ import re  # Don't delete this 'un-used' import
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
 import warnings
-
+from ezs3.log import EZLog
 # pySMART module imports
 from .attribute import Attribute
 from .test_entry import Test_Entry
 from .utils import smartctl_type, SMARTCTL_PATH
 
-logger = logging.getLogger('pySMART')
-
+logger = EZLog.get_logger(__name__)
 
 def smart_health_assement(disk_name):
     """
@@ -212,7 +211,7 @@ class Device(object):
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
-            logger.trace("Determining interface of disk: {0}".format(self.name))
+            logger.debug("Determining interface of disk: {0}".format(self.name))
             cmd = Popen(
                 [SMARTCTL_PATH, '-d', 'test', os.path.join('/dev/', self.name)],
                 stdout=PIPE,
@@ -777,7 +776,7 @@ class Device(object):
             popen_list.extend(['-a', os.path.join('/dev/', self.name)])
 
         popen_list = list(filter(None, popen_list))
-        logger.trace("Executing the following cmd: {0}".format(popen_list))
+        logger.debug("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
         parse_self_tests = False

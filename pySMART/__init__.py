@@ -102,7 +102,7 @@ portabiity, I thought a simple wrapper for smartctl would save time in the
 development of future automated test tools.
 """
 from . import utils
-utils.configure_trace_logging()
+#utils.configure_trace_logging()
 
 from .attribute import Attribute
 from .device import Device, smart_health_assement
