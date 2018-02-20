@@ -805,6 +805,8 @@ class Device(object):
                 message += ' ' + line.lstrip().rstrip()
             if parse_self_tests:
                 num = line[1:3]
+                if '#' not in num:
+                    continue
                 if interface == 'scsi':
                     format = 'scsi'
                     test_type = line[5:23].rstrip()
