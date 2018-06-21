@@ -357,8 +357,8 @@ class Device(object):
         Prints the entire SMART self-test log, in a format similar to
         the output of smartctl.
         """
-        all_tests = []
         if self.tests:
+            all_tests = []
             if smartctl_type[self.interface] == 'scsi':
                 header = ("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
