@@ -357,9 +357,10 @@ class Device(object):
         Prints the entire SMART self-test log, in a format similar to
         the output of smartctl.
         """
+        all_tests = []
         if self.tests:
             if smartctl_type[self.interface] == 'scsi':
-                print("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
+                header = ("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
                     'Test Description',
                     'Status',
@@ -368,12 +369,22 @@ class Device(object):
                     '[SK  ASC  ASCQ]'
                 ))
             else:
-                print("{0:3}{1:17}{2:30}{3:5}{4:7}{5:17}".format(
-                    'ID', 'Test_Description', 'Status', 'Left', 'Hours', '1st_Error@LBA'))
+                header = ("{0:3}{1:17}{2:30}{3:5}{4:7}{5:17}".format(
+                    'ID',
+                    'Test_Description',
+                    'Status',
+                    'Left',
+                    'Hours',
+                    '1st_Error@LBA'))
+            all_tests.append(header)
             for test in self.tests:
-                print(test)
+                all_tests.append(test)
+
+            return all_tests
         else:
-            print("No self-tests have been logged for this device.")
+            no_tests = "No self-tests have been logged for this device."
+            return no_tests
+
 
     def _classify(self):
         """
