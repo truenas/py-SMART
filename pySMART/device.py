@@ -378,7 +378,7 @@ class Device(object):
                     '1st_Error@LBA'))
             all_tests.append(header)
             for test in self.tests:
-                all_tests.append(test)
+                all_tests.append(str(test))
 
             return all_tests
         else:
