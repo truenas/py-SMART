@@ -17,7 +17,7 @@
 ################################################################
 """
 This module contains generic utilities and configuration information for use
-by the other submodules of the `pySMART` package.
+by the other submodules of the `pySMART3` package.
 """
 
 import logging
@@ -25,7 +25,7 @@ import logging.handlers
 import os
 import io
 import traceback
-
+from os import path
 
 _srcfile = __file__
 TRACE = logging.DEBUG - 5
@@ -87,6 +87,8 @@ smartctl_type = {
     'atacam': 'atacam'
 }
 SMARTCTL_PATH = '/usr/local/sbin/smartctl'
+if not path.isfile(SMARTCTL_PATH):
+    SMARTCTL_PATH = '/usr/bin/smartctl'
 """
 **(dict of str):** Contains actual interface types (ie: sas, csmi) as keys and
 the corresponding smartctl interface type (ie: scsi, ata) as values.

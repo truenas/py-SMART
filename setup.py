@@ -38,11 +38,11 @@ def get_version(path):
     return _get_version_match(read_file(path))
 
 setup(
-    name='pySMART',
-    version=get_version(os.path.join('pySMART', '__init__.py')),
+    name='pySMART3',
+    version=get_version(os.path.join('pySMART3', '__init__.py')),
     author='Marc Herndon',
     author_email='Herndon.MarcT@gmail.com',
-    packages=['pySMART'],
+    packages=['pySMART3'],
     url='none',
     license='GNU LGPLv2.1.html',
     description='Wrapper for smartctl (smartmontools)',
