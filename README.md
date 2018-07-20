@@ -76,9 +76,7 @@ advantage of the powerful features of smartmontools.
 Installation
 ============
 ``pySMART3`` is not yet available on PyPI and not installable via ``pip``::
-    Maybe one day this will happen:
-
-    python -m pip install pySMART3
+     pip install git+git://github.com/jtylers/py-SMART3.git#egg=py-SMART3
 
 The only external dependency is the ``smartctl`` component of the smartmontools
 package.  This should be pre-installed in most Linux distributions, or it
