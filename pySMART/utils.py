@@ -25,7 +25,6 @@ import logging.handlers
 import os
 import io
 import traceback
-from os import path
 from shutil import which
 
 _srcfile = __file__
