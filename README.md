@@ -4,11 +4,11 @@ to ensure that it works on FreeBSD. Thanks to him for providing us with this sou
 This is the same project from (https://github.com/freenas/py-SMART) ported to python3
 
 ===========
-pySMART3
+pySMART
 ===========
 Copyright (C) 2015 Marc Herndon
 
-pySMART3 is a simple Python wrapper for the ``smartctl`` component of
+pySMART is a simple Python wrapper for the ``smartctl`` component of
 ``smartmontools``. It works under Linux and Windows, as long as smartctl is on
 the system path. Running with administrative rights is strongly recommended,
 as smartctl cannot accurately detect all device types or parse all SMART
@@ -21,10 +21,10 @@ information, initiate self-tests, and perform other functions.
 
 Usage
 =====
-The most common way to use pySMART3 is to create a logical representation of the
+The most common way to use pySMART is to create a logical representation of the
 physical storage device that you would like to work with, as shown::
 
-    >>> from pySMART3 import Device
+    >>> from pySMART import Device
     >>> sda = Device('/dev/sda')
     >>> sda
     <SATA device on /dev/sda mod:WDC WD5000AAKS-60Z1A0 sn:WD-WCAWFxxxxxxx>
@@ -59,7 +59,7 @@ Alternatively, the package provides a ``DeviceList`` class. When instantiated,
 this will auto-detect all local storage devices and create a list containing
 one ``Device`` object for each detected storage device::
 
-    >>> from pySMART3 import DeviceList
+    >>> from pySMART import DeviceList
     >>> devlist = DeviceList()
     >>> devlist
     <DeviceList contents:
@@ -70,12 +70,12 @@ one ``Device`` object for each detected storage device::
     >>> devlist.devices[0].attributes[5]  # Access Device data as above
     <SMART Attribute 'Reallocated_Sector_Ct' 173/140 raw:214>
 
-Using the pySMART3 wrapper, Python applications be be rapidly developed to take
+Using the pySMART wrapper, Python applications be be rapidly developed to take
 advantage of the powerful features of smartmontools.
 
 Installation
 ============
-``pySMART3`` is not yet available on PyPI but is installable with ``git`` and ``pip``::
+``pySMART`` is not yet available on PyPI but is installable with ``git`` and ``pip``::
 
      pip install git+git://github.com/jtylers/py-SMART3.git#egg=py-SMART3
 
@@ -95,7 +95,7 @@ Note that after installing smartmontools on Windows, the directory containing
 
 Documentation
 =============
-API documentation for ``pySMART3`` was generated using ``pdoc`` and can be
+API documentation for ``pySMART`` was generated using ``pdoc`` and can be
 found in the /docs folder within the package archive.
 
 Acknowledgements
@@ -115,11 +115,11 @@ development of future automated test tools.
 
 Final Note on Licensing
 =======================
-If you are reading this and thinking that you'd love to use pySMART3 if only
+If you are reading this and thinking that you'd love to use pySMART if only
 it weren't "restricted" by GPL licensing, please contact me. I am very
 willing to make the code available privately under a more permissive
 license, including for some corporate or commercial uses. I'd just like for
-you to say hello first, and tell me a bit about your project and how pySMART3
+you to say hello first, and tell me a bit about your project and how pySMART
 could fit into it. Odds are I'd be happy to help.
 
 I've been contacted with similar requests a handful of times previously, so

@@ -18,7 +18,7 @@
 """
 Copyright (C) 2014 Marc Herndon
 
-pySMART3 is a simple Python wrapper for the `smartctl` component of
+pySMART is a simple Python wrapper for the `smartctl` component of
 `smartmontools`. It works under Linux and Windows, as long as smartctl is on
 the system path. Running with administrative (root) privilege is strongly
 recommended, as smartctl cannot accurately detect all device types or parse
@@ -31,7 +31,7 @@ information, initiate device self-tests, and perform other functions.
 
 Usage
 -----
-The most common way to use pySMART3 is to create a logical representation of the
+The most common way to use pySMART is to create a logical representation of the
 physical storage device that you would like to work with, as shown:
 
     #!bash
@@ -83,7 +83,7 @@ one `Device` object for each detected storage device.
     >>> devlist.devices[0].attributes[5]  # Access Device data as above
     <SMART Attribute 'Reallocated_Sector_Ct' 173/140 raw:214>
 
-Using the pySMART3 wrapper, Python applications be be rapidly developed to take
+Using the pySMART wrapper, Python applications be be rapidly developed to take
 advantage of the powerful features of smartmontools.
 
 Acknowledgements
