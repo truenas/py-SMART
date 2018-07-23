@@ -1,8 +1,6 @@
 This is basically Marc Herndon's pySMART (see: https://pypi.python.org/pypi/pySMART/) with slight modifications
 to ensure that it works on FreeBSD. Thanks to him for providing us with this source code.
 
-This is the same project from (https://github.com/freenas/py-SMART) ported to python3
-
 ===========
 pySMART
 ===========
@@ -75,9 +73,9 @@ advantage of the powerful features of smartmontools.
 
 Installation
 ============
-``pySMART`` is not yet available on PyPI but is installable with ``git`` and ``pip``::
+``pySMART`` is available on PyPI and installable via ``pip``::
 
-     pip install git+git://github.com/jtylers/py-SMART3.git#egg=py-SMART3
+     python -m pip install pySMART
 
 The only external dependency is the ``smartctl`` component of the smartmontools
 package.  This should be pre-installed in most Linux distributions, or it
