@@ -75,7 +75,7 @@ Installation
 ============
 ``pySMART`` is available on PyPI and installable via ``pip``::
 
-     python -m pip install pySMART
+    python -m pip install pySMART
 
 The only external dependency is the ``smartctl`` component of the smartmontools
 package.  This should be pre-installed in most Linux distributions, or it
