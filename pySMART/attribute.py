@@ -53,7 +53,7 @@ class Attribute(object):
         self.when_failed = when_failed
         """
         **(str):** When did this attribute cross below
-        `pySMART3.attribute.Attribute.thresh`? Reads '-' when not failed.
+        `pySMART.attribute.Attribute.thresh`? Reads '-' when not failed.
         Generally either 'FAILING_NOW' or 'In_the_Past' otherwise.
         """
         self.raw = raw
@@ -68,7 +68,7 @@ class Attribute(object):
         """
         Define a formatted string representation of the object's content.
         In the interest of not overflowing 80-character lines this does not
-        print the value of `pySMART3.attribute.Attribute.flags_hex`.
+        print the value of `pySMART.attribute.Attribute.flags_hex`.
         """
         return "{0:>3} {1:24}{2:4}{3:4}{4:4}{5:9}{6:8}{7:12}{8}".format(
             self.num,

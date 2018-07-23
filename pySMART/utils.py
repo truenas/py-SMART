@@ -17,7 +17,7 @@
 ################################################################
 """
 This module contains generic utilities and configuration information for use
-by the other submodules of the `pySMART3` package.
+by the other submodules of the `pySMART` package.
 """
 
 import logging

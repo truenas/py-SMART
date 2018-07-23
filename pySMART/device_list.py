@@ -27,7 +27,7 @@ This class has no public methods.  All interaction should be through the
 # Python built-ins
 from subprocess import Popen, PIPE
 
-# pySMART3 module imports
+# pySMART module imports
 from .device import Device
 from .utils import SMARTCTL_PATH
 
@@ -42,10 +42,10 @@ class DeviceList(object):
         Instantiates and optionally initializes the `DeviceList`.
 
         ###Args:
-        * **init (bool):** By default, `pySMART3.device_list.DeviceList.devices`
+        * **init (bool):** By default, `pySMART.device_list.DeviceList.devices`
         is populated with `Device` objects during instantiation. Setting init
         to False will skip initialization and create an empty
-        `pySMART3.device_list.DeviceList` object instead.
+        `pySMART.device_list.DeviceList` object instead.
         """
         self.devices = []
         """

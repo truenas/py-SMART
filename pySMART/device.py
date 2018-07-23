@@ -33,12 +33,12 @@ from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
 import warnings
 
-# pySMART3 module imports
+# pySMART module imports
 from .attribute import Attribute
 from .test_entry import Test_Entry
 from .utils import smartctl_type, SMARTCTL_PATH
 
-logger = logging.getLogger('pySMART3')
+logger = logging.getLogger('pySMART')
 
 
 def smart_health_assement(disk_name):
@@ -79,7 +79,7 @@ class Device(object):
     """
 
     def __init__(self, name, interface=None, abridged=False, smart_options=''):
-        """Instantiates and initializes the `pySMART3.device.Device`."""
+        """Instantiates and initializes the `pySMART.device.Device`."""
         if not (
             interface is None or
             interface.lower() in [
@@ -162,7 +162,7 @@ class Device(object):
         }
         # Note have not included 'offline' test for scsi as it runs in the foregorund
         # mode. While this may be beneficial to us in someways it is against the
-        # general layout and pattern that the other tests issued using pySMART3 are
+        # general layout and pattern that the other tests issued using pySMART are
         # followed hence not doing it currently
         """
         **(dict): ** This dictionary contains key == 'Test Name' and
@@ -262,7 +262,7 @@ class Device(object):
 
     def __getstate__(self, all_info=True):
         """
-        Allows us to send a pySMART3 Device object over a serializable
+        Allows us to send a pySMART Device object over a serializable
         medium which uses json (or the likes of json) payloads
         """
         state_dict = {
@@ -486,7 +486,7 @@ class Device(object):
 
     def get_selftest_result(self, output=None):
         """
-        Refreshes a device's `pySMART3.device.Device.tests` attribute to obtain
+        Refreshes a device's `pySMART.device.Device.tests` attribute to obtain
         the latest test results. If a new test result is obtained, its content
         is returned.
 
@@ -600,7 +600,7 @@ class Device(object):
             this test are visible only in that it updates the SMART Attribute
             values, and if errors are found they will appear in the SMART error
             log, visible with the '-l error' option to smartctl. **This test is
-            not supported by SAS or SCSI devices in pySMART3 use cli smartctl for
+            not supported by SAS or SCSI devices in pySMART use cli smartctl for
             running 'offline' selftest (runs in foreground) on scsi devices.**
             * **ETA_type** - Format to return the estimated completion time/date
             in. Default is 'date'. One could otherwise specidy 'seconds'.
@@ -683,7 +683,7 @@ class Device(object):
         This is essentially a wrapper around run_selftest() such that we
         call self.run_selftest() and wait on the running selftest till
         it finished before returning.
-        The above holds true for all pySMART3 supported tests with the
+        The above holds true for all pySMART supported tests with the
         exception of the 'offline' test (ATA only) as it immediately
         returns, since the entire test only affects the smart error log
         (if any errors found) and updates the SMART attributes. Other
@@ -704,7 +704,7 @@ class Device(object):
             this test are visible only in that it updates the SMART Attribute
             values, and if errors are found they will appear in the SMART error
             log, visible with the '-l error' option to smartctl. **This test is
-            not supported by SAS or SCSI devices in pySMART3 use cli smartctl for
+            not supported by SAS or SCSI devices in pySMART use cli smartctl for
             running 'offline' selftest (runs in foreground) on scsi devices.**
         * **output (str, optional):** If set to 'str', the string
             representation of the most recent test result will be returned,
@@ -766,7 +766,7 @@ class Device(object):
         """
         Queries for device information using smartctl and updates all
         class members, including the SMART attribute table and self-test log.
-        Can be called at any time to refresh the `pySMART3.device.Device`
+        Can be called at any time to refresh the `pySMART.device.Device`
         object's data content.
         """
         # set temperature back to None so that if update() is called more than once
@@ -923,7 +923,7 @@ class Device(object):
                 self.test_capabilities['short'] = False if 'No' in line else True
             if 'Conveyance Self-test supported' in line:
                 self.test_capabilities['conveyance'] = False if 'No' in line else True
-            # Note: Currently I have not added any support in pySMART3 for selective Self-tests
+            # Note: Currently I have not added any support in pySMART for selective Self-tests
             # Thus commenting it out
             # if 'Selective Self-test supported' in line:
             #     self.test_capabilities['selective'] = False if 'No' in line else True
