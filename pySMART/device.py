@@ -815,7 +815,7 @@ class Device(object):
             if parse_ascq:
                 message += ' ' + line.lstrip().rstrip()
             if parse_self_tests:
-                num = line[1:3]
+                num = line[0:3]
                 if '#' not in num:
                     continue
                 if interface == 'scsi':
