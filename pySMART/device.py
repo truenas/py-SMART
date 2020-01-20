@@ -291,7 +291,7 @@ class Device(object):
         return state_dict
     
     def __setstate__(self, state):
-        state['assesment'] = state['smart_status']
+        state['assessment'] = state['smart_status']
         del state['smart_status']
         self.__dict__.update(state)
 
