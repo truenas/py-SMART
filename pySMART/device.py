@@ -289,6 +289,11 @@ class Device(object):
                 'capacity': self.capacity
             })
         return state_dict
+    
+    def __setstate__(self, state):
+        state['assessment'] = state['smart_status']
+        del state['smart_status']
+        self.__dict__.update(state)
 
     def smart_toggle(self, action):
         """
@@ -744,8 +749,10 @@ class Device(object):
             selftest_results = (3, 'Unspecified Error. Self-test not run.', None)
         # if not then the test initiated correctly and we can start the polling.
         # For now default 'polling' value is 5 seconds if not specified by the user
+        
+        #Do an initial check, for good measure. In the probably impossible case that self._test_running is instantly False...
+        selftest_results = self.get_selftest_result(output=output)
         while self._test_running:
-            selftest_results = self.get_selftest_result(output=output)
             if selftest_results[0] != 1:
                 # the selftest is run and finished lets return with the results
                 break
@@ -754,6 +761,10 @@ class Device(object):
                 progress_handler(selftest_results[2] if selftest_results[2] is not None else 50)
             # Now sleep 'polling' seconds before checking the progress again
             sleep(polling)
+            
+            #Check after the sleep to ensure we return the right result, and not an old one.
+            selftest_results = self.get_selftest_result(output=output)
+
         # Now if (selftes_results[0] == 2) i.e No new selftest (because the same
         # selftest was run twice within the last hour) but we know for a fact that
         # we just ran a new selftest then just return the latest entry in self.tests
@@ -815,7 +826,7 @@ class Device(object):
             if parse_ascq:
                 message += ' ' + line.lstrip().rstrip()
             if parse_self_tests:
-                num = line[1:3]
+                num = line[0:3]
                 if '#' not in num:
                     continue
                 if interface == 'scsi':
