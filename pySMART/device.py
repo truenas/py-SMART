@@ -878,7 +878,8 @@ class Device(object):
                 continue
             if 'Firmware Version' in line or 'Revision' in line:
                 self.firmware = line.split(':')[1].lstrip().rstrip()
-            if 'User Capacity' in line:
+            if 'User Capacity' in line or 'Namespace 1 Size/Capacity' in line:
+                # TODO: support for multiple NVMe namespaces
                 self.capacity = (
                     line.replace(']', '[').split('[')[1].lstrip().rstrip())
             if 'SMART support' in line:
