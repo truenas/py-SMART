@@ -203,6 +203,12 @@ class Device(object):
         **(int or None): Since SCSI disks do not report attributes like ATA ones
         we need to grep/regex the shit outta the normal "smartctl -a" output
         """
+        self.temperatures = {}
+        """
+        **(dict of int): NVMe disks usually report multiple temperatures, which
+        will be stored here if available. Keys are sensor numbers as reported in
+        output data.
+        """
         if self.name is None:
             warnings.warn(
                 "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
@@ -783,6 +789,8 @@ class Device(object):
         # set temperature back to None so that if update() is called more than once
         # any logic that relies on self.temperature to be None to rescan it works.it
         self.temperature = None
+        # same for temperatures
+        self.temperatures = {}
         if self.abridged:
             interface = None
             popen_list = [
@@ -1042,6 +1050,16 @@ class Device(object):
             if 'Current Drive Temperature' in line or ('Temperature' in line and interface =='nvme'):
                 try:
                     self.temperature = int(line.split(':')[-1].strip().split()[0])
+                except ValueError:
+                    pass
+            if 'Temperature Sensor ' in line:
+                try:
+                    match = re.search(r'Temperature\sSensor\s([0-9]+):\s+(-?[0-9]+)', line)
+                    if match:
+                        (tempsensor_number_s, tempsensor_value_s) = match.group(1,2)
+                        tempsensor_number = int(tempsensor_number_s)
+                        tempsensor_value = int(tempsensor_value_s)
+                        self.temperatures[tempsensor_number] = tempsensor_value
                 except ValueError:
                     pass
         if not self.abridged:
