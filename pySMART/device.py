@@ -1047,7 +1047,8 @@ class Device(object):
                 self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
             if 'Accumulated power on time' in line:
                 self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
-            if self.temperature is None and ('Current Drive Temperature' in line or ('Temperature' in line and interface =='nvme')):
+            if 'Current Drive Temperature' in line or ('Temperature:' in 
+line and interface == 'nvme'):
                 try:
                     self.temperature = int(line.split(':')[-1].strip().split()[0])
                 except ValueError:
