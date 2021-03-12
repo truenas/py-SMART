@@ -80,6 +80,8 @@ class Device(object):
 
     def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
+        if not SMARTCTL_PATH:
+            raise FileNotFoundError("Command smartctl doesn't exist!")
         if not (
             interface is None or
             interface.lower() in [
