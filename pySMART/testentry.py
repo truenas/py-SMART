@@ -21,14 +21,15 @@ represent individual entries in a `Device`'s SMART Self-test Log.
 """
 
 
-class Test_Entry(object):
+class TestEntry(object):
     """
     Contains all of the information associated with a single SMART Self-test
     log entry. This data is intended to exactly mirror that obtained through
     smartctl.
     """
 
-    def __init__(self, format, num, test_type, status, hours, LBA, remain=None, segment=None, sense=None, ASC=None, ASCQ=None):
+    def __init__(self, format, num, test_type, status, hours, lba, remain=None, segment=None, sense=None, asc=None,
+                 ascq=None):
         self._format = format
         """
         **(str):** Indicates whether this entry was taken from an 'ata' or
@@ -55,7 +56,7 @@ class Test_Entry(object):
         **(str):** The device's power-on hours at the time the self-test
         was initiated.
         """
-        self.LBA = LBA
+        self.LBA = lba
         """
         **(str):** Indicates the first LBA at which an error was encountered
         during this self-test. Presented as a decimal value for ATA/SATA
@@ -78,12 +79,12 @@ class Test_Entry(object):
         **(str):** SCSI sense key reported on self-test failure. Set to '-'
         otherwise.
         """
-        self.ASC = ASC
+        self.ASC = asc
         """
         **(str):** SCSI 'Additonal Sense Code' reported on self-test failure.
         Set to '-' otherwise.
         """
-        self.ASCQ = ASCQ
+        self.ASCQ = ascq
         """
         **(str):** SCSI 'Additonal Sense Code Quaifier' reported on self-test
         failure. Set to '-' otherwise.
@@ -136,4 +137,5 @@ class Test_Entry(object):
                 self.ASCQ
             ))
 
-__all__ = ['Test_Entry']
+
+__all__ = ['TestEntry']

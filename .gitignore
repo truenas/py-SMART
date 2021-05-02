@@ -1,0 +1,4 @@
+﻿venv
+pySMART.egg-info
+.idea
+*.pyc

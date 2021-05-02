@@ -20,10 +20,10 @@ This module contains generic utilities and configuration information for use
 by the other submodules of the `pySMART` package.
 """
 
+import io
 import logging
 import logging.handlers
 import os
-import io
 import traceback
 from shutil import which
 
@@ -81,6 +81,23 @@ def configure_trace_logging():
     if getattr(logging.handlers.logging.getLoggerClass(), 'trace', None) is None:
         logging.setLoggerClass(TraceLogger)
 
+def any_in(search_in, *searched_items):
+    """
+    return True if any of searched_items is in search_in otherwise False.
+    raise
+    """
+    assert len(searched_items) > 0
+    return any(map(lambda one: one in search_in, searched_items))
+
+
+def all_in(search_in, *searched_items):
+    """
+    return True if all of searched_items are in search_in otherwise False
+    does not care about duplicates in searched_items potentially evaluates all of them,
+    """
+    assert len(searched_items) > 0
+    return all(map(lambda one: one in search_in, searched_items))
+
 
 smartctl_type = {
     'ata': 'ata',
@@ -98,4 +115,4 @@ SMARTCTL_PATH = which('smartctl')
 the corresponding smartctl interface type (ie: scsi, ata) as values.
 """
 
-__all__ = ['smartctl_type', 'SMARTCTL_PATH']
+__all__ = ['smartctl_type', 'SMARTCTL_PATH', 'all_in', 'any_in']

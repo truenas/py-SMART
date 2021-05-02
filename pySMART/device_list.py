@@ -109,4 +109,5 @@ class DeviceList(object):
         # Sort the list alphabetically by device name
         self.devices.sort(key=lambda device: device.name)
 
+
 __all__ = ['DeviceList']
