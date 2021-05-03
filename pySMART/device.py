@@ -26,17 +26,18 @@ Methods are provided for initiating self tests and querying their results.
 """
 # Python built-ins
 from __future__ import print_function
-import os
+
 import logging
+import os
 import re  # Don't delete this 'un-used' import
+import warnings
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
-import warnings
 
 # pySMART module imports
 from .attribute import Attribute
-from .test_entry import Test_Entry
-from .utils import smartctl_type, SMARTCTL_PATH
+from .testentry import TestEntry
+from .utils import smartctl_type, SMARTCTL_PATH, any_in, all_in
 
 logger = logging.getLogger('pySMART')
 
@@ -50,7 +51,7 @@ def smart_health_assement(disk_name):
     """
     assessment = None
     cmd = Popen(
-        [SMARTCTL_PATH, '--health', os.path.join('/dev/', disk_name.replace('nvd','nvme'))],
+        [SMARTCTL_PATH, '--health', os.path.join('/dev/', disk_name.replace('nvd', 'nvme'))],
         stdout=PIPE,
         stderr=PIPE,
     )
@@ -71,7 +72,6 @@ def smart_health_assement(disk_name):
 
 
 class Device(object):
-
     """
     Represents any device attached to an internal storage interface, such as a
     hard drive or DVD-ROM, and detected by smartmontools. Includes eSATA
@@ -81,10 +81,10 @@ class Device(object):
     def __init__(self, name, interface=None, abridged=False, smart_options=''):
         """Instantiates and initializes the `pySMART.device.Device`."""
         if not (
-            interface is None or
-            interface.lower() in [
-                'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'unknown interface'
-            ]
+                interface is None or
+                interface.lower() in [
+                    'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'unknown interface'
+                ]
         ):
             raise ValueError('Unknown interface: {0} specified for {1}'.format(interface, name))
         self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
@@ -117,12 +117,12 @@ class Device(object):
         """**(str):** Device's user capacity."""
         self.firmware = None
         """**(str):** Device's firmware version."""
-        self.smart_capable = True if 'nvme' in self.name else False
+        self.smart_capable = 'nvme' in self.name
         """
         **(bool):** True if the device has SMART Support Available.
         False otherwise. This is useful for VMs amongst other things.
         """
-        self.smart_enabled = True if 'nvme' in self.name else False
+        self.smart_enabled = 'nvme' in self.name
         """
         **(bool):** True if the device supports SMART (or SCSI equivalent) and
         has the feature set enabled. False otherwise.
@@ -134,7 +134,7 @@ class Device(object):
         self.messages = []
         """
         **(list of str):** Contains any SMART warnings or other error messages
-        reported by the device (ie: ASCQ codes).
+        reported by the device (ie: ascq codes).
         """
         self.is_ssd = True if 'nvme' in self.name else False
         """
@@ -154,11 +154,11 @@ class Device(object):
         this device.
         """
         self.test_capabilities = {
-            'offline': False,       # SMART execute Offline immediate (ATA only)
-            'short': False if 'nvme' in self.name else True,  # SMART short Self-test
-            'long': False if 'nvme' in self.name else True,   # SMART long Self-test
-            'conveyance': False,    # SMART Conveyance Self-Test (ATA only)
-            'selective': False,     # SMART Selective Self-Test (ATA only)
+            'offline': False,  # SMART execute Offline immediate (ATA only)
+            'short': 'nvme' not in self.name,  # SMART short Self-test
+            'long': 'nvme' not in self.name,  # SMART long Self-test
+            'conveyance': False,  # SMART Conveyance Self-Test (ATA only)
+            'selective': False,  # SMART Selective Self-Test (ATA only)
         }
         # Note have not included 'offline' test for scsi as it runs in the foregorund
         # mode. While this may be beneficial to us in someways it is against the
@@ -239,6 +239,9 @@ class Device(object):
                 # The above example should be enough for anyone to understand the line below
                 try:
                     self.interface = _stdout.split('\n')[-2].split("'")[1]
+                    if self.interface == "nvme":  # if nvme set SMART to true
+                        self.smart_capable = True
+                        self.smart_enabled = True
                 except:
                     # for whatever reason we could not get the interface type
                     # we should mark this as an `abbridged` case and move on
@@ -295,7 +298,7 @@ class Device(object):
                 'capacity': self.capacity
             })
         return state_dict
-    
+
     def __setstate__(self, state):
         state['assessment'] = state['smart_status']
         del state['smart_status']
@@ -314,18 +317,18 @@ class Device(object):
         """
         # Lets make the action verb all lower case
         if self.interface == 'nvme':
-            return (False, "NVME devices do not currently support toggling SMART enabled")
+            return False, 'NVME devices do not currently support toggling SMART enabled'
         action_lower = action.lower()
         if action_lower not in ['on', 'off']:
-            return (False, 'Unsupported action {0}'.format(action))
+            return False, 'Unsupported action {0}'.format(action)
         # Now lets check if the device's smart enabled status is already that of what
         # the supplied action is intending it to be. If so then just return successfully
         if self.smart_enabled:
             if action_lower == 'on':
-                return (True, None)
+                return True, None
         else:
             if action_lower == 'off':
-                return (True, None)
+                return True, None
         cmd = Popen(
             [
                 SMARTCTL_PATH,
@@ -336,32 +339,32 @@ class Device(object):
             stdout=PIPE, stderr=PIPE)
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         if cmd.returncode != 0:
-            return (False, _stdout + _stderr)
+            return False, _stdout + _stderr
         # if everything worked out so far lets perform an update() and check the result
         self.update()
         if action_lower == 'off' and self.smart_enabled:
-            return (False, 'Failed to turn SMART off.')
+            return False, 'Failed to turn SMART off.'
         if action_lower == 'on' and not self.smart_enabled:
-            return (False, 'Failed to turn SMART on.')
-        return (True, None)
+            return False, 'Failed to turn SMART on.'
+        return True, None
 
-    def all_attributes(self):
+    def all_attributes(self, print_fn=print):
         """
         Prints the entire SMART attribute table, in a format similar to
         the output of smartctl.
+        allows usage of custom print function via parameter print_fn by default uses print
         """
         header_printed = False
         for attr in self.attributes:
             if attr is not None:
                 if not header_printed:
-                    print("{0:>3} {1:24}{2:4}{3:4}{4:4}{5:9}{6:8}{7:12}"
-                          "{8}".format(
-                              'ID#', 'ATTRIBUTE_NAME', 'CUR', 'WST', 'THR',
-                              'TYPE', 'UPDATED', 'WHEN_FAIL', 'RAW'))
+                    print_fn("{0:>3} {1:24}{2:4}{3:4}{4:4}{5:9}{6:8}{7:12}{8}"
+                             .format('ID#', 'ATTRIBUTE_NAME', 'CUR', 'WST', 'THR', 'TYPE', 'UPDATED', 'WHEN_FAIL',
+                                     'RAW'))
                     header_printed = True
-                print(attr)
+                print_fn(attr)
         if not header_printed:
-            print("This device does not support SMART attributes.")
+            print_fn('This device does not support SMART attributes.')
 
     def all_selftests(self):
         """
@@ -371,14 +374,14 @@ class Device(object):
         if self.tests:
             all_tests = []
             if smartctl_type[self.interface] == 'scsi':
-                header = ("{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
+                header = "{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
                     'Test Description',
                     'Status',
                     'Hours',
                     '1st_Error@LBA',
                     '[SK  ASC  ASCQ]'
-                ))
+                )
             else:
                 header = ("{0:3}{1:17}{2:30}{3:5}{4:7}{5:17}".format(
                     'ID',
@@ -393,9 +396,8 @@ class Device(object):
 
             return all_tests
         else:
-            no_tests = "No self-tests have been logged for this device."
+            no_tests = 'No self-tests have been logged for this device.'
             return no_tests
-
 
     def _classify(self):
         """
@@ -459,14 +461,14 @@ class Device(object):
                     if 'Transport protocol' in line and 'SAS' in line:
                         self.interface = 'sas'
 
-    def _guess_SMART_type(self, line):
+    def _guess_smart_type(self, line):
         """
         This function is not used in the generic wrapper, however the header
         is defined so that it can be monkey-patched by another application.
         """
         pass
 
-    def _make_SMART_warnings(self):
+    def _make_smart_warnings(self):
         """
         Parses an ATA/SATA SMART table for attributes with the 'when_failed'
         value set. Generates an warning message for any such attributes and
@@ -475,7 +477,6 @@ class Device(object):
         if smartctl_type[self.interface] == 'scsi':
             return
         for attr in self.attributes:
-            warn_str = ""
             if attr is not None:
                 if attr.when_failed == 'In_the_past':
                     warn_str = "{0} failed in the past with value {1}. [Threshold: {2}]".format(
@@ -541,21 +542,21 @@ class Device(object):
         # running selftests we can now purely rely on that for self._test_running
         # Thus check for that variable first and return if it is True with appropos message.
         if self._test_running is True:
-            return (1, 'Self-test in progress. Please wait.', self._test_progress)
+            return 1, 'Self-test in progress. Please wait.', self._test_progress
         # Check whether the list got longer (ie: new entry)
         # If so return the newest test result
         # If not, because it's max size already, check for new entries
         if (
-            (self.tests is not None and len(self.tests) != _len) or
-            (
-                len == maxlog and
+                (self.tests is not None and len(self.tests) != _len) or
                 (
-                    _first_entry.type != self.tests[0].type or
-                    _first_entry.hours != self.tests[0].hours or
-                    _last_entry.type != self.tests[len(self.tests) - 1].type or
-                    _last_entry.hours != self.tests[len(self.tests) - 1].hours
+                        len == maxlog and
+                        (
+                                _first_entry.type != self.tests[0].type or
+                                _first_entry.hours != self.tests[0].hours or
+                                _last_entry.type != self.tests[len(self.tests) - 1].type or
+                                _last_entry.hours != self.tests[len(self.tests) - 1].hours
+                        )
                 )
-            )
         ):
             return (
                 0 if 'Aborted' not in self.tests[0].status else 3,
@@ -563,7 +564,7 @@ class Device(object):
                 None
             )
         else:
-            return (2, 'No new self-test results found.', None)
+            return 2, 'No new self-test results found.', None
 
     def abort_selftest(self):
         """
@@ -582,7 +583,7 @@ class Device(object):
                 '-d',
                 smartctl_type[self.interface],
                 '-X',
-                os.path.join("/dev/", self.name),
+                os.path.join('/dev/', self.name),
             ],
             stdout=PIPE,
             stderr=PIPE
@@ -638,7 +639,7 @@ class Device(object):
         # data is already stored in the Device class object's variables
         self.get_selftest_result()
         if self._test_running:
-            return (1, 'Self-test in progress. Please wait.', self._test_ECD)
+            return 1, 'Self-test in progress. Please wait.', self._test_ECD
         test_type = test_type.lower()
         interface = smartctl_type[self.interface]
         try:
@@ -649,7 +650,7 @@ class Device(object):
                     None
                 )
         except KeyError:
-            return (2, "Unknown test type '{0}' requested.".format(test_type), None)
+            return 2, "Unknown test type '{0}' requested.".format(test_type), None
         cmd = Popen(
             [
                 SMARTCTL_PATH,
@@ -672,22 +673,22 @@ class Device(object):
             if 'aborting current test' in line:
                 _running = True
                 try:
-                    self._test_progress = 100 - int(line.split("(")[-1].split("%")[0])
+                    self._test_progress = 100 - int(line.split('(')[-1].split('%')[0])
                 except ValueError:
                     pass
 
             if _success and 'complete after' in line:
                 self._test_ECD = line[25:].rstrip()
                 if ETA_type == 'seconds':
-                    self._test_ECD = mktime(strptime(self._test_ECD, "%a %b %d %H:%M:%S %Y")) - time()
+                    self._test_ECD = mktime(strptime(self._test_ECD, '%a %b %d %H:%M:%S %Y')) - time()
                 self._test_progress = 0
         if _success:
-            return (0, "Self-test started successfully", self._test_ECD)
+            return 0, 'Self-test started successfully', self._test_ECD
         else:
             if _running:
-                return (1, 'Self-test already in progress. Please wait.', self._test_ECD)
+                return 1, 'Self-test already in progress. Please wait.', self._test_ECD
             else:
-                return (3, 'Unspecified Error. Self-test not started.', None)
+                return 3, 'Unspecified Error. Self-test not started.', None
 
     def run_selftest_and_wait(self, test_type, output=None, polling=5, progress_handler=None):
         """
@@ -740,23 +741,12 @@ class Device(object):
         if test_initiation_result[0] != 0:
             return test_initiation_result[:2]
         if test_type == 'offline':
-            # Since this test is not logged anywhere in the smart test log
-            # lemme just go ahead and make a test_entry for it!
-            # Note giving it num = 0 since I do not want to conflict with the test log
-            local_test_entry = Test_Entry(
-                'ata', 0, 'SMART Immediate Offline Test', 'Started: Successfully',
-                self.attributes[9].raw, '-')
-            if output == 'str':
-                local_test_entry = str(local_test_entry)
-            selftest_results = (0, local_test_entry)
             self._test_running = False
-        else:
-            # Lets set the default result just in case shit happens!
-            selftest_results = (3, 'Unspecified Error. Self-test not run.', None)
         # if not then the test initiated correctly and we can start the polling.
         # For now default 'polling' value is 5 seconds if not specified by the user
-        
-        #Do an initial check, for good measure. In the probably impossible case that self._test_running is instantly False...
+
+        # Do an initial check, for good measure.
+        # In the probably impossible case that self._test_running is instantly False...
         selftest_results = self.get_selftest_result(output=output)
         while self._test_running:
             if selftest_results[0] != 1:
@@ -767,8 +757,8 @@ class Device(object):
                 progress_handler(selftest_results[2] if selftest_results[2] is not None else 50)
             # Now sleep 'polling' seconds before checking the progress again
             sleep(polling)
-            
-            #Check after the sleep to ensure we return the right result, and not an old one.
+
+            # Check after the sleep to ensure we return the right result, and not an old one.
             selftest_results = self.get_selftest_result(output=output)
 
         # Now if (selftes_results[0] == 2) i.e No new selftest (because the same
@@ -776,7 +766,7 @@ class Device(object):
         # we just ran a new selftest then just return the latest entry in self.tests
         if selftest_results[0] == 2:
             selftest_return_value = 0 if 'Aborted' not in self.tests[0].status else 3
-            return (selftest_return_value, str(self.tests[0]) if output == 'str' else self.tests[0])
+            return selftest_return_value, str(self.tests[0]) if output == 'str' else self.tests[0]
         return selftest_results[:2]
 
     def update(self):
@@ -843,22 +833,22 @@ class Device(object):
                     status = line[23:46].rstrip()
                     segment = line[46:55].lstrip().rstrip()
                     hours = line[55:65].lstrip().rstrip()
-                    LBA = line[65:78].lstrip().rstrip()
+                    lba = line[65:78].lstrip().rstrip()
                     line_ = ' '.join(line.split('[')[1].split()).split(' ')
                     sense = line_[0]
-                    ASC = line_[1]
-                    ASCQ = line_[2][:-1]
-                    self.tests.append(Test_Entry(
+                    asc = line_[1]
+                    ascq = line_[2][:-1]
+                    self.tests.append(TestEntry(
                         format,
                         num,
                         test_type,
                         status,
                         hours,
-                        LBA,
+                        lba,
                         segment=segment,
                         sense=sense,
-                        ASC=ASC,
-                        ASCQ=ASCQ
+                        asc=asc,
+                        ascq=ascq
                     ))
                 else:
                     format = 'ata'
@@ -866,44 +856,43 @@ class Device(object):
                     status = line[25:54].rstrip()
                     remain = line[54:58].lstrip().rstrip()
                     hours = line[60:68].lstrip().rstrip()
-                    LBA = line[77:].rstrip()
+                    lba = line[77:].rstrip()
                     self.tests.append(
-                        Test_Entry(format, num, test_type, status, hours, LBA, remain=remain)
+                        TestEntry(format, num, test_type, status, hours, lba, remain=remain)
                     )
             # Basic device information parsing
-            if 'Device Model' in line or 'Product' in line or 'Model Number' in line:
+            if any_in(line, 'Device Model', 'Product', 'Model Number'):
                 self.model = line.split(':')[1].lstrip().rstrip()
-                self._guess_SMART_type(line.lower())
+                self._guess_smart_type(line.lower())
                 continue
             if 'Model Family' in line:
-                self._guess_SMART_type(line.lower())
+                self._guess_smart_type(line.lower())
                 continue
             if 'LU WWN' in line:
-                self._guess_SMART_type(line.lower())
+                self._guess_smart_type(line.lower())
                 continue
-            if 'Serial Number' in line or 'Serial number' in line:
+            if any_in(line, 'Serial Number', 'Serial number'):
                 self.serial = line.split(':')[1].split()[0].rstrip()
                 continue
-            if 'Firmware Version' in line or 'Revision' in line:
-                self.firmware = line.split(':')[1].lstrip().rstrip()
-            if 'User Capacity' in line or 'Namespace 1 Size/Capacity' in line:
+            if any_in(line, 'Firmware Version', 'Revision'):
+                self.firmware = line.split(':')[1].strip()
+            if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
-                self.capacity = (
-                    line.replace(']', '[').split('[')[1].lstrip().rstrip())
+                self.capacity = line.replace(']', '[').split('[')[1].strip()
             if 'SMART support' in line:
                 # self.smart_capable = 'Available' in line
                 # self.smart_enabled = 'Enabled' in line
                 # Since this line repeats twice the above method is flawed
                 # Lets try the following instead, it is a bit redundant but
                 # more robust.
-                if ('Unavailable' in line or 'device lacks SMART capability' in line):
+                if any_in(line, 'Unavailable', 'device lacks SMART capability'):
                     self.smart_capable = False
                     self.smart_enabled = False
                 elif 'Enabled' in line:
                     self.smart_enabled = True
                 elif 'Disabled' in line:
                     self.smart_enabled = False
-                elif ('Available' in line or 'device has SMART capability' in line):
+                elif any_in(line, 'Available', 'device has SMART capability') in line:
                     self.smart_capable = True
                 continue
             if 'does not support SMART' in line:
@@ -937,18 +926,18 @@ class Device(object):
             # Parse SMART test capabilities (ATA only)
             # Note: SCSI does not list this but and allows for only 'offline', 'short' and 'long'
             if 'SMART execute Offline immediate' in line:
-                self.test_capabilities['offline'] = False if 'No' in line else True
+                self.test_capabilities['offline'] = 'No' not in line
             if 'Self-test supported' in line:
-                self.test_capabilities['short'] = False if 'No' in line else True
-                self.test_capabilities['short'] = False if 'No' in line else True
+                self.test_capabilities['short'] = 'No' not in line
+                self.test_capabilities['short'] = 'No' not in line
             if 'Conveyance Self-test supported' in line:
-                self.test_capabilities['conveyance'] = False if 'No' in line else True
+                self.test_capabilities['conveyance'] = 'No' not in line
             # Note: Currently I have not added any support in pySMART for selective Self-tests
             # Thus commenting it out
             # if 'Selective Self-test supported' in line:
             #     self.test_capabilities['selective'] = False if 'No' in line else True
             # SMART Attribute table parsing
-            if '0x0' in line and '_' in line and not interface=='nvme':
+            if all_in(line, '0x0', '_') and not interface == 'nvme':
                 # Replace multiple space separators with a single space, then
                 # tokenize the string on space delimiters
                 line_ = ' '.join(line.split()).split(' ')
@@ -971,16 +960,16 @@ class Device(object):
                     # so we can just parse it and move on
                     self._test_running = True
                     try:
-                        self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
+                        self._test_progress = 100 - int(line.split('%')[0][-3:].strip())
                     except ValueError:
                         pass
             if parse_running_test is True:
                 try:
-                    self._test_progress = 100 - int(line.split("%")[0][-3:].strip())
+                    self._test_progress = 100 - int(line.split('%')[0][-3:].strip())
                 except ValueError:
                     pass
                 parse_running_test = False
-            if 'Description' in line and '(hours)' in line:
+            if all_in(line, 'Description', '(hours)'):
                 parse_self_tests = True  # Set flag to capture test entries
             if 'No self-tests have been logged' in line:
                 self.tests = None
@@ -1013,7 +1002,7 @@ class Device(object):
                 self.diags['Reallocated_Sector_Ct'] = line.split(':')[1].strip()
             if 'read:' in line and interface == 'scsi':
                 line_ = ' '.join(line.split()).split(' ')
-                if (line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0'):
+                if line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0':
                     self.diags['Corrected_Reads'] = '0'
                 elif line_[4] == '0':
                     self.diags['Corrected_Reads'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
@@ -1047,8 +1036,8 @@ class Device(object):
                 self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
             if 'Accumulated power on time' in line:
                 self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
-            if 'Current Drive Temperature' in line or ('Temperature:' in 
-line and interface == 'nvme'):
+            if 'Current Drive Temperature' in line or ('Temperature:' in
+                                                       line and interface == 'nvme'):
                 try:
                     self.temperature = int(line.split(':')[-1].strip().split()[0])
                 except ValueError:
@@ -1057,7 +1046,7 @@ line and interface == 'nvme'):
                 try:
                     match = re.search(r'Temperature\sSensor\s([0-9]+):\s+(-?[0-9]+)', line)
                     if match:
-                        (tempsensor_number_s, tempsensor_value_s) = match.group(1,2)
+                        (tempsensor_number_s, tempsensor_value_s) = match.group(1, 2)
                         tempsensor_number = int(tempsensor_number_s)
                         tempsensor_value = int(tempsensor_value_s)
                         self.temperatures[tempsensor_number] = tempsensor_value
@@ -1067,7 +1056,7 @@ line and interface == 'nvme'):
             if not interface == 'scsi':
                 # Parse the SMART table for below-threshold attributes and create
                 # corresponding warnings for non-SCSI disks
-                self._make_SMART_warnings()
+                self._make_smart_warnings()
             else:
                 # For SCSI disks, any diagnostic attribute which was not captured
                 # above gets set to '-' to indicate unsupported/unavailable.
@@ -1116,5 +1105,6 @@ line and interface == 'nvme'):
         if self._test_running is False:
             self._test_ECD = None
             self._test_progress = None
+
 
 __all__ = ['Device', 'smart_health_assement']

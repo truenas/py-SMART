@@ -58,9 +58,9 @@ are provided to retrieve information in bulk.  Some examples are shown below:
     199 UDMA_CRC_Error_Count    200 200 000 Old_age  Always  -           0
     200 Multi_Zone_Error_Rate   200 200 000 Old_age  Offline -           0
     >>> sda.tests[0]  # Query the most recent self-test result
-    <SMART Self-test [Short offline|Completed without error] hrs:23734 LBA:->
+    <SMART Self-test [Short offline|Completed without error] hrs:23734 lba:->
     >>> sda.all_selftests()  # Print the entire self-test log
-    ID Test_Description Status                        Left Hours  1st_Error@LBA
+    ID Test_Description Status                        Left Hours  1st_Error@lba
      1 Short offline    Completed without error       00%  23734  -
      2 Short offline    Completed without error       00%  23734  -
        ... # Edited for brevity
@@ -107,7 +107,7 @@ utils.configure_trace_logging()
 from .attribute import Attribute
 from .device import Device, smart_health_assement
 from .device_list import DeviceList
-from .test_entry import Test_Entry
+from .testentry import TestEntry
 
 
 __version__ = '0.3'
