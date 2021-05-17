@@ -26,6 +26,7 @@ This class has no public methods.  All interaction should be through the
 """
 # Python built-ins
 from subprocess import Popen, PIPE
+import re
 
 # pySMART module imports
 from .device import Device
@@ -96,18 +97,27 @@ class DeviceList(object):
         _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
         for line in _stdout.split('\n'):
             if not ('failed:' in line or line == ''):
-                name = line.split(' ')[0].replace('/dev/', '')
-                # CSMI devices are explicitly of the 'csmi' type and do not
-                # require further disambiguation
-                if name[0:4] == 'csmi':
-                    self.devices.append(Device(name, interface='csmi'))
-                # Other device types will be disambiguated by Device.__init__
-                else:
-                    self.devices.append(Device(name))
+                groups = re.compile(
+                    '^(/dev/\S+)\s+-d\s+(\S+)').match(line).groups()
+                name = groups[0]
+                interface = groups[1]
+                self.devices.append(Device(name, interface=interface))
+
         # Remove duplicates and unwanted devices (optical, etc.) from the list
         self._cleanup()
         # Sort the list alphabetically by device name
         self.devices.sort(key=lambda device: device.name)
+
+    def __getitem__(self, index: int) -> Device:
+        """Returns an element from self.devices
+
+        Args:
+            index (int): An index of self.devices
+
+        Returns:
+            Device: Returns a Device that is located on the asked index
+        """
+        return self.devices[index]
 
 
 __all__ = ['DeviceList']
