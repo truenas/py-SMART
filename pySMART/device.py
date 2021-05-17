@@ -51,7 +51,8 @@ def smart_health_assement(disk_name):
     """
     assessment = None
     cmd = Popen(
-        [SMARTCTL_PATH, '--health', os.path.join('/dev/', disk_name.replace('nvd', 'nvme'))],
+        [SMARTCTL_PATH, '--health',
+            os.path.join('/dev/', disk_name.replace('nvd', 'nvme'))],
         stdout=PIPE,
         stderr=PIPE,
     )
@@ -86,9 +87,11 @@ class Device(object):
                     'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'unknown interface'
                 ]
         ):
-            raise ValueError('Unknown interface: {0} specified for {1}'.format(interface, name))
+            raise ValueError(
+                'Unknown interface: {0} specified for {1}'.format(interface, name))
         self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
-        self.smart_options = smart_options.split(' ') if smart_options else ['']
+        self.smart_options = smart_options.split(
+            ' ') if smart_options else ['']
         self.name = name.replace('/dev/', '').replace('nvd', 'nvme')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
@@ -211,16 +214,19 @@ class Device(object):
         """
         if self.name is None:
             warnings.warn(
-                "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
+                "\nDevice '{0}' does not exist! This object should be destroyed.".format(
+                    name)
             )
             return
         # If no interface type was provided, scan for the device
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self.interface is None and not self.abridged:
-            logger.trace("Determining interface of disk: {0}".format(self.name))
+            logger.trace(
+                "Determining interface of disk: {0}".format(self.name))
             cmd = Popen(
-                [SMARTCTL_PATH, '-d', 'test', os.path.join('/dev/', self.name)],
+                [SMARTCTL_PATH, '-d', 'test',
+                    os.path.join('/dev/', self.name)],
                 stdout=PIPE,
                 stderr=PIPE
             )
@@ -252,7 +258,8 @@ class Device(object):
                 # self._classify()
             else:
                 warnings.warn(
-                    "\nDevice '{0}' does not exist! This object should be destroyed.".format(name)
+                    "\nDevice '{0}' does not exist! This object should be destroyed.".format(
+                        name)
                 )
                 return
         # If a valid device was detected, populate its information
@@ -456,7 +463,8 @@ class Device(object):
                     stdout=PIPE,
                     stderr=PIPE
                 )
-                _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
+                _stdout, _stderr = [i.decode('utf8', 'ignore')
+                                    for i in cmd.communicate()]
                 for line in _stdout.split('\n'):
                     if 'Transport protocol' in line and 'SAS' in line:
                         self.interface = 'sas'
@@ -549,13 +557,14 @@ class Device(object):
         if (
                 (self.tests is not None and len(self.tests) != _len) or
                 (
-                        len == maxlog and
-                        (
-                                _first_entry.type != self.tests[0].type or
-                                _first_entry.hours != self.tests[0].hours or
-                                _last_entry.type != self.tests[len(self.tests) - 1].type or
-                                _last_entry.hours != self.tests[len(self.tests) - 1].hours
-                        )
+                    len == maxlog and
+                    (
+                        _first_entry.type != self.tests[0].type or
+                        _first_entry.hours != self.tests[0].hours or
+                        _last_entry.type != self.tests[len(self.tests) - 1].type or
+                        _last_entry.hours != self.tests[len(
+                            self.tests) - 1].hours
+                    )
                 )
         ):
             return (
@@ -646,7 +655,8 @@ class Device(object):
             if not self.test_capabilities[test_type]:
                 return (
                     2,
-                    "Device {0} does not support the '{1}' test ".format(self.name, test_type),
+                    "Device {0} does not support the '{1}' test ".format(
+                        self.name, test_type),
                     None
                 )
         except KeyError:
@@ -673,14 +683,16 @@ class Device(object):
             if 'aborting current test' in line:
                 _running = True
                 try:
-                    self._test_progress = 100 - int(line.split('(')[-1].split('%')[0])
+                    self._test_progress = 100 - \
+                        int(line.split('(')[-1].split('%')[0])
                 except ValueError:
                     pass
 
             if _success and 'complete after' in line:
                 self._test_ECD = line[25:].rstrip()
                 if ETA_type == 'seconds':
-                    self._test_ECD = mktime(strptime(self._test_ECD, '%a %b %d %H:%M:%S %Y')) - time()
+                    self._test_ECD = mktime(
+                        strptime(self._test_ECD, '%a %b %d %H:%M:%S %Y')) - time()
                 self._test_progress = 0
         if _success:
             return 0, 'Self-test started successfully', self._test_ECD
@@ -754,7 +766,8 @@ class Device(object):
                 break
             # Otherwise see if we are provided with the progress_handler to update progress
             if progress_handler is not None:
-                progress_handler(selftest_results[2] if selftest_results[2] is not None else 50)
+                progress_handler(
+                    selftest_results[2] if selftest_results[2] is not None else 50)
             # Now sleep 'polling' seconds before checking the progress again
             sleep(polling)
 
@@ -802,7 +815,8 @@ class Device(object):
         popen_list = list(filter(None, popen_list))
         logger.trace("Executing the following cmd: {0}".format(popen_list))
         cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = [i.decode('utf8', 'ignore') for i in cmd.communicate()]
+        _stdout, _stderr = [i.decode('utf8', 'ignore')
+                            for i in cmd.communicate()]
         parse_self_tests = False
         parse_running_test = False
         parse_ascq = False
@@ -858,7 +872,8 @@ class Device(object):
                     hours = line[60:68].lstrip().rstrip()
                     lba = line[77:].rstrip()
                     self.tests.append(
-                        TestEntry(format, num, test_type, status, hours, lba, remain=remain)
+                        TestEntry(format, num, test_type, status,
+                                  hours, lba, remain=remain)
                     )
             # Basic device information parsing
             if any_in(line, 'Device Model', 'Product', 'Model Number'):
@@ -905,7 +920,8 @@ class Device(object):
                 elif 'rpm' in line:
                     self.is_ssd = False
                     try:
-                        self.rotation_rate = int(line.split(':')[1].lstrip().rstrip()[:-4])
+                        self.rotation_rate = int(
+                            line.split(':')[1].lstrip().rstrip()[:-4])
                     except ValueError:
                         # Cannot parse the RPM? Assigning None instead
                         self.rotation_rate = None
@@ -960,12 +976,14 @@ class Device(object):
                     # so we can just parse it and move on
                     self._test_running = True
                     try:
-                        self._test_progress = 100 - int(line.split('%')[0][-3:].strip())
+                        self._test_progress = 100 - \
+                            int(line.split('%')[0][-3:].strip())
                     except ValueError:
                         pass
             if parse_running_test is True:
                 try:
-                    self._test_progress = 100 - int(line.split('%')[0][-3:].strip())
+                    self._test_progress = 100 - \
+                        int(line.split('%')[0][-3:].strip())
                 except ValueError:
                     pass
                 parse_running_test = False
@@ -999,13 +1017,15 @@ class Device(object):
                         100 - (int(self.diags['Load_Cycle_Count']) /
                                int(self.diags['Load_Cycle_Spec'])), 0))) + '%'
             if 'Elements in grown defect list' in line:
-                self.diags['Reallocated_Sector_Ct'] = line.split(':')[1].strip()
+                self.diags['Reallocated_Sector_Ct'] = line.split(':')[
+                    1].strip()
             if 'read:' in line and interface == 'scsi':
                 line_ = ' '.join(line.split()).split(' ')
                 if line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0':
                     self.diags['Corrected_Reads'] = '0'
                 elif line_[4] == '0':
-                    self.diags['Corrected_Reads'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diags['Corrected_Reads'] = str(
+                        int(line_[1]) + int(line_[2]) + int(line_[3]))
                 else:
                     self.diags['Corrected_Reads'] = line_[4]
                 self.diags['Reads_GB'] = line_[6]
@@ -1016,7 +1036,8 @@ class Device(object):
                         line_[3] == '0' and line_[4] == '0'):
                     self.diags['Corrected_Writes'] = '0'
                 elif line_[4] == '0':
-                    self.diags['Corrected_Writes'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diags['Corrected_Writes'] = str(
+                        int(line_[1]) + int(line_[2]) + int(line_[3]))
                 else:
                     self.diags['Corrected_Writes'] = line_[4]
                 self.diags['Writes_GB'] = line_[6]
@@ -1027,7 +1048,8 @@ class Device(object):
                         line_[3] == '0' and line_[4] == '0'):
                     self.diags['Corrected_Verifies'] = '0'
                 elif line_[4] == '0':
-                    self.diags['Corrected_Verifies'] = str(int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diags['Corrected_Verifies'] = str(
+                        int(line_[1]) + int(line_[2]) + int(line_[3]))
                 else:
                     self.diags['Corrected_Verifies'] = line_[4]
                 self.diags['Verifies_GB'] = line_[6]
@@ -1039,12 +1061,14 @@ class Device(object):
             if 'Current Drive Temperature' in line or ('Temperature:' in
                                                        line and interface == 'nvme'):
                 try:
-                    self.temperature = int(line.split(':')[-1].strip().split()[0])
+                    self.temperature = int(
+                        line.split(':')[-1].strip().split()[0])
                 except ValueError:
                     pass
             if 'Temperature Sensor ' in line:
                 try:
-                    match = re.search(r'Temperature\sSensor\s([0-9]+):\s+(-?[0-9]+)', line)
+                    match = re.search(
+                        r'Temperature\sSensor\s([0-9]+):\s+(-?[0-9]+)', line)
                     if match:
                         (tempsensor_number_s, tempsensor_value_s) = match.group(1, 2)
                         tempsensor_number = int(tempsensor_number_s)
@@ -1086,10 +1110,12 @@ class Device(object):
                         stdout=PIPE,
                         stderr=PIPE
                     )
-                    _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+                    _stdout, _stderr = [i.decode('utf8')
+                                        for i in cmd.communicate()]
                     for line in _stdout.split('\n'):
                         if 'power on time' in line:
-                            self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
+                            self.diags['Power_On_Hours'] = line.split(':')[
+                                1].split(' ')[1]
         # map temperature
         if self.temperature is None:
             # in this case the disk is probably ata
