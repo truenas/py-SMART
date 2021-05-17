@@ -81,6 +81,7 @@ def configure_trace_logging():
     if getattr(logging.handlers.logging.getLoggerClass(), 'trace', None) is None:
         logging.setLoggerClass(TraceLogger)
 
+
 def any_in(search_in, *searched_items):
     """
     return True if any of searched_items is in search_in otherwise False.
@@ -99,7 +100,7 @@ def all_in(search_in, *searched_items):
     return all(map(lambda one: one in search_in, searched_items))
 
 
-smartctl_type = {
+smartctl_type_dict = {
     'ata': 'ata',
     'csmi': 'ata',
     'nvme': 'nvme',
@@ -109,10 +110,49 @@ smartctl_type = {
     'scsi': 'scsi',
     'atacam': 'atacam'
 }
-SMARTCTL_PATH = which('smartctl')
 """
 **(dict of str):** Contains actual interface types (ie: sas, csmi) as keys and
 the corresponding smartctl interface type (ie: scsi, ata) as values.
 """
+
+SMARTCTL_PATH = which('smartctl')
+
+
+def smartctl_isvalid_type(interface_type: str) -> bool:
+    """Tests if the interface_type is supported
+
+    Args:
+        interface_type (str): An internal interface_type
+
+    Returns:
+        bool: True if the type is supported, false z
+    """
+    if interface_type in smartctl_type_dict:
+        return True
+    elif 'megaraid,' in interface_type:
+        return True
+    else:
+        return False
+
+
+def smartctl_type(interface_type: str) -> str:
+    """This method basically searchs on smartctl_type_dict to convert from internal
+       smartctl interface type to an understable type for smartctl. However, further
+       transforms may be performed for some special interfaces
+
+    Args:
+        interface_type (str): An internal representation of an smartctl interface type
+
+    Returns:
+        str: Returns the corresponding smartctl interface_type that matches with the internal interface representation.
+             In case it is not supported, None would be returned
+    """
+    if interface_type in smartctl_type_dict:
+        return smartctl_type_dict[interface_type]
+    elif 'megaraid,' in interface_type:
+        return interface_type
+    else:
+        return None
+
 
 __all__ = ['smartctl_type', 'SMARTCTL_PATH', 'all_in', 'any_in']

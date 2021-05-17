@@ -37,7 +37,7 @@ from time import time, strptime, mktime, sleep
 # pySMART module imports
 from .attribute import Attribute
 from .testentry import TestEntry
-from .utils import smartctl_type, SMARTCTL_PATH, any_in, all_in
+from .utils import smartctl_type, smartctl_isvalid_type, SMARTCTL_PATH, any_in, all_in
 
 logger = logging.getLogger('pySMART')
 
@@ -83,9 +83,7 @@ class Device(object):
         """Instantiates and initializes the `pySMART.device.Device`."""
         if not (
                 interface is None or
-                interface.lower() in [
-                    'ata', 'csmi', 'sas', 'sat', 'sata', 'scsi', 'atacam', 'nvme', 'unknown interface'
-                ]
+                smartctl_isvalid_type(interface.lower())
         ):
             raise ValueError(
                 'Unknown interface: {0} specified for {1}'.format(interface, name))
@@ -380,7 +378,7 @@ class Device(object):
         """
         if self.tests:
             all_tests = []
-            if smartctl_type[self.interface] == 'scsi':
+            if smartctl_type(self.interface) == 'scsi':
                 header = "{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
                     'Test Description',
@@ -420,7 +418,7 @@ class Device(object):
                 [
                     SMARTCTL_PATH,
                     '-d',
-                    smartctl_type[test],
+                    smartctl_type(test),
                     '-l',
                     'sataphy',
                     os.path.join('/dev/', self.name)
@@ -482,7 +480,7 @@ class Device(object):
         value set. Generates an warning message for any such attributes and
         updates the self-assessment value if necessary.
         """
-        if smartctl_type[self.interface] == 'scsi':
+        if smartctl_type(self.interface) == 'scsi':
             return
         for attr in self.attributes:
             if attr is not None:
@@ -528,7 +526,7 @@ class Device(object):
         Otherwise 'None'.
         """
         # SCSI self-test logs hold 20 entries while ATA logs hold 21
-        if smartctl_type[self.interface] == 'scsi':
+        if smartctl_type(self.interface) == 'scsi':
             maxlog = 20
         else:
             maxlog = 21
@@ -590,7 +588,7 @@ class Device(object):
             [
                 SMARTCTL_PATH,
                 '-d',
-                smartctl_type[self.interface],
+                smartctl_type(self.interface),
                 '-X',
                 os.path.join('/dev/', self.name),
             ],
@@ -650,7 +648,7 @@ class Device(object):
         if self._test_running:
             return 1, 'Self-test in progress. Please wait.', self._test_ECD
         test_type = test_type.lower()
-        interface = smartctl_type[self.interface]
+        interface = smartctl_type(self.interface)
         try:
             if not self.test_capabilities[test_type]:
                 return (
@@ -803,7 +801,7 @@ class Device(object):
                 os.path.join('/dev/', self.name)
             ]
         else:
-            interface = smartctl_type[self.interface]
+            interface = smartctl_type(self.interface)
             popen_list = [
                 SMARTCTL_PATH,
                 '-d',
@@ -907,7 +905,7 @@ class Device(object):
                     self.smart_enabled = True
                 elif 'Disabled' in line:
                     self.smart_enabled = False
-                elif any_in(line, 'Available', 'device has SMART capability') in line:
+                elif any_in(line, 'Available', 'device has SMART capability'):
                     self.smart_capable = True
                 continue
             if 'does not support SMART' in line:
