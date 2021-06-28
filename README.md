@@ -15,10 +15,10 @@ pySMART.naudit
 Copyright (C) 2015 Marc Herndon
 
 pySMART is a simple Python wrapper for the ``smartctl`` component of
-``smartmontools``. It works under Linux and Windows, as long as smartctl is on
-the system path. Running with administrative rights is strongly recommended,
-as smartctl cannot accurately detect all device types or parse all SMART
-information without these permissions.
+``smartmontools``. It is officially compatible with Linux, Windows and FreeBSD,
+as long as smartctl is on the system path. Running with administrative rights
+is strongly recommended, as smartctl cannot accurately detect all device types
+or parse all SMART information without these permissions.
 
 With only a device's name (ie: /dev/sda, pd0), the package will create a
 ``Device`` object, populated with all relevant information about that
@@ -115,18 +115,28 @@ rely on smartctl.exe to automate evaluation and testing of large pools of
 storage devices.  Without his work, my job would have been significantly
 more miserable. :)
 
-Having recently migrated my script development from Batch to Python for Linux
-portabiity, I thought a simple wrapper for smartctl would save time in the
-development of future automated test tools.
+Additionally I would like to thank iXsystems, Inc., the team behind the amazing
+FreeNAS and TrueNAS products.  Several years ago that team approached me with an
+interest in pySMART, though I have no other affiliation with the company.  At
+their request I made a simple change to allow pySMART to run on FreeBSD and
+changed the license from GPL to LGPL to allow them to build upon my work and
+incorporate it into their products.  They began hosting the code on their github,
+and in the intervening years they've taken the project to all new heights.
+Because of their work the code is now Python 3 compatible, supports NVME hardware
+devices, and has several other improvements and bug fixes.
+
+This version 1.0 is simply a download and repackaging for PyPI of the code on
+the FreeNAS github, found at https://github.com/freenas/py-SMART, as of 9 Aug, 2019.
+This will almost surely be the last version of pySMART on pyPI, as neither I nor
+the iXsystems team have worked on this project in over a year.
 
 Final Note on Licensing
 =======================
-If you are reading this and thinking that you'd love to use pySMART if only
-it weren't "restricted" by GPL licensing, please contact me. I am very
-willing to make the code available privately under a more permissive
-license, including for some corporate or commercial uses. I'd just like for
-you to say hello first, and tell me a bit about your project and how pySMART
-could fit into it. Odds are I'd be happy to help.
-
-I've been contacted with similar requests a handful of times previously, so
-I decided to add this note in case there are others out there afraid to ask.
+At the request of several companies seeking to use this code in their products,
+the license has been changed from GPL to the slightly more permissive LGPL.
+This should allow you to call into pySMART as a library as use it as-is in your
+own project without fear of "GPL contamination".  If you are reading this and
+thinking that the license is still too restrictive, please contact me. I am very
+willing to make the code available privately under a more permissive license,
+including for some corporate or commercial uses. I'd just like for you to say hello
+first, and tell me a bit about your project and how pySMART could fit into it. 
