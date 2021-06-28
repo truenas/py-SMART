@@ -16,6 +16,7 @@
 #
 ################################################################
 from distutils.core import setup
+from subprocess import Popen, PIPE
 import os
 import re
 
@@ -35,7 +36,16 @@ def _get_version_match(content):
 
 
 def get_version(path):
-    return _get_version_match(read_file(path))
+    try:
+        p = Popen(['git', 'describe', '--always', '--tags'],
+                  stdout=PIPE, stderr=PIPE)
+        p.stderr.close()
+        line = p.stdout.readlines()[0]
+        return line.strip()[1:].decode('utf-8')
+
+    except Exception as e:
+        print(e)
+        return _get_version_match(read_file(path))
 
 
 def get_long_description():
