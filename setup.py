@@ -43,7 +43,7 @@ setup(
     author='Marc Herndon',
     author_email='Herndon.MarcT@gmail.com',
     packages=['pySMART'],
-    url='none',
+    url='https://github.com/Naudit/py-SMART',
     license='GNU LGPLv2.1.html',
     description='Wrapper for smartctl (smartmontools)',
     long_description=open('README.md').read(),

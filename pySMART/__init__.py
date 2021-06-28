@@ -101,13 +101,12 @@ Having recently migrated my development from Batch to Python for Linux
 portabiity, I thought a simple wrapper for smartctl would save time in the
 development of future automated test tools.
 """
+from .testentry import TestEntry
+from .device_list import DeviceList
+from .device import Device, smart_health_assement
+from .attribute import Attribute
 from . import utils
 utils.configure_trace_logging()
 
-from .attribute import Attribute
-from .device import Device, smart_health_assement
-from .device_list import DeviceList
-from .testentry import TestEntry
 
-
-__version__ = '0.3'
+__version__ = '1.0.1'

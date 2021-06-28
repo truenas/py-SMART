@@ -1,5 +1,13 @@
-This is basically Marc Herndon's pySMART (see: https://pypi.python.org/pypi/pySMART/) with slight modifications
-to ensure that it works on FreeBSD. Thanks to him for providing us with this source code.
+This repository is a FORK from [truenas/py-SMART](https://github.com/truenas/py-SMART) repository which is a fork of [Marc Herndon's pySMART](https://pypi.python.org/pypi/pySMART/) (The original PyPI pySMART project)
+
+The main objetive of this repository is to keep track a live PyPI repository with the last changes. You can find out this version as pySMART.naudit (see: https://pypi.python.org/pypi/pySMART.naudit/)
+
+
+I will intend to PR every change done on this repository to [truenas/py-SMART](https://github.com/truenas/py-SMART).
+Thanks everybody that have worked on this project before.
+
+------
+------
 
 ===========
 pySMART
