@@ -29,7 +29,7 @@ from __future__ import print_function
 
 import logging
 import os
-import re  # Don't delete this 'un-used' import
+import re
 import warnings
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
@@ -839,17 +839,30 @@ class Device(object):
                 num = line[0:3]
                 if '#' not in num:
                     continue
-                if interface == 'scsi':
+
+                # Detect Test Format
+
+                ## SCSI/SAS FORMAT ##
+                # Example smartctl output
+                # SMART Self-test log
+                # Num  Test              Status                 segment  LifeTime  LBA_first_err [SK ASC ASQ]
+                #      Description                              number   (hours)
+                # # 1  Background short  Completed                   -   33124                 - [-   -    -]
+                format_scsi = re.compile(
+                    '^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s+\[([^\s]+)\s+([^\s]+)\s+([^\s]+)\]$').match(line)
+
+                if format_scsi is not None:
                     format = 'scsi'
-                    test_type = line[5:23].rstrip()
-                    status = line[23:46].rstrip()
-                    segment = line[46:55].lstrip().rstrip()
-                    hours = line[55:65].lstrip().rstrip()
-                    lba = line[65:78].lstrip().rstrip()
-                    line_ = ' '.join(line.split('[')[1].split()).split(' ')
-                    sense = line_[0]
-                    asc = line_[1]
-                    ascq = line_[2][:-1]
+                    parsed = format_scsi.groups()
+                    num = parsed[0]
+                    test_type = parsed[1]
+                    status = parsed[2]
+                    segment = parsed[3]
+                    hours = parsed[4]
+                    lba = parsed[5]
+                    sense = parsed[6]
+                    asc = parsed[7]
+                    ascq = parsed[8]
                     self.tests.append(TestEntry(
                         format,
                         num,
@@ -863,12 +876,20 @@ class Device(object):
                         ascq=ascq
                     ))
                 else:
+                    ## ATA FORMAT ##
+                    # Example smartctl output:
+                    # SMART Self-test log structure revision number 1
+                    # Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+                    # # 1  Extended offline    Completed without error       00%     46660         -
                     format = 'ata'
-                    test_type = line[5:25].rstrip()
-                    status = line[25:54].rstrip()
-                    remain = line[54:58].lstrip().rstrip()
-                    hours = line[60:68].lstrip().rstrip()
-                    lba = line[77:].rstrip()
+                    parsed = re.compile(
+                        '^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])$').match(line).groups()
+                    num = parsed[0]
+                    test_type = parsed[1]
+                    status = parsed[2]
+                    remain = parsed[3]
+                    hours = parsed[4]
+                    lba = parsed[5]
                     self.tests.append(
                         TestEntry(format, num, test_type, status,
                                   hours, lba, remain=remain)
