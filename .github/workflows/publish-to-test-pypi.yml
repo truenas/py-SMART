@@ -16,6 +16,16 @@ jobs:
         pip install
         build
         --user
+    - name: Install pypa/pdoc
+      run: >-
+        python -m
+        pip install
+        pdoc
+        --user
+    - name: Generate doc
+      run: >-
+        python -m
+        pdoc -o docs -n pySMART
     - name: Build a binary wheel and a source tarball
       run: >-
         python -m
