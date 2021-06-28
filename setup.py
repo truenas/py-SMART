@@ -43,7 +43,7 @@ def get_version(path):
         line = p.stdout.readlines()[0]
         describe = line.strip()[1:].decode('utf-8').split('-')
         if len(describe) == 1:
-            return describe
+            return describe[0]
         else:
             return describe[0]+'.'+describe[1]
 
