@@ -41,7 +41,11 @@ def get_version(path):
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0]
-        return line.strip()[1:].decode('utf-8')
+        describe = line.strip()[1:].decode('utf-8').split('-')
+        if len(describe) == 1:
+            return describe
+        else:
+            return describe[0]+'.'+describe[1]
 
     except Exception as e:
         print(e)
