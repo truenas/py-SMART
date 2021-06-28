@@ -10,7 +10,7 @@ Thanks everybody that have worked on this project before.
 ------
 
 ===========
-pySMART
+pySMART.naudit
 ===========
 Copyright (C) 2015 Marc Herndon
 
@@ -81,9 +81,9 @@ advantage of the powerful features of smartmontools.
 
 Installation
 ============
-``pySMART`` is available on PyPI and installable via ``pip``::
+``pySMART.naudit`` is available on PyPI and installable via ``pip``::
 
-    python -m pip install pySMART
+    python -m pip install pySMART.naudit
 
 The only external dependency is the ``smartctl`` component of the smartmontools
 package.  This should be pre-installed in most Linux distributions, or it
@@ -101,7 +101,7 @@ Note that after installing smartmontools on Windows, the directory containing
 
 Documentation
 =============
-API documentation for ``pySMART`` was generated using ``pdoc`` and can be
+API documentation for ``pySMART.naudit`` was generated using ``pdoc`` and can be
 found in the /docs folder within the package archive.
 
 Acknowledgements
