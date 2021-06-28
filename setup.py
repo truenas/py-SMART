@@ -37,14 +37,24 @@ def _get_version_match(content):
 def get_version(path):
     return _get_version_match(read_file(path))
 
+
+def get_long_description():
+    this_directory = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+        long_description = f.read()
+
+    return long_description
+
+
 setup(
-    name='pySMART',
+    name='pySMART.naudit',
     version=get_version(os.path.join('pySMART', '__init__.py')),
-    author='Marc Herndon',
-    author_email='Herndon.MarcT@gmail.com',
+    author='Rafael Leira',
+    author_email='rafael.leira@naudit.es',
     packages=['pySMART'],
     url='https://github.com/Naudit/py-SMART',
     license='GNU LGPLv2.1.html',
     description='Wrapper for smartctl (smartmontools)',
-    long_description=open('README.md').read(),
+    long_description=get_long_description(),
+    long_description_content_type='text/markdown',
 )
