@@ -1,6 +1,10 @@
 ﻿venv
+.env
 docs
 pySMART.egg-info
 .idea
+.vscode
 .pypirc
 *.pyc
+build/
+dist/
