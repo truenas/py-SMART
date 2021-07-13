@@ -1,17 +1,14 @@
-This repository is a FORK from [truenas/py-SMART](https://github.com/truenas/py-SMART) repository which is a fork of [Marc Herndon's pySMART](https://pypi.python.org/pypi/pySMART/) (The original PyPI pySMART project)
-
-The main objetive of this repository is to keep track a live PyPI repository with the last changes. You can find out this version as pySMART.naudit (see: https://pypi.python.org/pypi/pySMART.naudit/)
-
-
-I will intend to PR every change done on this repository to [truenas/py-SMART](https://github.com/truenas/py-SMART).
-Thanks everybody that have worked on this project before.
-
-------
-------
-
+pySMART
 ===========
-pySMART.naudit
-===========
+
+![](https://img.shields.io/pypi/v/pySMART?label=release)
+![](https://img.shields.io/pypi/pyversions/pySMART)
+![](https://img.shields.io/github/checks-status/truenas/py-smart/master)
+![](https://img.shields.io/github/workflow/status/truenas/py-smart/Publish%20Python%20%F0%9F%90%8D%20distributions%20%F0%9F%93%A6%20to%20PyPI%20and%20TestPyPI)
+![](https://img.shields.io/github/issues/truenas/py-smart)
+![](https://img.shields.io/github/issues-pr/truenas/py-smart)
+![](https://img.shields.io/pypi/dm/pysmart)
+
 Copyright (C) 2015 Marc Herndon
 
 pySMART is a simple Python wrapper for the ``smartctl`` component of
@@ -81,9 +78,9 @@ advantage of the powerful features of smartmontools.
 
 Installation
 ============
-``pySMART.naudit`` is available on PyPI and installable via ``pip``::
+``pySMART`` is available on PyPI and installable via ``pip``::
 
-    python -m pip install pySMART.naudit
+    python -m pip install pySMART
 
 The only external dependency is the ``smartctl`` component of the smartmontools
 package.  This should be pre-installed in most Linux distributions, or it
@@ -101,7 +98,7 @@ Note that after installing smartmontools on Windows, the directory containing
 
 Documentation
 =============
-API documentation for ``pySMART.naudit`` was generated using ``pdoc`` and can be
+API documentation for ``pySMART`` was generated using ``pdoc`` and can be
 found in the /docs folder within the package archive.
 
 Acknowledgements
@@ -124,11 +121,6 @@ incorporate it into their products.  They began hosting the code on their github
 and in the intervening years they've taken the project to all new heights.
 Because of their work the code is now Python 3 compatible, supports NVME hardware
 devices, and has several other improvements and bug fixes.
-
-This version 1.0 is simply a download and repackaging for PyPI of the code on
-the FreeNAS github, found at https://github.com/freenas/py-SMART, as of 9 Aug, 2019.
-This will almost surely be the last version of pySMART on pyPI, as neither I nor
-the iXsystems team have worked on this project in over a year.
 
 Final Note on Licensing
 =======================
