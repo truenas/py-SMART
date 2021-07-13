@@ -77,7 +77,7 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name='pySMART',
+    name=os.environ.get('PACKAGE_NAME', 'pySMART'),
     version=get_version(os.path.join('pySMART', '__init__.py')),
     author='Marc Herndon',
     author_email='Herndon.MarcT@gmail.com',
