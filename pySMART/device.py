@@ -27,6 +27,9 @@ Methods are provided for initiating self tests and querying their results.
 # Python built-ins
 from __future__ import print_function
 
+from subprocess import Popen, PIPE
+from time import time, strptime, mktime, sleep
+from typing import Union, List
 import logging
 import os
 import re
