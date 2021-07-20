@@ -34,8 +34,6 @@ import logging
 import os
 import re
 import warnings
-from subprocess import Popen, PIPE
-from time import time, strptime, mktime, sleep
 
 # pySMART module imports
 from .attribute import Attribute
@@ -95,16 +93,16 @@ class Device(object):
         self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
         self.smart_options = smart_options.split(
             ' ') if smart_options else ['']
-        self.name = name.replace('/dev/', '').replace('nvd', 'nvme')
+        self.name: str = name.replace('/dev/', '').replace('nvd', 'nvme')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
         (ie: sda (Linux), pd0 (Windows))
         """
-        self.model = None
+        self.model: str = None
         """**(str):** Device's model number."""
-        self.serial = None
+        self.serial: str = None
         """**(str):** Device's serial number."""
-        self.interface = None if interface == 'UNKNOWN INTERFACE' else interface
+        self.interface: str = None if interface == 'UNKNOWN INTERFACE' else interface
         """
         **(str):** Device's interface type. Must be one of:
             * **ATA** - Advanced Technology Attachment
@@ -119,40 +117,40 @@ class Device(object):
         occur. Otherwise, this value overrides the auto-detected type and could
         produce unexpected or no data.
         """
-        self.capacity = None
+        self.capacity: str = None
         """**(str):** Device's user capacity."""
-        self.firmware = None
+        self.firmware: str = None
         """**(str):** Device's firmware version."""
-        self.smart_capable = 'nvme' in self.name
+        self.smart_capable: bool = 'nvme' in self.name
         """
         **(bool):** True if the device has SMART Support Available.
         False otherwise. This is useful for VMs amongst other things.
         """
-        self.smart_enabled = 'nvme' in self.name
+        self.smart_enabled: bool = 'nvme' in self.name
         """
         **(bool):** True if the device supports SMART (or SCSI equivalent) and
         has the feature set enabled. False otherwise.
         """
-        self.assessment = None
+        self.assessment: str = None
         """
         **(str):** SMART health self-assessment as reported by the device.
         """
-        self.messages = []
+        self.messages: List[str] = []
         """
         **(list of str):** Contains any SMART warnings or other error messages
         reported by the device (ie: ascq codes).
         """
-        self.is_ssd = True if 'nvme' in self.name else False
+        self.is_ssd: bool = True if 'nvme' in self.name else False
         """
         **(bool):** True if this device is a Solid State Drive.
         False otherwise.
         """
-        self.rotation_rate = None
+        self.rotation_rate: int = None
         """
         **(int):** The Roatation Rate of the Drive if it is not a SSD.
         The Metric is RPM.
         """
-        self.attributes = [None] * 256
+        self.attributes: List[Attribute] = [None] * 256
         """
         **(list of `Attribute`):** Contains the complete SMART table
         information for this device, as provided by smartctl. Indexed by
@@ -177,9 +175,9 @@ class Device(object):
         # Note: The above are just default values and can/will be changed
         # upon update() when the attributes and type of the disk is actually
         # determined.
-        self.tests = []
+        self.tests: List[TestEntry] = []
         """
-        **(list of `Log_Entry`):** Contains the complete SMART self-test log
+        **(list of `TestEntry`):** Contains the complete SMART self-test log
         for this device, as provided by smartctl. If no SMART self-tests have
         been recorded, contains a `None` type instead.
         """
@@ -204,10 +202,12 @@ class Device(object):
         SAS and SCSI devices, since ATA/SATA SMART attributes are manufacturer
         proprietary.
         """
-        self.temperature = None
+        self.temperature: int = None
         """
         **(int or None): Since SCSI disks do not report attributes like ATA ones
-        we need to grep/regex the shit outta the normal "smartctl -a" output
+        we need to grep/regex the shit outta the normal "smartctl -a" output.
+        In case the device have more than one temperature sensor the first value
+        will be stored here too.
         """
         self.temperatures = {}
         """
