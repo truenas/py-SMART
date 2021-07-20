@@ -27,13 +27,13 @@ Methods are provided for initiating self tests and querying their results.
 # Python built-ins
 from __future__ import print_function
 
-from subprocess import Popen, PIPE
-from time import time, strptime, mktime, sleep
-from typing import Union, List
 import logging
 import os
 import re
 import warnings
+from subprocess import Popen, PIPE
+from time import time, strptime, mktime, sleep
+from typing import Union, List
 
 # pySMART module imports
 from .attribute import Attribute
@@ -117,8 +117,8 @@ class Device(object):
         occur. Otherwise, this value overrides the auto-detected type and could
         produce unexpected or no data.
         """
-        self.capacity: str = None
-        """**(str):** Device's user capacity."""
+        self._capacity: str = None
+        """**(str):** Device's user capacity as reported directly by smartctl (RAW)."""
         self.firmware: str = None
         """**(str):** Device's firmware version."""
         self.smart_capable: bool = 'nvme' in self.name
@@ -270,6 +270,36 @@ class Device(object):
         if self.interface is not None or self.abridged:
             self.update()
 
+    @property
+    def capacity(self) -> str:
+        """Returns the capacity in the raw smartctl format.
+        This may be deprecated in the future and its only retained for compatibility.
+
+        Returns:
+            str: The capacity in the raw smartctl format
+        """
+        return self._capacity
+
+    @property
+    def size_raw(self) -> str:
+        """Returns the capacity in the raw smartctl format.
+
+        Returns:
+            str: The capacity in the raw smartctl format
+        """
+        return self._capacity
+
+    @property
+    def size(self) -> int:
+        """Returns the capacity in bytes
+
+        Returns:
+            int: The capacity in bytes
+        """
+        import humanfriendly
+
+        return humanfriendly.parse_size(self._capacity)
+
     def __repr__(self):
         """Define a basic representation of the class object."""
         return "<{0} device on /dev/{1} mod:{2} sn:{3}>".format(
@@ -305,7 +335,7 @@ class Device(object):
                 'serial': self.serial,
                 'is_ssd': self.is_ssd,
                 'rotation_rate': self.rotation_rate,
-                'capacity': self.capacity
+                'capacity': self._capacity
             })
         return state_dict
 
@@ -917,7 +947,7 @@ class Device(object):
                 self.firmware = line.split(':')[1].strip()
             if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
-                self.capacity = line.replace(']', '[').split('[')[1].strip()
+                self._capacity = line.replace(']', '[').split('[')[1].strip()
             if 'SMART support' in line:
                 # self.smart_capable = 'Available' in line
                 # self.smart_enabled = 'Enabled' in line

@@ -60,6 +60,10 @@ def get_long_description():
     return long_description
 
 
+REQUIREMENTS = [
+    'humanfriendly',
+]
+
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
     'Intended Audience :: Developers',
@@ -89,4 +93,5 @@ setup(
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
     classifiers=CLASSIFIERS,
+    install_requires=REQUIREMENTS,
 )
