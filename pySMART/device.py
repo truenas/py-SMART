@@ -1095,6 +1095,8 @@ class Device(object):
                         tempsensor_number = int(tempsensor_number_s)
                         tempsensor_value = int(tempsensor_value_s)
                         self.temperatures[tempsensor_number] = tempsensor_value
+                        if self.temperature is None or tempsensor_number == 0:
+                            self.temperature = tempsensor_value
                 except ValueError:
                     pass
         if not self.abridged:
