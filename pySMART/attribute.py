@@ -29,28 +29,28 @@ class Attribute(object):
     """
 
     def __init__(self, num, name, flags, value, worst, thresh, attr_type, updated, when_failed, raw):
-        self.num = num
+        self.num: str = num
         """**(str):** Attribute's ID as a decimal value (1-255)."""
-        self.name = name
+        self.name: str = name
         """
         **(str):** Attribute's name, as reported by smartmontools' drive.db.
         """
-        self.flags = flags
+        self.flags: str = flags
         """**(str):** Attribute flags as a hexadecimal value (ie: 0x0032)."""
-        self.value = value
+        self.value: str = value
         """**(str):** Attribute's current normalized value."""
-        self.worst = worst
+        self.worst: str = worst
         """**(str):** Worst recorded normalized value for this attribute."""
-        self.thresh = thresh
+        self.thresh: str = thresh
         """**(str):** Attribute's failure threshold."""
-        self.type = attr_type
+        self.type: str = attr_type
         """**(str):** Attribute's type, generally 'pre-fail' or 'old-age'."""
-        self.updated = updated
+        self.updated: str = updated
         """
         **(str):** When is this attribute updated? Generally 'Always' or
         'Offline'
         """
-        self.when_failed = when_failed
+        self.when_failed: str = when_failed
         """
         **(str):** When did this attribute cross below
         `pySMART.attribute.Attribute.thresh`? Reads '-' when not failed.
