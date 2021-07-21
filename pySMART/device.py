@@ -1013,8 +1013,7 @@ class Device(object):
                 line_ = ' '.join(line.split()).split(' ')
                 if '' not in line_:
                     self.attributes[int(line_[0])] = Attribute(
-                        line_[0], line_[1], line[2], line_[3], line_[4],
-                        line_[5], line_[6], line_[7], line_[8], line_[9])
+                        int(line_[0]), line_[1], int(line[2], base=16), line_[3], line_[4], line_[5], line_[6], line_[7], line_[8], line_[9])
             # For some reason smartctl does not show a currently running test
             # for 'ATA' in the Test log so I just have to catch it this way i guess!
             # For 'scsi' I still do it since it is the only place I get % remaining in scsi

@@ -28,20 +28,20 @@ class Attribute(object):
     obtained through smartctl.
     """
 
-    def __init__(self, num, name, flags, value, worst, thresh, attr_type, updated, when_failed, raw):
-        self.num: str = num
-        """**(str):** Attribute's ID as a decimal value (1-255)."""
+    def __init__(self, num: int, name, flags: int, value, worst, thresh, attr_type, updated, when_failed, raw):
+        self.num: int = num
+        """**(int):** Attribute's ID as a decimal value (1-255)."""
         self.name: str = name
         """
         **(str):** Attribute's name, as reported by smartmontools' drive.db.
         """
-        self.flags: str = flags
-        """**(str):** Attribute flags as a hexadecimal value (ie: 0x0032)."""
-        self.value: str = value
+        self.flags: int = flags
+        """**(int):** Attribute flags as a bit value (ie: 0x0032)."""
+        self._value: str = value
         """**(str):** Attribute's current normalized value."""
-        self.worst: str = worst
+        self._worst: str = worst
         """**(str):** Worst recorded normalized value for this attribute."""
-        self.thresh: str = thresh
+        self._thresh: str = thresh
         """**(str):** Attribute's failure threshold."""
         self.type: str = attr_type
         """**(str):** Attribute's type, generally 'pre-fail' or 'old-age'."""
@@ -59,6 +59,61 @@ class Attribute(object):
         self.raw = raw
         """**(str):** Attribute's current raw (non-normalized) value."""
 
+    @property
+    def value_str(self) -> str:
+        """Gets the attribute value
+
+        Returns:
+            str: The attribute value in string format
+        """
+        return self._value
+
+    @property
+    def value_int(self) -> int:
+        """Gets the attribute value
+
+        Returns:
+            int: The attribute value in integer format.
+        """
+        return int(self._value)
+
+    @property
+    def value(self) -> str:
+        """Gets the attribue value
+
+        Returns:
+            str: The attribute value in string format
+        """
+        return self.value_str
+
+    @property
+    def worst(self) -> int:
+        """Gets the worst value
+
+        Returns:
+            int: The attribute worst field in integer format
+        """
+        return int(self._worst)
+
+    @property
+    def thresh(self) -> int:
+        """Gets the threshold value
+
+        Returns:
+            int: The attribute threshold field in integer format
+        """
+        return int(self._thresh)
+
+    @property
+    def raw_int(self) -> int:
+        """Gets the raw value converted to int
+        NOTE: Some values may not be correctly converted!
+
+        Returns:
+            int: The attribute raw-value field in integer format.
+        """
+        return int(self.raw)
+
     def __repr__(self):
         """Define a basic representation of the class object."""
         return "<SMART Attribute %r %s/%s raw:%s>" % (
@@ -70,7 +125,7 @@ class Attribute(object):
         In the interest of not overflowing 80-character lines this does not
         print the value of `pySMART.attribute.Attribute.flags_hex`.
         """
-        return "{0:>3} {1:24}{2:4}{3:4}{4:4}{5:9}{6:8}{7:12}{8}".format(
+        return "{0:>3} {1:23}{2:>4}{3:>4}{4:>4} {5:9}{6:8}{7:12}{8}".format(
             self.num,
             self.name,
             self.value,
