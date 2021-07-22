@@ -28,16 +28,16 @@ class TestEntry(object):
     smartctl.
     """
 
-    def __init__(self, format, num, test_type, status, hours, lba, remain=None, segment=None, sense=None, asc=None,
+    def __init__(self, format, num: int, test_type, status, hours, lba, remain=None, segment=None, sense=None, asc=None,
                  ascq=None):
         self._format = format
         """
         **(str):** Indicates whether this entry was taken from an 'ata' or
         'scsi' self-test log. Used to display the content properly.
         """
-        self.num = num
+        self.num: int = num
         """
-        **(str):** Entry's position in the log from 1 (most recent) to 21
+        **(int):** Entry's position in the log from 1 (most recent) to 21
         (least recent).  ATA logs save the last 21 entries while SCSI logs
         only save the last 20.
         """

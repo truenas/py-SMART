@@ -889,7 +889,7 @@ class Device(object):
                 if format_scsi is not None:
                     format = 'scsi'
                     parsed = format_scsi.groups()
-                    num = parsed[0]
+                    num = int(parsed[0])
                     test_type = parsed[1]
                     status = parsed[2]
                     segment = parsed[3]
