@@ -178,8 +178,7 @@ class Device(object):
         self.tests: List[TestEntry] = []
         """
         **(list of `TestEntry`):** Contains the complete SMART self-test log
-        for this device, as provided by smartctl. If no SMART self-tests have
-        been recorded, contains a `None` type instead.
+        for this device, as provided by smartctl.
         """
         self._test_running = False
         """
@@ -323,7 +322,7 @@ class Device(object):
             'smart_status': self.assessment,
             'messages': self.messages,
             'test_capabilities': self.test_capabilities.copy(),
-            'tests': [t.__getstate__() for t in self.tests] if self.tests else None,
+            'tests': [t.__getstate__() for t in self.tests] if self.tests else [],
             'diagnostics': self.diags.copy(),
             'temperature': self.temperature,
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes]
@@ -588,7 +587,7 @@ class Device(object):
         # If so return the newest test result
         # If not, because it's max size already, check for new entries
         if (
-                (self.tests is not None and len(self.tests) != _len) or
+                (len(self.tests) != _len) or
                 (
                     len == maxlog and
                     (
@@ -863,8 +862,6 @@ class Device(object):
             if line.strip() == '':  # Blank line stops sub-captures
                 if parse_self_tests is True:
                     parse_self_tests = False
-                    if len(self.tests) == 0:
-                        self.tests = None
                 if parse_ascq:
                     parse_ascq = False
                     self.messages.append(message)
@@ -1042,8 +1039,6 @@ class Device(object):
                 parse_running_test = False
             if all_in(line, 'Description', '(hours)'):
                 parse_self_tests = True  # Set flag to capture test entries
-            if 'No self-tests have been logged' in line:
-                self.tests = None
             # Everything from here on is parsing SCSI information that takes
             # the place of similar ATA SMART information
             if 'used endurance' in line:
