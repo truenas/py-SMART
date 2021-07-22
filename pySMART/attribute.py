@@ -20,6 +20,8 @@ This module contains the definition of the `Attribute` class, used to represent
 individual SMART attributes associated with a `Device`.
 """
 
+import re
+
 
 class Attribute(object):
     """
@@ -111,8 +113,12 @@ class Attribute(object):
 
         Returns:
             int: The attribute raw-value field in integer format.
+            None: In case the raw string failed to be parsed
         """
-        return int(self.raw)
+        try:
+            return int(re.search(r'\d+', self.raw).group())
+        except:
+            return None
 
     def __repr__(self):
         """Define a basic representation of the class object."""
