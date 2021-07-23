@@ -82,7 +82,7 @@ Installation
 
     python -m pip install pySMART
 
-The only external dependency is the ``smartctl`` component of the smartmontools
+The only external (non-python) dependency is the ``smartctl`` component of the smartmontools
 package.  This should be pre-installed in most Linux distributions, or it
 can be obtained through your package manager.  Likely one of the following::
 
