@@ -33,17 +33,18 @@ import re
 import warnings
 from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
-from typing import Union, List
+from typing import Tuple, Union, List
 
 # pySMART module imports
 from .attribute import Attribute
 from .testentry import TestEntry
-from .utils import smartctl_type, smartctl_isvalid_type, SMARTCTL_PATH, any_in, all_in
+from .smartctl import Smartctl
+from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 
 logger = logging.getLogger('pySMART')
 
 
-def smart_health_assement(disk_name):
+def smart_health_assement(disk_name, smartctl: Smartctl = Smartctl()):
     """
     This function gets the SMART Health Status of the disk (IF the disk
     is SMART capable and smart is enabled on it else returns None).
@@ -51,15 +52,9 @@ def smart_health_assement(disk_name):
     since in non-abridged mode update gets this information anyways.
     """
     assessment = None
-    cmd = Popen(
-        [SMARTCTL_PATH, '--health',
-            os.path.join('/dev/', disk_name.replace('nvd', 'nvme'))],
-        stdout=PIPE,
-        stderr=PIPE,
-    )
-    _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-    _stdout = _stdout.split('\n')
-    line = _stdout[4]  # We only need this line
+    raw = smartctl.health(os.path.join(
+        '/dev/', disk_name.replace('nvd', 'nvme')))
+    line = raw[4]  # We only need this line
     if 'SMART overall-health self-assessment' in line:  # ATA devices
         if line.split(':')[1].strip() == 'PASSED':
             assessment = 'PASS'
@@ -80,10 +75,8 @@ class Device(object):
     (considered SATA) but excludes other external devices (USB, Firewire).
     """
 
-    def __init__(self, name, interface=None, abridged=False, smart_options=''):
+    def __init__(self, name: str, interface: str = None, abridged: bool = False, smart_options: Union[str, List[str]] = None, smartctl: Smartctl = Smartctl()):
         """Instantiates and initializes the `pySMART.device.Device`."""
-        if not SMARTCTL_PATH:
-            raise FileNotFoundError("Command smartctl doesn't exist!")
         if not (
                 interface is None or
                 smartctl_isvalid_type(interface.lower())
@@ -91,8 +84,13 @@ class Device(object):
             raise ValueError(
                 'Unknown interface: {0} specified for {1}'.format(interface, name))
         self.abridged = abridged or interface == 'UNKNOWN INTERFACE'
-        self.smart_options = smart_options.split(
-            ' ') if smart_options else ['']
+        if smart_options is not None:
+            if isinstance(smart_options,  str):
+                smart_options = smart_options.split(' ')
+            smartctl.add_options(smart_options)
+        self.smartctl = smartctl
+        """
+        """
         self.name: str = name.replace('/dev/', '').replace('nvd', 'nvme')
         """
         **(str):** Device's hardware ID, without the '/dev/' prefix.
@@ -226,14 +224,10 @@ class Device(object):
         elif self.interface is None and not self.abridged:
             logger.trace(
                 "Determining interface of disk: {0}".format(self.name))
-            cmd = Popen(
-                [SMARTCTL_PATH, '-d', 'test',
-                    os.path.join('/dev/', self.name)],
-                stdout=PIPE,
-                stderr=PIPE
-            )
-            _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-            if _stdout != '':
+            raw, returncode = self.smartctl.generic_call(
+                ['-d', 'test', os.path.join('/dev/', self.name)])
+
+            if len(raw) > 0:
                 # I do not like this parsing logic but it works for now!
                 # just for reference _stdout.split('\n') gets us
                 # something like
@@ -246,7 +240,7 @@ class Device(object):
                 # ]
                 # The above example should be enough for anyone to understand the line below
                 try:
-                    self.interface = _stdout.split('\n')[-2].split("'")[1]
+                    self.interface = raw[-2].split("'")[1]
                     if self.interface == "nvme":  # if nvme set SMART to true
                         self.smart_capable = True
                         self.smart_enabled = True
@@ -343,16 +337,16 @@ class Device(object):
         del state['smart_status']
         self.__dict__.update(state)
 
-    def smart_toggle(self, action):
+    def smart_toggle(self, action: str) -> Tuple[bool, List[str]]:
         """
         A basic function to enable/disable SMART on device.
 
-        ##Args:
+        # Args:
         * **action (str):** Can be either 'on'(for enabling) or 'off'(for disabling).
 
-        ##Returns"
+        # Returns"
         * **(bool):** Return True (if action succeded) else False
-        * **(str):** None if option succeded else contains the error message.
+        * **(List[str]):** None if option succeded else contains the error message.
         """
         # Lets make the action verb all lower case
         if self.interface == 'nvme':
@@ -368,17 +362,11 @@ class Device(object):
         else:
             if action_lower == 'off':
                 return True, None
-        cmd = Popen(
-            [
-                SMARTCTL_PATH,
-                '-s',
-                action_lower,
-                os.path.join('/dev/', self.name)
-            ],
-            stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-        if cmd.returncode != 0:
-            return False, _stdout + _stderr
+        raw, returncode = self.smartctl.generic_call(
+            ['-s', action_lower, os.path.join('/dev/', self.name)])
+
+        if returncode != 0:
+            return False, raw
         # if everything worked out so far lets perform an update() and check the result
         self.update()
         if action_lower == 'off' and self.smart_enabled:
@@ -448,56 +436,33 @@ class Device(object):
         if self.interface in ['scsi', 'ata']:
             test = 'sat' if self.interface == 'scsi' else 'sata'
             # Look for a SATA PHY to detect SAT and SATA
-            cmd = Popen(
-                [
-                    SMARTCTL_PATH,
-                    '-d',
-                    smartctl_type(test),
-                    '-l',
-                    'sataphy',
-                    os.path.join('/dev/', self.name)
-                ],
-                stdout=PIPE,
-                stderr=PIPE
-            )
-            _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-            if 'GP Log 0x11' in _stdout.split('\n')[3]:
+            raw, returncode = self.smartctl.generic_call([
+                '-d',
+                smartctl_type(test),
+                '-l',
+                'sataphy',
+                os.path.join('/dev/', self.name)])
+
+            if 'GP Log 0x11' in raw[3]:
                 self.interface = test
         # If device type is still SCSI (not changed to SAT above), then
         # check for a SAS PHY
         if self.interface == 'scsi':
-            cmd = Popen(
-                [
-                    SMARTCTL_PATH,
-                    '-d',
-                    'scsi',
-                    '-l',
-                    'sasphy',
-                    os.path.join('/dev/', self.name)
-                ],
-                stdout=PIPE,
-                stderr=PIPE
-            )
-            _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-            if 'SAS SSP' in _stdout.split('\n')[4]:
+            raw, returncode = self.smartctl.generic_call([
+                '-d',
+                'scsi',
+                '-l',
+                'sasphy',
+                os.path.join('/dev/', self.name)])
+            if 'SAS SSP' in raw[4]:
                 self.interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
             # For these, see if smartmontools reports a transport protocol.
             else:
-                cmd = Popen(
-                    [
-                        SMARTCTL_PATH,
-                        '-d',
-                        'scsi',
-                        '-a',
-                        os.path.join('/dev/', self.name)
-                    ],
-                    stdout=PIPE,
-                    stderr=PIPE
-                )
-                _stdout, _stderr = [i.decode('utf8', 'ignore')
-                                    for i in cmd.communicate()]
-                for line in _stdout.split('\n'):
+                raw = self.smartctl.all(
+                    'scsi', os.path.join('/dev/', self.name))
+
+                for line in raw:
                     if 'Transport protocol' in line and 'SAS' in line:
                         self.interface = 'sas'
 
@@ -542,12 +507,12 @@ class Device(object):
         the latest test results. If a new test result is obtained, its content
         is returned.
 
-        ###Args:
+        # Args:
         * **output (str, optional):** If set to 'str', the string
         representation of the most recent test result will be returned, instead
         of a `Test_Entry` object.
 
-        ##Returns:
+        # Returns:
         * **(int):** Return status code. One of the following:
             * 0 - Success. Object (or optionally, string rep) is attached.
             * 1 - Self-test in progress. Must wait for it to finish.
@@ -613,24 +578,12 @@ class Device(object):
         will  abort the Offline Immediate Test routine only if your disk
         has the "Abort Offline collection upon new command"  capability.
 
-        ##Args: Nothing (just aborts directly)
+        # Args: Nothing (just aborts directly)
 
-        ##Returns:
+        # Returns:
         * **(int):** The returncode of calling `smartctl -X device_path`
         """
-        cmd = Popen(
-            [
-                SMARTCTL_PATH,
-                '-d',
-                smartctl_type(self.interface),
-                '-X',
-                os.path.join('/dev/', self.name),
-            ],
-            stdout=PIPE,
-            stderr=PIPE
-        )
-        cmd.wait()
-        return cmd.returncode
+        return self.smartctl.test_stop(smartctl_type(self.interface), os.path.join('/dev/', self.name))
 
     def run_selftest(self, test_type, ETA_type='date'):
         """
@@ -638,7 +591,7 @@ class Device(object):
         'offline' / 'background' mode, allowing normal use of the device while
         it is being tested.
 
-        ##Args:
+        # Args:
         * **test_type (str):** The type of test to run. Accepts the following
         (not case sensitive):
             * **short** - Brief electo-mechanical functionality check.
@@ -659,7 +612,7 @@ class Device(object):
             in. Default is 'date'. One could otherwise specidy 'seconds'.
             Again only for ATA devices.
 
-        ##Returns:
+        # Returns:
         * **(int):** Return status code.  One of the following:
             * 0 - Self-test initiated successfully
             * 1 - Previous self-test running. Must wait for it to finish.
@@ -693,22 +646,12 @@ class Device(object):
                 )
         except KeyError:
             return 2, "Unknown test type '{0}' requested.".format(test_type), None
-        cmd = Popen(
-            [
-                SMARTCTL_PATH,
-                '-d',
-                interface,
-                '-t',
-                test_type,
-                os.path.join('/dev/', self.name)
-            ],
-            stdout=PIPE,
-            stderr=PIPE
-        )
-        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+
+        raw = self.smartctl.test_start(
+            interface, test_type, os.path.join('/dev/', self.name))
         _success = False
         _running = False
-        for line in _stdout.split('\n'):
+        for line in raw:
             if 'has begun' in line:
                 _success = True
                 self._test_running = True
@@ -745,7 +688,7 @@ class Device(object):
         (if any errors found) and updates the SMART attributes. Other
         than that it is not visibile anywhere else, so we start it and
         simply return.
-        ##Args:
+        # Args:
         * **test_type (str):** The type of test to run. Accepts the following
         (not case sensitive):
             * **short** - Brief electo-mechanical functionality check.
@@ -770,7 +713,7 @@ class Device(object):
         * **progress_handler (function, optional):** This if provided is called
             with self._test_progress as the supplied argument everytime a poll to
             check the status of the selftest is done.
-        ##Returns:
+        # Returns:
         * **(int):** Return status code.  One of the following:
             * 0 - Self-test executed and finished successfully
             * 1 - Previous self-test running. Must wait for it to finish.
@@ -828,27 +771,13 @@ class Device(object):
         self.temperatures = {}
         if self.abridged:
             interface = None
-            popen_list = [
-                SMARTCTL_PATH,
-                *self.smart_options,
-                '-i',
-                os.path.join('/dev/', self.name)
-            ]
+            raw = self.smartctl.info(os.path.join('/dev/', self.name))
+
         else:
             interface = smartctl_type(self.interface)
-            popen_list = [
-                SMARTCTL_PATH,
-                '-d',
-                interface,
-                *self.smart_options,
-                '-a',
-                os.path.join('/dev/', self.name)
-            ]
-        popen_list = list(filter(None, popen_list))
-        logger.trace("Executing the following cmd: {0}".format(popen_list))
-        cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = [i.decode('utf8', 'ignore')
-                            for i in cmd.communicate()]
+            raw = self.smartctl.all(
+                interface, os.path.join('/dev/', self.name))
+
         parse_self_tests = False
         parse_running_test = False
         parse_ascq = False
@@ -857,7 +786,7 @@ class Device(object):
         self._test_running = False
         self._test_progress = None
         # Lets skip the first couple of non-useful lines
-        _stdout = _stdout.split('\n')[4:]
+        _stdout = raw[4:]
         for line in _stdout:
             if line.strip() == '':  # Blank line stops sub-captures
                 if parse_self_tests is True:
@@ -1148,21 +1077,16 @@ class Device(object):
                 # If not obtained above, make a direct attempt to extract power on
                 # hours from the background scan results log.
                 if self.diags['Power_On_Hours'] == '-':
-                    cmd = Popen(
+                    raw, returncode = self.smartctl.generic_call(
                         [
-                            SMARTCTL_PATH,
                             '-d',
                             'scsi',
                             '-l',
                             'background',
                             os.path.join('/dev/', self.name)
-                        ],
-                        stdout=PIPE,
-                        stderr=PIPE
-                    )
-                    _stdout, _stderr = [i.decode('utf8')
-                                        for i in cmd.communicate()]
-                    for line in _stdout.split('\n'):
+                        ])
+
+                    for line in raw:
                         if 'power on time' in line:
                             self.diags['Power_On_Hours'] = line.split(':')[
                                 1].split(' ')[1]

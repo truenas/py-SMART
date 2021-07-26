@@ -25,12 +25,12 @@ This class has no public methods.  All interaction should be through the
 `Device` class API.
 """
 # Python built-ins
-from subprocess import Popen, PIPE
 import re
 
 # pySMART module imports
 from .device import Device
-from .utils import SMARTCTL_PATH
+from .smartctl import Smartctl
+from typing import List
 
 
 class DeviceList(object):
@@ -38,20 +38,25 @@ class DeviceList(object):
     Represents a list of all the storage devices connected to this computer.
     """
 
-    def __init__(self, init=True):
-        """
-        Instantiates and optionally initializes the `DeviceList`.
+    def __init__(self, init: bool = True, smartctl=Smartctl()):
+        """Instantiates and optionally initializes the `DeviceList`.
 
-        ###Args:
-        * **init (bool):** By default, `pySMART.device_list.DeviceList.devices`
-        is populated with `Device` objects during instantiation. Setting init
-        to False will skip initialization and create an empty
-        `pySMART.device_list.DeviceList` object instead.
+        Args:
+            init (bool, optional): By default, `pySMART.device_list.DeviceList.devices`
+                is populated with `Device` objects during instantiation. Setting init
+                to False will skip initialization and create an empty
+                `pySMART.device_list.DeviceList` object instead. Defaults to True.
+            smartctl ([type], optional): This stablish the smartctl wrapper. Defaults to Smartctl()
+                and should be only overwritten on tests
         """
-        self.devices = []
+
+        self.devices: List[Device] = []
         """
         **(list of `Device`):** Contains all storage devices detected during
         instantiation, as `Device` objects.
+        """
+        self.smartctl: Smartctl = smartctl
+        """The smartctl wrapper
         """
         if init:
             self._initialize()
@@ -93,15 +98,15 @@ class DeviceList(object):
         Scans system busses for attached devices and add them to the
         `DeviceList` as `Device` objects.
         """
-        cmd = Popen([SMARTCTL_PATH, '--scan-open'], stdout=PIPE, stderr=PIPE)
-        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
-        for line in _stdout.split('\n'):
+
+        for line in self.smartctl.scan():
             if not ('failed:' in line or line == ''):
                 groups = re.compile(
                     '^(/dev/\S+)\s+-d\s+(\S+)').match(line).groups()
                 name = groups[0]
                 interface = groups[1]
-                self.devices.append(Device(name, interface=interface))
+                self.devices.append(
+                    Device(name, interface=interface, smartctl=self.smartctl))
 
         # Remove duplicates and unwanted devices (optical, etc.) from the list
         self._cleanup()
