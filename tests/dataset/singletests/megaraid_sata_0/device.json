@@ -1,0 +1,4 @@
+{
+    "name": "/dev/bus/0",
+    "interface": "megaraid,16"
+}

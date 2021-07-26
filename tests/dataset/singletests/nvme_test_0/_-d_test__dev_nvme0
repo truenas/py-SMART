@@ -1,0 +1,5 @@
+smartctl 7.2 2021-01-17 r5171 [x86_64-linux-5.13.4-200.fc34.x86_64] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/nvme0: Device of type 'nvme' [NVMe] detected
+/dev/nvme0: Device of type 'nvme' [NVMe] opened
