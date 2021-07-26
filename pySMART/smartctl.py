@@ -26,9 +26,6 @@ logger = logging.getLogger('pySMART')
 class Smartctl:
     def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = []):
         """Instantiates and initializes the Smartctl wrapper."""
-        if not smartctl_path:
-            raise FileNotFoundError("Command smartctl doesn't exist!")
-
         self.smartctl_path = smartctl_path
         self.options: List[str] = options
 
@@ -50,6 +47,9 @@ class Smartctl:
         Returns:
             Tuple[List[str], int]: A raw line-by-line output from smartctl and the process return code
         """
+        if not self.smartctl_path:
+            raise FileNotFoundError("Command smartctl doesn't exist!")
+
         if pass_options:
             popen_list = [self.smartctl_path] + self.options + params
         else:
