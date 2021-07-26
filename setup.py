@@ -15,7 +15,7 @@
 # MA  02110-1301, USA.
 #
 ################################################################
-from distutils.core import setup
+from setuptools import setup
 from subprocess import Popen, PIPE
 import os
 import re
@@ -94,4 +94,11 @@ setup(
     long_description_content_type='text/markdown',
     classifiers=CLASSIFIERS,
     install_requires=REQUIREMENTS,
+    extras_require={
+        'dev': [
+            # Requirements only needed for development
+            'pytest',
+            'pytest-cov',
+        ]
+    },
 )
