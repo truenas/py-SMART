@@ -810,7 +810,7 @@ class Device(object):
                 #      Description                              number   (hours)
                 # # 1  Background short  Completed                   -   33124                 - [-   -    -]
                 format_scsi = re.compile(
-                    '^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s+\[([^\s]+)\s+([^\s]+)\s+([^\s]+)\]$').match(line)
+                    r'^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s+\[([^\s]+)\s+([^\s]+)\s+([^\s]+)\]$').match(line)
 
                 if format_scsi is not None:
                     format = 'scsi'
@@ -844,7 +844,7 @@ class Device(object):
                     # # 1  Extended offline    Completed without error       00%     46660         -
                     format = 'ata'
                     parsed = re.compile(
-                        '^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])$').match(line).groups()
+                        r'^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{1,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])$').match(line).groups()
                     num = parsed[0]
                     test_type = parsed[1]
                     status = parsed[2]
