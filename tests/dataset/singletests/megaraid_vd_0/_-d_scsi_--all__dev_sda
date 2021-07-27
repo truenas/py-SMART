@@ -1,0 +1,24 @@
+smartctl 7.1 2019-12-30 r5022 [x86_64-linux-5.4.0-73-generic] (local build)
+Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Vendor:               Intel
+Product:              RS3DC080
+Revision:             4.23
+Compliance:           SPC-3
+User Capacity:        118,999,744,512 bytes [118 GB]
+Logical block size:   512 bytes
+Physical block size:  4096 bytes
+Logical Unit id:      0x600605b00a0944901fd8325907497d90
+Serial number:        00907d49075932d81f9044090ab00506
+Device type:          disk
+Local Time is:        Tue Jul 27 10:47:47 2021 CEST
+SMART support is:     Unavailable - device lacks SMART capability.
+
+=== START OF READ SMART DATA SECTION ===
+Current Drive Temperature:     0 C
+Drive Trip Temperature:        0 C
+
+Error Counter logging not supported
+
+Device does not support Self Test logging

@@ -1,18 +1,17 @@
 {
-    "name": "/dev/nvme0",
-    "values": {
+    "name": "/dev/sda",
+    "tests": {
         "abridged": false,
-        "name": "nvme0",
-        "model": "KBG30ZMV256G TOSHIBA",
-        "serial": "XXXXXXXXXXXX",
-        "interface": "nvme",
-        "_capacity": "256 GB",
-        "firmware": "ADHA0101",
-        "smart_capable": true,
-        "smart_enabled": true,
-        "assessment": "PASS",
+        "name": "sda",
+        "model": "RS3DC080",
+        "serial": "00907d49075932d81f9044090ab00506",
+        "interface": "scsi",
+        "firmware": "4.23",
+        "smart_capable": false,
+        "smart_enabled": false,
+        "assessment": null,
         "messages": [],
-        "is_ssd": true,
+        "is_ssd": false,
         "rotation_rate": null,
         "attributes": [
             null,
@@ -274,16 +273,34 @@
         ],
         "test_capabilities": {
             "offline": false,
-            "short": false,
-            "long": false,
+            "short": true,
+            "long": true,
             "conveyance": false,
             "selective": false
         },
         "tests": [],
-        "diags": {},
-        "temperature": 42,
-        "temperatures": {
-            "1": 42
-        }
+        "diags": {
+            "Corrected_Reads": "-",
+            "Corrected_Writes": "-",
+            "Corrected_Verifies": "-",
+            "Uncorrected_Reads": "-",
+            "Uncorrected_Writes": "-",
+            "Uncorrected_Verifies": "-",
+            "Reallocated_Sector_Ct": "-",
+            "Start_Stop_Spec": "-",
+            "Start_Stop_Cycles": "-",
+            "Load_Cycle_Spec": "-",
+            "Load_Cycle_Count": "-",
+            "Start_Stop_Pct_Left": "-",
+            "Load_Cycle_Pct_Left": "-",
+            "Power_On_Hours": "-",
+            "Life_Left": "-",
+            "Non-Medium_Errors": "-",
+            "Reads_GB": "-",
+            "Writes_GB": "-",
+            "Verifies_GB": "-"
+        },
+        "temperature": 0,
+        "temperatures": {}
     }
 }

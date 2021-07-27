@@ -1,0 +1,5 @@
+smartctl 7.1 2019-12-30 r5022 [x86_64-linux-5.4.0-73-generic] (local build)
+Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/sda: Device of type 'scsi' [SCSI] detected
+/dev/sda: Device of type 'scsi' [SCSI] opened
