@@ -26,7 +26,13 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "176373483"
+                "raw": "176373483",
+                "raw_int": 176373483,
+                "thresh": 44,
+                "value": "082",
+                "value_int": 82,
+                "value_str": "082",
+                "worst": 66
             },
             null,
             {
@@ -39,7 +45,13 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 0,
+                "value": "090",
+                "value_int": 90,
+                "value_str": "090",
+                "worst": 89
             },
             {
                 "num": 4,
@@ -51,7 +63,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "10"
+                "raw": "10",
+                "raw_int": 10,
+                "thresh": 20,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 5,
@@ -63,7 +81,13 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 10,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             null,
             {
@@ -76,7 +100,13 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "5849609"
+                "raw": "5849609",
+                "raw_int": 5849609,
+                "thresh": 45,
+                "value": "068",
+                "value_int": 68,
+                "value_str": "068",
+                "worst": 60
             },
             null,
             {
@@ -89,7 +119,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "252"
+                "raw": "252",
+                "raw_int": 252,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 10,
@@ -101,7 +137,13 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 97,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             null,
             {
@@ -114,7 +156,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "9"
+                "raw": "9",
+                "raw_int": 9,
+                "thresh": 20,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             null,
             null,
@@ -300,7 +348,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 188,
@@ -312,7 +366,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             null,
             {
@@ -325,7 +385,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "38"
+                "raw": "38",
+                "raw_int": 38,
+                "thresh": 40,
+                "value": "062",
+                "value_int": 62,
+                "value_str": "062",
+                "worst": 60
             },
             null,
             {
@@ -338,7 +404,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "8"
+                "raw": "8",
+                "raw_int": 8,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 193,
@@ -350,7 +422,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "1230"
+                "raw": "1230",
+                "raw_int": 1230,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 194,
@@ -362,7 +440,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "38"
+                "raw": "38",
+                "raw_int": 38,
+                "thresh": 0,
+                "value": "038",
+                "value_int": 38,
+                "value_str": "038",
+                "worst": 40
             },
             {
                 "num": 195,
@@ -374,7 +458,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "176373483"
+                "raw": "176373483",
+                "raw_int": 176373483,
+                "thresh": 0,
+                "value": "032",
+                "value_int": 32,
+                "value_str": "032",
+                "worst": 15
             },
             null,
             {
@@ -387,7 +477,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 198,
@@ -399,7 +495,13 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             {
                 "num": 199,
@@ -411,7 +513,13 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 0,
+                "value": "200",
+                "value_int": 200,
+                "value_str": "200",
+                "worst": 200
             },
             {
                 "num": 200,
@@ -423,7 +531,13 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "0"
+                "raw": "0",
+                "raw_int": 0,
+                "thresh": 1,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 100
             },
             null,
             null,
@@ -474,7 +588,13 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "when_failed": "-",
-                "raw": "17"
+                "raw": "17",
+                "raw_int": 17,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 253
             },
             {
                 "num": 241,
@@ -486,7 +606,13 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "when_failed": "-",
-                "raw": "3625709712"
+                "raw": "3625709712",
+                "raw_int": 3625709712,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 253
             },
             {
                 "num": 242,
@@ -498,7 +624,13 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "when_failed": "-",
-                "raw": "1041293"
+                "raw": "1041293",
+                "raw_int": 1041293,
+                "thresh": 0,
+                "value": "100",
+                "value_int": 100,
+                "value_str": "100",
+                "worst": 253
             },
             null,
             null,
@@ -627,10 +759,51 @@
                 "ASCQ": null
             }
         ],
-        "diags": {},
+        "diagnostics": {
+            "Reallocated_Sector_Ct": null,
+            "Start_Stop_Spec": null,
+            "Start_Stop_Cycles": null,
+            "Start_Stop_Pct_Left": null,
+            "Load_Cycle_Spec": null,
+            "Load_Cycle_Count": null,
+            "Load_Cycle_Pct_Left": null,
+            "Power_On_Hours": null,
+            "Life_Left": null,
+            "Corrected_Reads": null,
+            "Corrected_Writes": null,
+            "Corrected_Verifies": null,
+            "Uncorrected_Reads": null,
+            "Uncorrected_Writes": null,
+            "Uncorrected_Verifies": null,
+            "Reads_GB": null,
+            "Writes_GB": null,
+            "Verifies_GB": null,
+            "Non_Medium_Errors": null
+        },
         "temperature": 38,
         "temperatures": {},
         "capacity": "12.0 TB",
+        "diags": {
+            "Reallocated_Sector_Ct": "-",
+            "Start_Stop_Spec": "-",
+            "Start_Stop_Cycles": "-",
+            "Start_Stop_Pct_Left": "-",
+            "Load_Cycle_Spec": "-",
+            "Load_Cycle_Count": "-",
+            "Load_Cycle_Pct_Left": "-",
+            "Power_On_Hours": "-",
+            "Life_Left": "-",
+            "Corrected_Reads": "-",
+            "Corrected_Writes": "-",
+            "Corrected_Verifies": "-",
+            "Uncorrected_Reads": "-",
+            "Uncorrected_Writes": "-",
+            "Uncorrected_Verifies": "-",
+            "Reads_GB": "-",
+            "Writes_GB": "-",
+            "Verifies_GB": "-",
+            "Non-Medium_Errors": "-"
+        },
         "size": 12000000000000,
         "size_raw": "12.0 TB"
     }

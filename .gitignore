@@ -6,6 +6,7 @@ pySMART.egg-info
 .vscode
 .pypirc
 *.pyc
+__pycache__
 build/
 dist/
 .coverage

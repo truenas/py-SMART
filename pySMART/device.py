@@ -31,12 +31,12 @@ import logging
 import os
 import re
 import warnings
-from subprocess import Popen, PIPE
 from time import time, strptime, mktime, sleep
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Dict
 
 # pySMART module imports
 from .attribute import Attribute
+from .diagnostics import Diagnostics
 from .testentry import TestEntry
 from .smartctl import Smartctl
 from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
@@ -192,9 +192,9 @@ class Device(object):
         """
         **(int):** Estimate progress percantage of the running SMART selftest.
         """
-        self.diags = {}
+        self.diagnostics: Diagnostics = Diagnostics()
         """
-        **(dict of str):** Contains parsed and processed diagnostic information
+        **Diagnostics** Contains parsed and processed diagnostic information
         extracted from the SMART information. Currently only populated for
         SAS and SCSI devices, since ATA/SATA SMART attributes are manufacturer
         proprietary.
@@ -274,6 +274,12 @@ class Device(object):
         return self._capacity
 
     @property
+    def diags(self) -> Dict[str, str]:
+        """Gets the old/deprecated version of SCSI/SAS diags atribute.
+        """
+        return self.diagnostics.get_classic_format()
+
+    @property
     def size_raw(self) -> str:
         """Returns the capacity in the raw smartctl format.
 
@@ -317,7 +323,7 @@ class Device(object):
             'messages': self.messages,
             'test_capabilities': self.test_capabilities.copy(),
             'tests': [t.__getstate__() for t in self.tests] if self.tests else [],
-            'diagnostics': self.diags.copy(),
+            'diagnostics': self.diagnostics.__getstate__(),
             'temperature': self.temperature,
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes]
         }
@@ -972,69 +978,71 @@ class Device(object):
             # the place of similar ATA SMART information
             if 'used endurance' in line:
                 pct = int(line.split(':')[1].strip()[:-1])
-                self.diags['Life_Left'] = str(100 - pct) + '%'
+                self.diagnostics.Life_Left = 100 - pct
             if 'Specified cycle count' in line:
-                self.diags['Start_Stop_Spec'] = line.split(':')[1].strip()
-                if self.diags['Start_Stop_Spec'] == '0':
-                    self.diags['Start_Stop_Pct_Left'] = '-'
+                self.diagnostics.Start_Stop_Spec = int(
+                    line.split(':')[1].strip())
             if 'Accumulated start-stop cycles' in line:
-                self.diags['Start_Stop_Cycles'] = line.split(':')[1].strip()
-                if 'Start_Stop_Pct_Left' not in self.diags:
-                    self.diags['Start_Stop_Pct_Left'] = str(int(round(
-                        100 - (int(self.diags['Start_Stop_Cycles']) /
-                               int(self.diags['Start_Stop_Spec'])), 0))) + '%'
+                self.diagnostics.Start_Stop_Cycles = int(
+                    line.split(':')[1].strip())
+                if self.diagnostics.Start_Stop_Spec != 0:
+                    self.diagnostics.Start_Stop_Pct_Left = int(round(
+                        100 - (self.diagnostics.Start_Stop_Cycles /
+                               self.diagnostics.Start_Stop_Spec), 0))
             if 'Specified load-unload count' in line:
-                self.diags['Load_Cycle_Spec'] = line.split(':')[1].strip()
-                if self.diags['Load_Cycle_Spec'] == '0':
-                    self.diags['Load_Cycle_Pct_Left'] = '-'
+                self.diagnostics.Load_Cycle_Spec = int(
+                    line.split(':')[1].strip())
             if 'Accumulated load-unload cycles' in line:
-                self.diags['Load_Cycle_Count'] = line.split(':')[1].strip()
-                if 'Load_Cycle_Pct_Left' not in self.diags:
-                    self.diags['Load_Cycle_Pct_Left'] = str(int(round(
-                        100 - (int(self.diags['Load_Cycle_Count']) /
-                               int(self.diags['Load_Cycle_Spec'])), 0))) + '%'
+                self.diagnostics.Load_Cycle_Count = int(
+                    line.split(':')[1].strip())
+                if self.diagnostics.Load_Cycle_Spec != 0:
+                    self.diagnostics.Load_Cycle_Pct_Left = int(round(
+                        100 - (self.diagnostics.Load_Cycle_Count /
+                               self.diagnostics.Load_Cycle_Spec), 0))
             if 'Elements in grown defect list' in line:
-                self.diags['Reallocated_Sector_Ct'] = line.split(':')[
-                    1].strip()
+                self.diagnostics.Reallocated_Sector_Ct = int(
+                    line.split(':')[1].strip())
             if 'read:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0':
-                    self.diags['Corrected_Reads'] = '0'
+                    self.diagnostics.Corrected_Reads = 0
                 elif line_[4] == '0':
-                    self.diags['Corrected_Reads'] = str(
-                        int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diagnostics.Corrected_Reads = int(
+                        line_[1]) + int(line_[2]) + int(line_[3])
                 else:
-                    self.diags['Corrected_Reads'] = line_[4]
-                self.diags['Reads_GB'] = line_[6]
-                self.diags['Uncorrected_Reads'] = line_[7]
+                    self.diagnostics.Corrected_Reads = int(line_[4])
+                self.diagnostics.Reads_GB = float(line_[6])
+                self.diagnostics.Uncorrected_Reads = int(line_[7])
             if 'write:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
                         line_[3] == '0' and line_[4] == '0'):
-                    self.diags['Corrected_Writes'] = '0'
+                    self.diagnostics.Corrected_Writes = 0
                 elif line_[4] == '0':
-                    self.diags['Corrected_Writes'] = str(
-                        int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diagnostics.Corrected_Writes = int(
+                        line_[1]) + int(line_[2]) + int(line_[3])
                 else:
-                    self.diags['Corrected_Writes'] = line_[4]
-                self.diags['Writes_GB'] = line_[6]
-                self.diags['Uncorrected_Writes'] = line_[7]
+                    self.diagnostics.Corrected_Writes = int(line_[4])
+                self.diagnostics.Writes_GB = float(line_[6])
+                self.diagnostics.Uncorrected_Writes = int(line_[7])
             if 'verify:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
                         line_[3] == '0' and line_[4] == '0'):
-                    self.diags['Corrected_Verifies'] = '0'
+                    self.diagnostics.Corrected_Verifies = 0
                 elif line_[4] == '0':
-                    self.diags['Corrected_Verifies'] = str(
-                        int(line_[1]) + int(line_[2]) + int(line_[3]))
+                    self.diagnostics.Corrected_Verifies = int(
+                        line_[1]) + int(line_[2]) + int(line_[3])
                 else:
-                    self.diags['Corrected_Verifies'] = line_[4]
-                self.diags['Verifies_GB'] = line_[6]
-                self.diags['Uncorrected_Verifies'] = line_[7]
+                    self.diagnostics.Corrected_Verifies = int(line_[4])
+                self.diagnostics.Verifies_GB = float(line_[6])
+                self.diagnostics.Uncorrected_Verifies = int(line_[7])
             if 'non-medium error count' in line:
-                self.diags['Non-Medium_Errors'] = line.split(':')[1].strip()
+                self.diagnostics.Non_Medium_Errors = int(
+                    line.split(':')[1].strip())
             if 'Accumulated power on time' in line:
-                self.diags['Power_On_Hours'] = line.split(':')[1].split(' ')[1]
+                self.diagnostics.Power_On_Hours = int(
+                    line.split(':')[1].split(' ')[1])
             if 'Current Drive Temperature' in line or ('Temperature:' in
                                                        line and interface == 'nvme'):
                 try:
@@ -1061,22 +1069,9 @@ class Device(object):
                 # corresponding warnings for non-SCSI disks
                 self._make_smart_warnings()
             else:
-                # For SCSI disks, any diagnostic attribute which was not captured
-                # above gets set to '-' to indicate unsupported/unavailable.
-                for diag in ['Corrected_Reads', 'Corrected_Writes',
-                             'Corrected_Verifies', 'Uncorrected_Reads',
-                             'Uncorrected_Writes', 'Uncorrected_Verifies',
-                             'Reallocated_Sector_Ct',
-                             'Start_Stop_Spec', 'Start_Stop_Cycles',
-                             'Load_Cycle_Spec', 'Load_Cycle_Count',
-                             'Start_Stop_Pct_Left', 'Load_Cycle_Pct_Left',
-                             'Power_On_Hours', 'Life_Left', 'Non-Medium_Errors',
-                             'Reads_GB', 'Writes_GB', 'Verifies_GB']:
-                    if diag not in self.diags:
-                        self.diags[diag] = '-'
-                # If not obtained above, make a direct attempt to extract power on
+                # If not obtained Power_On_Hours above, make a direct attempt to extract power on
                 # hours from the background scan results log.
-                if self.diags['Power_On_Hours'] == '-':
+                if self.diagnostics.Power_On_Hours is None:
                     raw, returncode = self.smartctl.generic_call(
                         [
                             '-d',
@@ -1088,8 +1083,8 @@ class Device(object):
 
                     for line in raw:
                         if 'power on time' in line:
-                            self.diags['Power_On_Hours'] = line.split(':')[
-                                1].split(' ')[1]
+                            self.diagnostics.Power_On_Hours = int(
+                                line.split(':')[1].split(' ')[1])
         # map temperature
         if self.temperature is None:
             # in this case the disk is probably ata

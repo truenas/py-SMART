@@ -20,11 +20,13 @@ This module contains generic utilities and configuration information for use
 by the other submodules of the `pySMART` package.
 """
 
+import copy
 import io
 import logging
 import logging.handlers
 import os
 import traceback
+from typing import Dict, Any
 from shutil import which
 
 _srcfile = __file__
@@ -155,4 +157,31 @@ def smartctl_type(interface_type: str) -> str:
         return None
 
 
-__all__ = ['smartctl_type', 'SMARTCTL_PATH', 'all_in', 'any_in']
+def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool = False) -> Dict[str, Any]:
+    type_name = type(obj).__name__
+    prop_names = dir(obj)
+
+    if deep_copy:
+        ret = copy.deepcopy(vars(obj))
+    else:
+        ret = vars(obj)
+
+    available_types = ['dict', 'str', 'int', 'float', 'list', 'NoneType']
+
+    for prop_name in prop_names:
+        prop_val = getattr(obj, prop_name)
+        prop_val_type_name = type(prop_val).__name__
+
+        if (prop_name[0] != '_') and (prop_val_type_name in available_types) and (prop_name not in ret):
+            ret[prop_name] = prop_val
+
+    if remove_private:
+        for key in ret.keys():
+            if key[0] == '_':
+                del ret[key]
+
+    return ret
+
+
+__all__ = ['smartctl_type', 'SMARTCTL_PATH',
+           'all_in', 'any_in', 'get_object_properties']

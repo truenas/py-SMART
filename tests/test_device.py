@@ -20,6 +20,7 @@ import os
 import pytest
 
 from pySMART import Device
+from pySMART.utils import get_object_properties
 
 from .smartctlfile import SmartctlFile
 
@@ -64,7 +65,7 @@ class TestSingleDevice():
 
         if 'values' in device_data:
             values = device_data['values']
-            skip_values = ['attributes', 'tests']
+            skip_values = ['attributes', 'tests', 'diagnostics']
             for value in values:
                 # Special comparators
                 if value == 'temperatures':
@@ -75,6 +76,17 @@ class TestSingleDevice():
                 elif value not in skip_values:
                     # Generic case
                     assert getattr(dev, value) == values[value]
+
+    @pytest.mark.parametrize("folder", folders)
+    def test_device_diagnostics(self, folder):
+
+        device_data = self.get_device_data(folder)
+
+        dev: Device = self.create_device(folder, device_data)
+
+        if 'values' in device_data and 'diagnostics' in device_data['values']:
+            diagnostics = device_data['values']['diagnostics']
+            assert dev.diagnostics.__getstate__() == diagnostics
 
     @pytest.mark.parametrize("folder", folders)
     def test_device_attributes(self, folder):
@@ -88,10 +100,11 @@ class TestSingleDevice():
             i = 0
             for attribute in attributes:
                 # Generic case
-                if dev.attributes[i] == None:
+                if dev.attributes[i] is None:
                     assert dev.attributes[i] == attribute
                 else:
-                    assert vars(dev.attributes[i]) == attribute
+                    assert get_object_properties(
+                        dev.attributes[i]) == attribute
 
                 i = i + 1
 
@@ -107,9 +120,9 @@ class TestSingleDevice():
             i = 0
             for test in tests:
                 # Generic case
-                if dev.tests[i] == None:
+                if dev.tests[i] is None:
                     assert dev.tests[i] == test
                 else:
-                    assert vars(dev.tests[i]) == test
+                    assert get_object_properties(dev.tests[i]) == test
 
                 i = i + 1
