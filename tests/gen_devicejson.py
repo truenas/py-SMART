@@ -18,6 +18,7 @@
 
 import argparse
 import json
+import sys
 import os
 from typing import Dict, Any
 
@@ -44,23 +45,7 @@ def get_all_properties(obj) -> Dict[str, Any]:
     return ret
 
 
-def main():
-
-    parser = argparse.ArgumentParser(
-        description='Generate device.json from data stored in file for future tests.')
-    parser.add_argument('--folder', required=True,
-                        help='The folder where the device info is stored')
-    parser.add_argument('--device', required=True,
-                        help='The device name')
-    parser.add_argument('--interface', default=None,
-                        help='The device interface')
-
-    args = parser.parse_args()
-
-    folder = args.folder
-    device_name = args.device
-    interface_name = args.interface
-
+def update_device(folder, device_name, interface_name=None):
     sf = SmartctlFile(folder)
 
     json_dict = {"name": device_name}
@@ -112,6 +97,57 @@ def main():
 
     with open(os.path.join(folder, 'device.json'), "w") as f:
         f.write(json.dumps(json_dict, indent=4))
+
+
+def main():
+
+    parser = argparse.ArgumentParser(
+        description='Generate device.json from data stored in file for future tests.')
+    parser.add_argument('--folder', required=True,
+                        help='The folder where the device info is stored')
+    parser.add_argument('--device',
+                        help='The device name')
+    parser.add_argument('--interface', default=None,
+                        help='The device interface')
+    parser.add_argument('--updateSubfolders', default=False, action='store_true',
+                        help='If set, the tool will scan the folder, read previusly stored tests, and regenerate them')
+
+    args = parser.parse_args()
+
+    folder = args.folder
+    device_name = args.device
+    interface_name = args.interface
+
+    if args.updateSubfolders == False and device_name is None:
+        print("Error, --device argument is required!")
+        sys.exit(-1)
+
+    elif args.updateSubfolders == False:
+        update_device(folder, device_name, interface_name)
+
+    elif args.updateSubfolders == True:
+        subdirs = os.listdir(folder)
+        for subdir in subdirs:
+            subdir = os.path.join(folder, subdir)
+
+            if os.path.isdir(subdir):
+                json_path = os.path.join(subdir, 'device.json')
+                if os.path.exists(json_path):
+                    with open(json_path) as json_file:
+                        data = json.load(json_file)
+
+                    if 'interface' not in data:
+                        update_device(subdir, data['name'])
+
+                    else:
+                        update_device(subdir, data['name'], data['interface'])
+
+                else:
+                    print(f"Warning: {json_path} does not exists!. Skipped...")
+
+    else:
+        print("Unknown error!")
+        sys.exit(-1)
 
 
 if __name__ == "__main__":
