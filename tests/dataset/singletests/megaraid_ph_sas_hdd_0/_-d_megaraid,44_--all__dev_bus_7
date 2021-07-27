@@ -1,0 +1,56 @@
+smartctl 7.1 2019-12-30 r5022 [x86_64-linux-5.4.0-73-generic] (local build)
+Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Vendor:               HGST
+Product:              HUS726040AL5210
+Revision:             A907
+Compliance:           SPC-4
+User Capacity:        4,000,787,030,016 bytes [4.00 TB]
+Logical block size:   512 bytes
+Physical block size:  4096 bytes
+LU is fully provisioned
+Rotation Rate:        7200 rpm
+Form Factor:          3.5 inches
+Logical Unit id:      0x5000cca25c244870
+Serial number:        K3GMYL4L
+Device type:          disk
+Transport protocol:   SAS (SPL-3)
+Local Time is:        Tue Jul 27 11:03:39 2021 CEST
+SMART support is:     Available - device has SMART capability.
+SMART support is:     Enabled
+Temperature Warning:  Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART Health Status: OK
+
+Current Drive Temperature:     40 C
+Drive Trip Temperature:        85 C
+
+Manufactured in week 37 of year 2017
+Specified cycle count over device lifetime:  50000
+Accumulated start-stop cycles:  101
+Specified load-unload count over device lifetime:  600000
+Accumulated load-unload cycles:  974
+Elements in grown defect list: 0
+
+Vendor (Seagate Cache) information
+  Blocks sent to initiator = 44447033381093376
+
+Error counter log:
+           Errors Corrected by           Total   Correction     Gigabytes    Total
+               ECC          rereads/    errors   algorithm      processed    uncorrected
+           fast | delayed   rewrites  corrected  invocations   [10^9 bytes]  errors
+read:          0        8         0         8      60614      16772.475           0
+write:         0      211         0       211     233430     574543.134           0
+verify:        0       73         0        73     111983       3464.820           0
+
+Non-medium error count:        0
+
+SMART Self-test log
+Num  Test              Status                 segment  LifeTime  LBA_first_err [SK ASC ASQ]
+     Description                              number   (hours)
+# 1  Background short  Completed                   -     302                 - [-   -    -]
+
+Long (extended) Self-test duration: 34237 seconds [570.6 minutes]
+
