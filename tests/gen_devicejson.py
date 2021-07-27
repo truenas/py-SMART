@@ -19,11 +19,29 @@
 import argparse
 import json
 import os
-import sys
+from typing import Dict, Any
 
 from pySMART import Device
 
 from .smartctlfile import SmartctlFile
+
+
+def get_all_properties(obj) -> Dict[str, Any]:
+    type_name = type(obj).__name__
+    prop_names = dir(obj)
+
+    ret = vars(obj)
+
+    available_types = ['dict', 'str', 'int', 'float', 'list', 'NoneType']
+
+    for prop_name in prop_names:
+        prop_val = getattr(obj, prop_name)
+        prop_val_type_name = type(prop_val).__name__
+
+        if prop_name[0] != '_' and prop_val_type_name in available_types and prop_name not in ret:
+            ret[prop_name] = prop_val
+
+    return ret
 
 
 def main():
@@ -54,7 +72,7 @@ def main():
         dev = Device(device_name, interface=interface_name, smartctl=sf)
         json_dict['interface'] = interface_name
 
-    json_dict['values'] = vars(dev)
+    json_dict['values'] = get_all_properties(dev)
 
     # Remove non serializable objects
     to_delete = [
