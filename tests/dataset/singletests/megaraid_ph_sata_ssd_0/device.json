@@ -5,7 +5,7 @@
         "abridged": false,
         "name": "bus/0",
         "model": "INTEL SSDSC2BB120G6",
-        "serial": "BTWA517503PD120CGN",
+        "serial": "BXXXXXXXXXXXXXXXXN",
         "interface": "megaraid,28",
         "firmware": "G2010130",
         "smart_capable": true,
