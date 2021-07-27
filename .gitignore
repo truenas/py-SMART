@@ -9,3 +9,4 @@ pySMART.egg-info
 build/
 dist/
 .coverage
+htmlcov
