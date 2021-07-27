@@ -53,4 +53,24 @@ class TestSingleDevice():
 
         device_data = self.get_device_data(folder)
 
-        d: Device = self.create_device(folder, device_data)
+        dev: Device = self.create_device(folder, device_data)
+
+    @pytest.mark.parametrize("folder", folders)
+    def test_generic_checks(self, folder):
+
+        device_data = self.get_device_data(folder)
+
+        dev: Device = self.create_device(folder, device_data)
+
+        if 'values' in device_data:
+            values = device_data['values']
+            for value in values:
+                # Special comparators
+                if value == 'temperatures':
+                    for temp in values[value]:
+                        assert dev.temperatures[int(
+                            temp)] == values[value][temp]
+
+                else:
+                    # Generic case
+                    assert getattr(dev, value) == values[value]
