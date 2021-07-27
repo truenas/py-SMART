@@ -8,3 +8,4 @@ pySMART.egg-info
 *.pyc
 build/
 dist/
+.coverage
