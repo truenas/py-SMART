@@ -20,7 +20,11 @@ from .utils import SMARTCTL_PATH
 from typing import List, Union, Tuple
 
 import logging
+import os
+
 logger = logging.getLogger('pySMART')
+
+os.environ["LANG"] = "C"
 
 
 class Smartctl:
