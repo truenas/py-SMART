@@ -111,4 +111,4 @@ from .device import Device, smart_health_assement
 # autopep8: on
 
 
-__version__ = '1.0.6'
+__version__ = '1.1.0'

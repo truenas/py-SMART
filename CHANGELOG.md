@@ -1,13 +1,15 @@
 
 Version 1.1.0
 =============
-- Minnor fixes
+- Minor fixes
+- Added tests
 - **Breaking changes**
     - **Typing**:
         - Tests and attributes have been typed. This may cause some exceptions if you have been attached to the "everything is a string" previously philosophy.
-        - Some attributes have been kept back for compatibility but others (like num) have been directly converted into int. Test everything after the upgrade
-        - Other typing changes migh take place in the future when it is confirmed that smartctl always use a fixed time instead "anything" (str for us).
-    - **device.tests**: Now returns empty list instead of None when there is no tests present
+        - Some attributes have been kept back for compatibility but others (like num) have been directly converted into an integer. Test everything after the upgrade
+        - Other typing changes might take place in the future when it is confirmed that smartctl always uses a fixed time instead of "anything" (str for us).
+    - **device.tests**: Now returns an empty list instead of None when there are no tests present
+    - **device.diags**: Device.diags have been deprecated and moved into a class called Diagnostics. For compatibility reasons, a property called "diags" has been created. This property simulates the old diags behavior.
 
 Version 1.0.6
 =============
