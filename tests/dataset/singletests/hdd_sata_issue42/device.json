@@ -629,6 +629,9 @@
         ],
         "diags": {},
         "temperature": 38,
-        "temperatures": {}
+        "temperatures": {},
+        "capacity": "12.0 TB",
+        "size": 12000000000000,
+        "size_raw": "12.0 TB"
     }
 }

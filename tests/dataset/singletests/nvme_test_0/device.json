@@ -283,6 +283,9 @@
         "temperature": 42,
         "temperatures": {
             "1": 42
-        }
+        },
+        "capacity": "256 GB",
+        "size": 256000000000,
+        "size_raw": "256 GB"
     }
 }

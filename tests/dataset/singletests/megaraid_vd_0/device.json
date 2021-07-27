@@ -301,6 +301,9 @@
             "Verifies_GB": "-"
         },
         "temperature": 0,
-        "temperatures": {}
+        "temperatures": {},
+        "capacity": "118 GB",
+        "size": 118000000000,
+        "size_raw": "118 GB"
     }
 }

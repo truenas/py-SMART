@@ -313,6 +313,9 @@
             "Uncorrected_Verifies": "0"
         },
         "temperature": 40,
-        "temperatures": {}
+        "temperatures": {},
+        "capacity": "4.00 TB",
+        "size": 4000000000000,
+        "size_raw": "4.00 TB"
     }
 }

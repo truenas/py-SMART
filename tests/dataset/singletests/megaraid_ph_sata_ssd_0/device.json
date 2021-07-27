@@ -571,6 +571,9 @@
         ],
         "diags": {},
         "temperature": 32,
-        "temperatures": {}
+        "temperatures": {},
+        "capacity": "120 GB",
+        "size": 120000000000,
+        "size_raw": "120 GB"
     }
 }
