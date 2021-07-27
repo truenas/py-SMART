@@ -301,7 +301,16 @@
             "Load_Cycle_Spec": "600000",
             "Load_Cycle_Count": "974",
             "Load_Cycle_Pct_Left": "100%",
-            "Reallocated_Sector_Ct": "0"
+            "Reallocated_Sector_Ct": "0",
+            "Corrected_Reads": "8",
+            "Reads_GB": "16772.475",
+            "Uncorrected_Reads": "0",
+            "Corrected_Writes": "211",
+            "Writes_GB": "574543.134",
+            "Uncorrected_Writes": "0",
+            "Corrected_Verifies": "73",
+            "Verifies_GB": "3464.820",
+            "Uncorrected_Verifies": "0"
         },
         "temperature": 40,
         "temperatures": {}

@@ -996,7 +996,7 @@ class Device(object):
             if 'Elements in grown defect list' in line:
                 self.diags['Reallocated_Sector_Ct'] = line.split(':')[
                     1].strip()
-            if 'read:' in line and interface == 'scsi':
+            if 'read:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0':
                     self.diags['Corrected_Reads'] = '0'
@@ -1007,7 +1007,7 @@ class Device(object):
                     self.diags['Corrected_Reads'] = line_[4]
                 self.diags['Reads_GB'] = line_[6]
                 self.diags['Uncorrected_Reads'] = line_[7]
-            if 'write:' in line and interface == 'scsi':
+            if 'write:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
                         line_[3] == '0' and line_[4] == '0'):
@@ -1019,7 +1019,7 @@ class Device(object):
                     self.diags['Corrected_Writes'] = line_[4]
                 self.diags['Writes_GB'] = line_[6]
                 self.diags['Uncorrected_Writes'] = line_[7]
-            if 'verify:' in line and interface == 'scsi':
+            if 'verify:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
                         line_[3] == '0' and line_[4] == '0'):
