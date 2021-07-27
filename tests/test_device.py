@@ -64,6 +64,7 @@ class TestSingleDevice():
 
         if 'values' in device_data:
             values = device_data['values']
+            skip_values = ['attributes', 'tests']
             for value in values:
                 # Special comparators
                 if value == 'temperatures':
@@ -71,6 +72,44 @@ class TestSingleDevice():
                         assert dev.temperatures[int(
                             temp)] == values[value][temp]
 
-                else:
+                elif value not in skip_values:
                     # Generic case
                     assert getattr(dev, value) == values[value]
+
+    @pytest.mark.parametrize("folder", folders)
+    def test_device_attributes(self, folder):
+
+        device_data = self.get_device_data(folder)
+
+        dev: Device = self.create_device(folder, device_data)
+
+        if 'values' in device_data and 'attributes' in device_data['values']:
+            attributes = device_data['values']['attributes']
+            i = 0
+            for attribute in attributes:
+                # Generic case
+                if dev.attributes[i] == None:
+                    assert dev.attributes[i] == attribute
+                else:
+                    assert vars(dev.attributes[i]) == attribute
+
+                i = i + 1
+
+    @pytest.mark.parametrize("folder", folders)
+    def test_device_tests(self, folder):
+
+        device_data = self.get_device_data(folder)
+
+        dev: Device = self.create_device(folder, device_data)
+
+        if 'values' in device_data and 'tests' in device_data['values']:
+            tests = device_data['values']['tests']
+            i = 0
+            for test in tests:
+                # Generic case
+                if dev.tests[i] == None:
+                    assert dev.tests[i] == test
+                else:
+                    assert vars(dev.tests[i]) == test
+
+                i = i + 1
