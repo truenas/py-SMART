@@ -1,7 +1,7 @@
 {
     "name": "/dev/bus/0",
     "interface": "megaraid,16",
-    "tests": {
+    "values": {
         "abridged": false,
         "name": "bus/0",
         "model": "HGST HUS724040ALE640",

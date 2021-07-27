@@ -1,7 +1,7 @@
 {
     "name": "/dev/bus/0",
     "interface": "megaraid,28",
-    "tests": {
+    "values": {
         "abridged": false,
         "name": "bus/0",
         "model": "INTEL SSDSC2BB120G6",

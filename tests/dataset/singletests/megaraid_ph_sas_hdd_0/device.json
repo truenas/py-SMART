@@ -1,7 +1,7 @@
 {
     "name": "/dev/bus/7",
     "interface": "megaraid,44",
-    "tests": {
+    "values": {
         "abridged": false,
         "name": "bus/7",
         "model": "HUS726040AL5210",

@@ -1,6 +1,6 @@
 {
     "name": "/dev/sda",
-    "tests": {
+    "values": {
         "abridged": false,
         "name": "sda",
         "model": "RS3DC080",

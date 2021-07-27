@@ -54,7 +54,7 @@ def main():
         dev = Device(device_name, interface=interface_name, smartctl=sf)
         json_dict['interface'] = interface_name
 
-    json_dict['tests'] = vars(dev)
+    json_dict['values'] = vars(dev)
 
     # Remove non serializable objects
     to_delete = [
@@ -62,35 +62,35 @@ def main():
     ]
 
     # add to list private objects
-    for entry in json_dict['tests']:
+    for entry in json_dict['values']:
         if entry[0] == '_':
             to_delete.append(entry)
 
     for todel in to_delete:
-        if todel in json_dict['tests']:
-            del json_dict['tests'][todel]
+        if todel in json_dict['values']:
+            del json_dict['values'][todel]
 
     # Transform attributes
-    if 'attributes' in json_dict['tests']:
+    if 'attributes' in json_dict['values']:
         att_list = []
-        for att in json_dict['tests']['attributes']:
+        for att in json_dict['values']['attributes']:
             if att is None:
                 att_list.append(None)
             else:
                 att_list.append(vars(att))
 
-        json_dict['tests']['attributes'] = att_list
+        json_dict['values']['attributes'] = att_list
 
     # Transform tests
-    if 'tests' in json_dict['tests']:
+    if 'tests' in json_dict['values']:
         test_list = []
-        for tst in json_dict['tests']['tests']:
+        for tst in json_dict['values']['tests']:
             if tst is None:
                 test_list.append(None)
             else:
                 test_list.append(vars(tst))
 
-        json_dict['tests']['tests'] = test_list
+        json_dict['values']['tests'] = test_list
 
     with open(os.path.join(folder, 'device.json'), "w") as f:
         f.write(json.dumps(json_dict, indent=4))

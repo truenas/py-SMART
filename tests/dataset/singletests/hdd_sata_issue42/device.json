@@ -1,7 +1,7 @@
 {
     "name": "/dev/sdau",
     "interface": "ata",
-    "tests": {
+    "values": {
         "abridged": false,
         "name": "sdau",
         "model": "OOS12000G",
