@@ -1,0 +1,1 @@
+/dev/nvme0 -d nvme # /dev/nvme0, NVMe device
