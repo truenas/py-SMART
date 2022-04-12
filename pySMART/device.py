@@ -100,6 +100,8 @@ class Device(object):
         """**(str):** Device's model number."""
         self.serial: str = None
         """**(str):** Device's serial number."""
+        self.vendor: str = None
+        """**(str):** Device's vendor (if any)."""
         self.interface: str = None if interface == 'UNKNOWN INTERFACE' else interface
         """
         **(str):** Device's interface type. Must be one of:
@@ -875,6 +877,8 @@ class Device(object):
             if any_in(line, 'Serial Number', 'Serial number'):
                 self.serial = line.split(':')[1].split()[0].rstrip()
                 continue
+            if 'Vendor' in line:
+                self.vendor = line.split(':')[1].strip()
             if any_in(line, 'Firmware Version', 'Revision'):
                 self.firmware = line.split(':')[1].strip()
             if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):
