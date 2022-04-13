@@ -6,6 +6,7 @@
         "name": "bus/0",
         "model": "INTEL SSDSC2BB120G6",
         "serial": "BXXXXXXXXXXXXXXXXN",
+        "vendor": null,
         "interface": "megaraid,28",
         "firmware": "G2010130",
         "smart_capable": true,

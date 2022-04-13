@@ -6,6 +6,7 @@
         "name": "nvme0",
         "model": "Samsung SSD 970 EVO Plus 500GB",
         "serial": "S4EVNX0NA32843N",
+        "vendor": null,
         "interface": "nvme",
         "firmware": "2B2QEXM7",
         "smart_capable": true,

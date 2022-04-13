@@ -5,6 +5,7 @@
         "name": "sda",
         "model": "RS3DC080",
         "serial": "00907d49075932d81f9044090ab00506",
+        "vendor": "Intel",
         "interface": "scsi",
         "firmware": "4.23",
         "smart_capable": false,

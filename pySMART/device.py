@@ -877,8 +877,9 @@ class Device(object):
             if any_in(line, 'Serial Number', 'Serial number'):
                 self.serial = line.split(':')[1].split()[0].rstrip()
                 continue
-            if 'Vendor' in line:
-                self.vendor = line.split(':')[1].strip()
+            vendor = re.compile(r'^Vendor:\s+(\w+)').match(line)
+            if vendor is not None:
+                self.vendor = vendor.groups()[0]
             if any_in(line, 'Firmware Version', 'Revision'):
                 self.firmware = line.split(':')[1].strip()
             if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):

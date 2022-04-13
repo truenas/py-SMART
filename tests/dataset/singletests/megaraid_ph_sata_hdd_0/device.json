@@ -6,6 +6,7 @@
         "name": "bus/0",
         "model": "HGST HUS724040ALE640",
         "serial": "PKXXXXXXXXXXGB",
+        "vendor": null,
         "interface": "megaraid,16",
         "firmware": "MJAOA580",
         "smart_capable": true,

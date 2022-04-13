@@ -6,6 +6,7 @@
         "name": "sdau",
         "model": "OOS12000G",
         "serial": "00008AXB",
+        "vendor": null,
         "interface": "ata",
         "firmware": "OOS1",
         "smart_capable": true,
