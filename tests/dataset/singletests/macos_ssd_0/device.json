@@ -6,6 +6,7 @@
         "name": "IOService:/AppleACPIPlatformExpert/PCI0@0/AppleACPIPCI/RP06@1C,5/IOPP/SSD0@0/AppleAHCI/PRT0@0/IOAHCIDevice@0/AppleAHCIDiskDriver/IOAHCIBlockStorageDevice",
         "model": "APPLE SSD SM0256F",
         "serial": "S1XXXXXXXXXXXX",
+        "vendor": null,
         "interface": "ata",
         "firmware": "UXM2JA1Q",
         "smart_capable": true,

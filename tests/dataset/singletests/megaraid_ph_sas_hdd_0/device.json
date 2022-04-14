@@ -6,6 +6,7 @@
         "name": "bus/7",
         "model": "HUS726040AL5210",
         "serial": "XXXXXXXX",
+        "vendor": "HGST",
         "interface": "megaraid,44",
         "firmware": "A907",
         "smart_capable": true,
