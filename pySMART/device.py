@@ -214,6 +214,15 @@ class Device(object):
         will be stored here if available. Keys are sensor numbers as reported in
         output data.
         """
+        self.logical_sector_size: int = None
+        """
+        **(int):** The logical sector size of the device (or LBA).
+        """
+        self.physical_sector_size: int = None
+        """
+        **(int):** The physical sector size of the device.
+        """
+
         if self.name is None:
             warnings.warn(
                 "\nDevice '{0}' does not exist! This object should be destroyed.".format(
@@ -300,6 +309,20 @@ class Device(object):
         import humanfriendly
 
         return humanfriendly.parse_size(self._capacity)
+
+    @property
+    def sector_size(self) -> int:
+        """Returns the sector size of the device.
+
+        Returns:
+            int: The sector size of the device in Bytes. If undefined, we'll assume 512B
+        """
+        if self.logical_sector_size is not None:
+            return self.logical_sector_size
+        elif self.physical_sector_size is not None:
+            return self.physical_sector_size
+        else:
+            return 512
 
     def __repr__(self):
         """Define a basic representation of the class object."""
@@ -868,23 +891,30 @@ class Device(object):
                 self.model = line.split(':')[1].lstrip().rstrip()
                 self._guess_smart_type(line.lower())
                 continue
+
             if 'Model Family' in line:
                 self._guess_smart_type(line.lower())
                 continue
+
             if 'LU WWN' in line:
                 self._guess_smart_type(line.lower())
                 continue
+
             if any_in(line, 'Serial Number', 'Serial number'):
                 self.serial = line.split(':')[1].split()[0].rstrip()
                 continue
+
             vendor = re.compile(r'^Vendor:\s+(\w+)').match(line)
             if vendor is not None:
                 self.vendor = vendor.groups()[0]
+
             if any_in(line, 'Firmware Version', 'Revision'):
                 self.firmware = line.split(':')[1].strip()
+
             if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
                 self._capacity = line.replace(']', '[').split('[')[1].strip()
+
             if 'SMART support' in line:
                 # self.smart_capable = 'Available' in line
                 # self.smart_enabled = 'Enabled' in line
@@ -901,10 +931,12 @@ class Device(object):
                 elif any_in(line, 'Available', 'device has SMART capability'):
                     self.smart_capable = True
                 continue
+
             if 'does not support SMART' in line:
                 self.smart_capable = False
                 self.smart_enabled = False
                 continue
+
             if 'Rotation Rate' in line:
                 if 'Solid State Device' in line:
                     self.is_ssd = True
@@ -923,6 +955,8 @@ class Device(object):
                     self.assessment = 'PASS'
                 else:
                     self.assessment = 'FAIL'
+                continue
+
             if 'SMART Health Status' in line:  # SCSI devices
                 if line.split(':')[1].strip() == 'OK':
                     self.assessment = 'PASS'
@@ -930,6 +964,8 @@ class Device(object):
                     self.assessment = 'FAIL'
                     parse_ascq = True  # Set flag to capture status message
                     message = line.split(':')[1].lstrip().rstrip()
+                continue
+
             # Parse SMART test capabilities (ATA only)
             # Note: SCSI does not list this but and allows for only 'offline', 'short' and 'long'
             if 'SMART execute Offline immediate' in line:
@@ -960,7 +996,6 @@ class Device(object):
                     # for ATA the "%" remaining is on the next line
                     # thus set the parse_running_test flag and move on
                     parse_running_test = True
-                    continue
                 elif '%' in line:
                     # for scsi the progress is on the same line
                     # so we can just parse it and move on
@@ -970,6 +1005,7 @@ class Device(object):
                             int(line.split('%')[0][-3:].strip())
                     except ValueError:
                         pass
+                continue
             if parse_running_test is True:
                 try:
                     self._test_progress = 100 - \
@@ -977,16 +1013,26 @@ class Device(object):
                 except ValueError:
                     pass
                 parse_running_test = False
+
             if all_in(line, 'Description', '(hours)'):
                 parse_self_tests = True  # Set flag to capture test entries
+
+            #######################################
+            #              SCSI only              #
+            #######################################
+            #
             # Everything from here on is parsing SCSI information that takes
             # the place of similar ATA SMART information
             if 'used endurance' in line:
                 pct = int(line.split(':')[1].strip()[:-1])
                 self.diagnostics.Life_Left = 100 - pct
+                continue
+
             if 'Specified cycle count' in line:
                 self.diagnostics.Start_Stop_Spec = int(
                     line.split(':')[1].strip())
+                continue
+
             if 'Accumulated start-stop cycles' in line:
                 self.diagnostics.Start_Stop_Cycles = int(
                     line.split(':')[1].strip())
@@ -994,9 +1040,13 @@ class Device(object):
                     self.diagnostics.Start_Stop_Pct_Left = int(round(
                         100 - (self.diagnostics.Start_Stop_Cycles /
                                self.diagnostics.Start_Stop_Spec), 0))
+                continue
+
             if 'Specified load-unload count' in line:
                 self.diagnostics.Load_Cycle_Spec = int(
                     line.split(':')[1].strip())
+                continue
+
             if 'Accumulated load-unload cycles' in line:
                 self.diagnostics.Load_Cycle_Count = int(
                     line.split(':')[1].strip())
@@ -1004,9 +1054,13 @@ class Device(object):
                     self.diagnostics.Load_Cycle_Pct_Left = int(round(
                         100 - (self.diagnostics.Load_Cycle_Count /
                                self.diagnostics.Load_Cycle_Spec), 0))
+                continue
+
             if 'Elements in grown defect list' in line:
                 self.diagnostics.Reallocated_Sector_Ct = int(
                     line.split(':')[1].strip())
+                continue
+
             if 'read:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0':
@@ -1018,6 +1072,8 @@ class Device(object):
                     self.diagnostics.Corrected_Reads = int(line_[4])
                 self.diagnostics.Reads_GB = float(line_[6])
                 self.diagnostics.Uncorrected_Reads = int(line_[7])
+                continue
+
             if 'write:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
@@ -1030,6 +1086,8 @@ class Device(object):
                     self.diagnostics.Corrected_Writes = int(line_[4])
                 self.diagnostics.Writes_GB = float(line_[6])
                 self.diagnostics.Uncorrected_Writes = int(line_[7])
+                continue
+
             if 'verify:' in line:
                 line_ = ' '.join(line.split()).split(' ')
                 if (line_[1] == '0' and line_[2] == '0' and
@@ -1042,12 +1100,18 @@ class Device(object):
                     self.diagnostics.Corrected_Verifies = int(line_[4])
                 self.diagnostics.Verifies_GB = float(line_[6])
                 self.diagnostics.Uncorrected_Verifies = int(line_[7])
+                continue
+
             if 'non-medium error count' in line:
                 self.diagnostics.Non_Medium_Errors = int(
                     line.split(':')[1].strip())
+                continue
+
             if 'Accumulated power on time' in line:
                 self.diagnostics.Power_On_Hours = int(
                     line.split(':')[1].split(' ')[1])
+                continue
+
             if 'Current Drive Temperature' in line or ('Temperature:' in
                                                        line and interface == 'nvme'):
                 try:
@@ -1055,6 +1119,9 @@ class Device(object):
                         line.split(':')[-1].strip().split()[0])
                 except ValueError:
                     pass
+
+                continue
+
             if 'Temperature Sensor ' in line:
                 try:
                     match = re.search(
@@ -1068,6 +1135,9 @@ class Device(object):
                             self.temperature = tempsensor_value
                 except ValueError:
                     pass
+
+                continue
+
         if not self.abridged:
             if not interface == 'scsi':
                 # Parse the SMART table for below-threshold attributes and create
