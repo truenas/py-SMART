@@ -1144,6 +1144,32 @@ class Device(object):
 
                 continue
 
+            #######################################
+            #            Common values            #
+            #######################################
+
+            # Sector sizes
+            if 'Sector Sizes' in line:  # ATA
+                m = re.match(
+                    r'.* (\d+) bytes logical,\s*(\d+) bytes physical', line)
+                if m:
+                    self.logical_sector_size = int(m.group(1))
+                    self.physical_sector_size = int(m.group(2))
+                continue
+            if 'Logical block size:' in line:  # SCSI 1/2
+                self.logical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
+                continue
+            if 'Physical block size:' in line:  # SCSI 2/2
+                self.physical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
+                continue
+            if 'Namespace 1 Formatted LBA Size' in line:  # NVMe
+                # Note: we will assume that there is only one namespace
+                self.logical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
+                continue
+
         if not self.abridged:
             if not interface == 'scsi':
                 # Parse the SMART table for below-threshold attributes and create

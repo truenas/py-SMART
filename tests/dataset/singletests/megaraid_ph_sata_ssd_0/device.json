@@ -743,6 +743,8 @@
         },
         "temperature": 32,
         "temperatures": {},
+        "logical_sector_size": 512,
+        "physical_sector_size": 4096,
         "capacity": "120 GB",
         "diags": {
             "Reallocated_Sector_Ct": "-",
@@ -765,6 +767,7 @@
             "Verifies_GB": "-",
             "Non-Medium_Errors": "-"
         },
+        "sector_size": 512,
         "size": 120000000000,
         "size_raw": "120 GB"
     }
