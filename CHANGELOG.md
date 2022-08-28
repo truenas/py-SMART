@@ -1,3 +1,7 @@
+Version 1.2.0
+=============
+- Added "sudo" property to the Smartctl class for POSIX systems.
+- Added global SMARTCTL object used for defaults.
 
 Version 1.1.0
 =============

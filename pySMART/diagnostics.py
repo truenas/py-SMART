@@ -21,9 +21,7 @@ represent SMART SCSI attributes associated with a `Device`.
 """
 
 import copy
-import re
 from typing import Dict
-from pySMART.utils import get_object_properties
 
 
 class Diagnostics(object):

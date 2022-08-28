@@ -38,13 +38,13 @@ from typing import Tuple, Union, List, Dict
 from .attribute import Attribute
 from .diagnostics import Diagnostics
 from .testentry import TestEntry
-from .smartctl import Smartctl
+from .smartctl import Smartctl, SMARTCTL
 from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 
 logger = logging.getLogger('pySMART')
 
 
-def smart_health_assement(disk_name, smartctl: Smartctl = Smartctl()):
+def smart_health_assement(disk_name, smartctl: Smartctl = SMARTCTL):
     """
     This function gets the SMART Health Status of the disk (IF the disk
     is SMART capable and smart is enabled on it else returns None).
@@ -75,7 +75,7 @@ class Device(object):
     (considered SATA) but excludes other external devices (USB, Firewire).
     """
 
-    def __init__(self, name: str, interface: str = None, abridged: bool = False, smart_options: Union[str, List[str]] = None, smartctl: Smartctl = Smartctl()):
+    def __init__(self, name: str, interface: str = None, abridged: bool = False, smart_options: Union[str, List[str]] = None, smartctl: Smartctl = SMARTCTL):
         """Instantiates and initializes the `pySMART.device.Device`."""
         if not (
                 interface is None or

@@ -17,7 +17,7 @@
 ################################################################
 from subprocess import Popen, PIPE
 from .utils import SMARTCTL_PATH
-from typing import List, Union, Tuple
+from typing import List, Tuple
 
 import logging
 import os
@@ -28,10 +28,29 @@ os.environ["LANG"] = "C"
 
 
 class Smartctl:
-    def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = []):
-        """Instantiates and initializes the Smartctl wrapper."""
+    def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = [], sudo: bool = False):
+        """
+        Instantiates and initializes the Smartctl wrapper.
+
+        Args:
+            smartctl_path (str | PathLike): path to the smartctl executable
+            options (List[str]): extra options to use when invoking smartctl
+            sudo (bool): if True use sudo when calling smartctl on POSIX systems
+        """
         self.smartctl_path = smartctl_path
         self.options: List[str] = options
+        self._sudo: bool = False
+        self.sudo = sudo
+
+    @property
+    def sudo(self):
+        return self._sudo
+
+    @sudo.setter
+    def sudo(self, value):
+        if value and os.name != 'posix':
+            logger.warn('Setting sudo=True is ignored on non-posix systems')
+        self._sudo = value
 
     def add_options(self, new_options: List[str]):
         """Adds options to be passed on some smartctl queries
@@ -54,10 +73,16 @@ class Smartctl:
         if not self.smartctl_path:
             raise FileNotFoundError("Command smartctl doesn't exist!")
 
+        popen_list = []
+        if self.sudo and os.name == 'posix':
+            popen_list.append('sudo')
+
+        popen_list.append(self.smartctl_path)
+
         if pass_options:
-            popen_list = [self.smartctl_path] + self.options + params
-        else:
-            popen_list = [self.smartctl_path] + params
+            popen_list.extend(self.options)
+
+        popen_list.extend(params)
 
         logger.trace("Executing the following cmd: {0}".format(popen_list))
 
@@ -136,3 +161,7 @@ class Smartctl:
             int: the smartctl process return code
         """
         return self.generic_call(['-d', disk_type, '-t', test_type, disk])[0]
+
+
+# A global smartctl object used as the defaults in Device and DeviceList.
+SMARTCTL = Smartctl()

@@ -158,7 +158,6 @@ def smartctl_type(interface_type: str) -> str:
 
 
 def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool = False) -> Dict[str, Any]:
-    type_name = type(obj).__name__
     prop_names = dir(obj)
 
     if deep_copy:
