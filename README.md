@@ -116,6 +116,11 @@ to be prompted for a password.
 >
 ```
 
+In general, it is recommended to run the base script with enough privileges to
+execute smartctl, but this is not possible in all cases, so this workaround is
+provided as a convenience. However, note that using sudo inside other
+non-terminal projects may cause dev-bugs/issues.
+
 Using the pySMART wrapper, Python applications be be rapidly developed to take
 advantage of the powerful features of smartmontools.
 
@@ -133,7 +138,7 @@ can be obtained through your package manager.  Likely one of the following::
 
 ```bash
 apt-get install smartmontools
-    or
+#    or
 yum install smartmontools
 ```
 

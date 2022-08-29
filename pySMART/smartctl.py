@@ -17,7 +17,7 @@
 ################################################################
 from subprocess import Popen, PIPE
 from .utils import SMARTCTL_PATH
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import logging
 import os
@@ -28,28 +28,55 @@ os.environ["LANG"] = "C"
 
 
 class Smartctl:
-    def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = [], sudo: bool = False):
+    def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = [], sudo: Union[bool | List[str]] = False):
         """
         Instantiates and initializes the Smartctl wrapper.
 
         Args:
             smartctl_path (str | PathLike): path to the smartctl executable
             options (List[str]): extra options to use when invoking smartctl
-            sudo (bool): if True use sudo when calling smartctl on POSIX systems
+            sudo (bool | List[str]):
+                if True use sudo -E when calling smartctl on POSIX systems.
+                If given as a list, then these arguments are passed to sudo.
+                (e.g. `sudo=['-u', 'foo']` will run `sudo -u foo ...`).
         """
         self.smartctl_path = smartctl_path
         self.options: List[str] = options
-        self._sudo: bool = False
+        self._sudo: Union[None, List[str]] = None
         self.sudo = sudo
 
     @property
     def sudo(self):
+        """
+        Example:
+            >>> # xdoctest: +REQUIRES(POSIX)
+            >>> self = Smartctl()
+            >>> print(f'self.sudo={self.sudo}')
+            >>> self.sudo = True
+            >>> print(f'self.sudo={self.sudo}')
+            >>> self.sudo = []
+            >>> print(f'self.sudo={self.sudo}')
+            >>> self.sudo = False
+            >>> print(f'self.sudo={self.sudo}')
+            self.sudo=None
+            self.sudo=['-E']
+            self.sudo=[]
+            self.sudo=None
+        """
         return self._sudo
 
     @sudo.setter
     def sudo(self, value):
-        if value and os.name != 'posix':
-            logger.warn('Setting sudo=True is ignored on non-posix systems')
+        if not isinstance(value, list):
+            if value:
+                # Setting sudo=True corresponds to ['-E'] by default
+                value = ['-E']
+            else:
+                # Falsy non-list values become None
+                value = None
+
+        if value is not None and os.name != 'posix':
+            logger.warn('Setting sudo is ignored on non-posix systems')
         self._sudo = value
 
     def add_options(self, new_options: List[str]):
@@ -74,8 +101,9 @@ class Smartctl:
             raise FileNotFoundError("Command smartctl doesn't exist!")
 
         popen_list = []
-        if self.sudo and os.name == 'posix':
-            popen_list.append('sudo')
+        if os.name == 'posix':
+            if self.sudo is not None:
+                popen_list.extend(['sudo'] + self.sudo)
 
         popen_list.append(self.smartctl_path)
 

@@ -117,6 +117,11 @@ to be prompted for a password.
     <SAT device on /dev/sdd mod:ST10000DM0004-1ZC101 sn:ZA2215HL>
     >
 
+In general, it is recommended to run the base script with enough privileges to
+execute smartctl, but this is not possible in all cases, so this workaround is
+provided as a convenience. However, note that using sudo inside other
+non-terminal projects may cause dev-bugs/issues.
+
 
 Using the pySMART wrapper, Python applications be be rapidly developed to take
 advantage of the powerful features of smartmontools.
