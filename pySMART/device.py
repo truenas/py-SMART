@@ -236,7 +236,7 @@ class Device(object):
             logger.trace(
                 "Determining interface of disk: {0}".format(self.name))
             raw, returncode = self.smartctl.generic_call(
-                ['-d', 'test', os.path.join('/dev/', self.name)])
+                ['-d', 'test', self.dev_reference])
 
             if len(raw) > 0:
                 # I do not like this parsing logic but it works for now!
@@ -273,6 +273,24 @@ class Device(object):
         # OR if in unabridged mode, then do it even without interface info
         if self.interface is not None or self.abridged:
             self.update()
+
+    @property
+    def dev_reference(self) -> str:
+        """The reference to the device as provided by smartctl.
+           - On unix-like systems, this is the path to the device. (example /dev/<name>)
+           - On MacOS, this is the name of the device. (example <name>)
+           - On Windows, this is the drive letter of the device. (example <drive letter>)
+
+        Returns:
+            str: The reference to the device as provided by smartctl.
+        """
+
+        # detect if we are on MacOS
+        if 'IOService' in self.name:
+            return self.name
+
+        # otherwise asume we are on unix-like systems
+        return os.path.join('/dev/', self.name)
 
     @property
     def capacity(self) -> str:
@@ -355,7 +373,7 @@ class Device(object):
         if all_info:
             state_dict.update({
                 'name': self.name,
-                'path': os.path.join('/dev/', self.name),
+                'path': self.dev_reference,
                 'serial': self.serial,
                 'is_ssd': self.is_ssd,
                 'rotation_rate': self.rotation_rate,
@@ -394,7 +412,7 @@ class Device(object):
             if action_lower == 'off':
                 return True, None
         raw, returncode = self.smartctl.generic_call(
-            ['-s', action_lower, os.path.join('/dev/', self.name)])
+            ['-s', action_lower, self.dev_reference])
 
         if returncode != 0:
             return False, raw
@@ -472,7 +490,7 @@ class Device(object):
                 smartctl_type(test),
                 '-l',
                 'sataphy',
-                os.path.join('/dev/', self.name)])
+                self.dev_reference])
 
             if 'GP Log 0x11' in raw[3]:
                 self.interface = test
@@ -484,14 +502,14 @@ class Device(object):
                 'scsi',
                 '-l',
                 'sasphy',
-                os.path.join('/dev/', self.name)])
+                self.dev_reference])
             if 'SAS SSP' in raw[4]:
                 self.interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
             # For these, see if smartmontools reports a transport protocol.
             else:
                 raw = self.smartctl.all(
-                    'scsi', os.path.join('/dev/', self.name))
+                    'scsi', self.dev_reference)
 
                 for line in raw:
                     if 'Transport protocol' in line and 'SAS' in line:
@@ -614,7 +632,7 @@ class Device(object):
         # Returns:
         * **(int):** The returncode of calling `smartctl -X device_path`
         """
-        return self.smartctl.test_stop(smartctl_type(self.interface), os.path.join('/dev/', self.name))
+        return self.smartctl.test_stop(smartctl_type(self.interface), self.dev_reference)
 
     def run_selftest(self, test_type, ETA_type='date'):
         """
@@ -679,7 +697,7 @@ class Device(object):
             return 2, "Unknown test type '{0}' requested.".format(test_type), None
 
         raw = self.smartctl.test_start(
-            interface, test_type, os.path.join('/dev/', self.name))
+            interface, test_type, self.dev_reference)
         _success = False
         _running = False
         for line in raw:
@@ -802,12 +820,12 @@ class Device(object):
         self.temperatures = {}
         if self.abridged:
             interface = None
-            raw = self.smartctl.info(os.path.join('/dev/', self.name))
+            raw = self.smartctl.info(self.dev_reference)
 
         else:
             interface = smartctl_type(self.interface)
             raw = self.smartctl.all(
-                interface, os.path.join('/dev/', self.name))
+                interface, self.dev_reference)
 
         parse_self_tests = False
         parse_running_test = False
@@ -1185,7 +1203,7 @@ class Device(object):
                             'scsi',
                             '-l',
                             'background',
-                            os.path.join('/dev/', self.name)
+                            self.dev_reference
                         ])
 
                     for line in raw:
