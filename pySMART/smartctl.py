@@ -28,7 +28,7 @@ os.environ["LANG"] = "C"
 
 
 class Smartctl:
-    def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = [], sudo: Union[bool | List[str]] = False):
+    def __init__(self, smartctl_path=SMARTCTL_PATH, options: List[str] = [], sudo: Union[bool, List[str]] = False):
         """
         Instantiates and initializes the Smartctl wrapper.
 
