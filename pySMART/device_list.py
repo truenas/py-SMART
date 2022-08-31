@@ -29,7 +29,7 @@ import re
 
 # pySMART module imports
 from .device import Device
-from .smartctl import Smartctl
+from .smartctl import Smartctl, SMARTCTL
 from typing import List
 
 
@@ -38,7 +38,7 @@ class DeviceList(object):
     Represents a list of all the storage devices connected to this computer.
     """
 
-    def __init__(self, init: bool = True, smartctl=Smartctl()):
+    def __init__(self, init: bool = True, smartctl=SMARTCTL):
         """Instantiates and optionally initializes the `DeviceList`.
 
         Args:
@@ -46,8 +46,9 @@ class DeviceList(object):
                 is populated with `Device` objects during instantiation. Setting init
                 to False will skip initialization and create an empty
                 `pySMART.device_list.DeviceList` object instead. Defaults to True.
-            smartctl ([type], optional): This stablish the smartctl wrapper. Defaults to Smartctl()
-                and should be only overwritten on tests
+            smartctl ([type], optional): This stablish the smartctl wrapper.
+                Defaults the global `SMARTCTL` object and should be only
+                overwritten on tests.
         """
 
         self.devices: List[Device] = []

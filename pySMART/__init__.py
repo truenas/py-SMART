@@ -83,6 +83,46 @@ one `Device` object for each detected storage device.
     >>> devlist.devices[0].attributes[5]  # Access Device data as above
     <SMART Attribute 'Reallocated_Sector_Ct' 173/140 raw:214>
 
+In the above cases if a new DeviceList is empty or a specific Device reports an
+"UNKNOWN INTERFACE", you are likely running without administrative privileges.
+On POSIX systems, you can request smartctl is run as a superuser by setting the
+sudo attribute of the global SMARTCTL object to True. Note this may cause you
+to be prompted for a password.
+
+    #!bash
+    >>> from pySMART import DeviceList
+    >>> from pySMART import Device
+    >>> sda = Device('/dev/sda')
+    >>> sda
+    <UNKNOWN INTERFACE device on /dev/sda mod:None sn:None>
+    >>> devlist = DeviceList()
+    >>> devlist
+    <DeviceList contents:
+    >
+    >>> from pySMART import SMARTCTL
+    >>> SMARTCTL.sudo = True
+    >>> sda = Device('/dev/sda')
+    >>> sda
+    [sudo] password for user:
+    <SAT device on /dev/sda mod:ST10000DM0004-1ZC101 sn:ZA20VNPT>
+    >>> devlist = DeviceList()
+    >>> devlist
+    <DeviceList contents:
+    <NVME device on /dev/nvme0 mod:Sabrent Rocket 4.0 1TB sn:03850709185D88300410>
+    <NVME device on /dev/nvme1 mod:Samsung SSD 970 EVO Plus 2TB sn:S59CNM0RB05028D>
+    <NVME device on /dev/nvme2 mod:Samsung SSD 970 EVO Plus 2TB sn:S59CNM0RB05113H>
+    <SAT device on /dev/sda mod:ST10000DM0004-1ZC101 sn:ZA20VNPT>
+    <SAT device on /dev/sdb mod:ST10000DM0004-1ZC101 sn:ZA22W366>
+    <SAT device on /dev/sdc mod:ST10000DM0004-1ZC101 sn:ZA22SPLG>
+    <SAT device on /dev/sdd mod:ST10000DM0004-1ZC101 sn:ZA2215HL>
+    >
+
+In general, it is recommended to run the base script with enough privileges to
+execute smartctl, but this is not possible in all cases, so this workaround is
+provided as a convenience. However, note that using sudo inside other
+non-terminal projects may cause dev-bugs/issues.
+
+
 Using the pySMART wrapper, Python applications be be rapidly developed to take
 advantage of the powerful features of smartmontools.
 
@@ -98,7 +138,7 @@ storage devices under Windows.  Without his work, my job would have been
 significantly more miserable. :)
 
 Having recently migrated my development from Batch to Python for Linux
-portabiity, I thought a simple wrapper for smartctl would save time in the
+portability, I thought a simple wrapper for smartctl would save time in the
 development of future automated test tools.
 """
 # autopep8: off
@@ -106,9 +146,14 @@ from .testentry import TestEntry
 from .attribute import Attribute
 from . import utils
 utils.configure_trace_logging()
+from .smartctl import SMARTCTL
 from .device_list import DeviceList
 from .device import Device, smart_health_assement
 # autopep8: on
 
 
-__version__ = '1.1.0'
+__version__ = '1.2.0'
+__all__ = [
+    'TestEntry', 'Attribute', 'utils', 'SMARTCTL', 'DeviceList', 'Device',
+    'smart_health_assement'
+]
