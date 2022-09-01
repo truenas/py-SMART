@@ -2,6 +2,8 @@ Version 1.2.0
 =============
 - Added property *vendor* to *Device* object
 - Added property *sector_size* to *Device* object
+- Added property *logical_sector_size* to *Device* object
+- Added property *physical_sector_size* to *Device* object
 - Added "sudo" property to the Smartctl class for POSIX systems.
 - Added global SMARTCTL object used for defaults.
 - Minor changes on parsing regexes
