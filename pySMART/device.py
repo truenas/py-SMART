@@ -207,12 +207,14 @@ class Device(object):
         we need to grep/regex the shit outta the normal "smartctl -a" output.
         In case the device have more than one temperature sensor the first value
         will be stored here too.
+        Note: Temperatures are always in Celsius (if possible).
         """
-        self.temperatures = {}
+        self.temperatures: Dict[int, int] = {}
         """
         **(dict of int): NVMe disks usually report multiple temperatures, which
         will be stored here if available. Keys are sensor numbers as reported in
         output data.
+        Note: Temperatures are always in Celsius (if possible).
         """
         self.logical_sector_size: int = None
         """
@@ -1141,6 +1143,10 @@ class Device(object):
                 try:
                     self.temperature = int(
                         line.split(':')[-1].strip().split()[0])
+
+                    if 'fahrenheit' in line.lower():
+                        self.temperature = int((self.temperature - 32) * 5 / 9)
+
                 except ValueError:
                     pass
 
@@ -1154,6 +1160,11 @@ class Device(object):
                         (tempsensor_number_s, tempsensor_value_s) = match.group(1, 2)
                         tempsensor_number = int(tempsensor_number_s)
                         tempsensor_value = int(tempsensor_value_s)
+
+                        if 'fahrenheit' in line.lower():
+                            tempsensor_value = int(
+                                (tempsensor_value - 32) * 5 / 9)
+
                         self.temperatures[tempsensor_number] = tempsensor_value
                         if self.temperature is None or tempsensor_number == 0:
                             self.temperature = tempsensor_value
