@@ -1,0 +1,5 @@
+smartctl 7.3 2022-02-28 r5338 [x86_64-w64-mingw32-w10-21H2] (sf-7.3-1)
+Copyright (C) 2002-22, Bruce Allen, Christian Franke, www.smartmontools.org
+
+sda: Device of type 'nvme' [NVMe] detected
+sda: Device of type 'nvme' [NVMe] opened
