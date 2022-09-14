@@ -17,11 +17,13 @@
 ################################################################
 """
 This module contains the definition of the `Diagnostics` class/structure, used to
-represent SMART SCSI attributes associated with a `Device`.
+represent different kinds of SMART SCSI health and attributes associated with a `Device`.
+
+Currently it merges the nvme (v2) and scsi diagnostics structures.
 """
 
 import copy
-from typing import Dict
+from typing import Dict, Union
 
 
 class Diagnostics(object):
@@ -36,6 +38,9 @@ class Diagnostics(object):
     def __init__(self):
         """Initialize the structure with every field set to None
         """
+        # Extra useful fields
+        self._block_size = 512
+        """The block size of the device in Bytes (512 for most disks)"""
 
         # Generic counters
         self.Reallocated_Sector_Ct: int = None
@@ -63,20 +68,102 @@ class Diagnostics(object):
         """**(float):** Total number of write operations that had an error but were corrected."""
         self.Corrected_Verifies: int = None
 
-        self.Uncorrected_Reads: int = None
+        self._Uncorrected_Reads: int = None
         """**(float):** Total number of read operations that had an uncorrectable error."""
-        self.Uncorrected_Writes: int = None
+        self._Uncorrected_Writes: int = None
         """**(float):** Total number of write operations that had an uncorrectable error."""
-        self.Uncorrected_Verifies: int = None
+        self._Uncorrected_Verifies: int = None
 
-        self.Reads_GB: float = None
+        self._Reads_GB: float = None
         """**(float):** Total number of GBs readed in the disk life."""
-        self.Writes_GB: float = None
+        self._Writes_GB: float = None
         """**(float):** Total number of GBs written in the disk life."""
-        self.Verifies_GB: float = None
+        self._Verifies_GB: float = None
+        """**(float):** Total number of GBs verified in the disk life."""
+
+        self._Reads_count: int = None
+        """**(int):** Total number of blocks readed in the disk life."""
+        self._Writes_count: int = None
+        """**(int):** Total number of blocks written in the disk life."""
+        self._Verifies_count: int = None
+        """**(int):** Total number of blocks verified in the disk life."""
 
         self.Non_Medium_Errors: int = None
         """**(int):** Other errors not caused by this disk."""
+
+    # Properties
+
+    @property
+    def Uncorrected_Reads(self):
+        return self._Uncorrected_Reads
+
+    @property
+    def Uncorrected_Writes(self):
+        return self._Uncorrected_Writes
+
+    @property
+    def Uncorrected_Verifies(self):
+        return self._Uncorrected_Verifies
+
+    @property
+    def Reads_GB(self) -> Union[float, None]:
+        if self._Reads_GB is not None:
+            return self._Reads_GB
+        elif self._Reads_count is not None:
+            return (self._Reads_count * self.block_size) / (1024.0 * 1024 * 1024)
+        else:
+            return None
+
+    @property
+    def Writes_GB(self) -> Union[float, None]:
+        if self._Writes_GB is not None:
+            return self._Writes_GB
+        elif self._Writes_count is not None:
+            return (self._Writes_count * self.block_size) / (1024.0 * 1024 * 1024)
+        else:
+            return None
+
+    @property
+    def Verifies_GB(self) -> Union[float, None]:
+        if self._Verifies_GB is not None:
+            return self._Verifies_GB
+        elif self._Verifies_count is not None:
+            return (self._Verifies_count * self.block_size) / (1024.0 * 1024 * 1024)
+        else:
+            return None
+
+    @property
+    def Reads_count(self) -> Union[int, None]:
+        if self._Reads_count is not None:
+            return self._Reads_count
+        elif self._Reads_GB is not None:
+            return int((self._Reads_GB * 1024 * 1024 * 1024) / self.block_size)
+        else:
+            return None
+
+    @property
+    def Writes_count(self) -> Union[int, None]:
+        if self._Writes_count is not None:
+            return self._Writes_count
+        elif self._Writes_GB is not None:
+            return (int)((self._Writes_GB * 1024 * 1024 * 1024) / self.block_size)
+        else:
+            return None
+
+    @property
+    def Verifies_count(self) -> Union[int, None]:
+        if self._Verifies_count is not None:
+            return self._Verifies_count
+        elif self._Verifies_GB is not None:
+            return (int)((self._Verifies_GB * 1024 * 1024 * 1024) / self.block_size)
+        else:
+            return None
+
+    @property
+    def block_size(self) -> int:
+        return self._block_size
+
+    # Methods
 
     def get_classic_format(self) -> Dict[str, str]:
         """This method pretends to generate the previously/depreceted diag dictionary structure
@@ -84,7 +171,14 @@ class Diagnostics(object):
         Returns:
             Dict[str,str]: the <1.1.0 PySMART diags structure
         """
-        ret_dict = copy.deepcopy(vars(self))
+
+        # Copy all the fields to a new dictionary that are not hidden
+        ret_dict = {k: v for k, v in vars(
+            self).items() if not k.startswith('_')}
+
+        # Add all the properties
+        ret_dict.update({k:  getattr(self, k) for k, v in vars(
+            Diagnostics).items() if type(v) is property})
 
         # replace Non_Medium_Errors -> Non-Medium_Errors
         ret_dict['Non-Medium_Errors'] = ret_dict['Non_Medium_Errors']

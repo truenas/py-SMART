@@ -86,7 +86,7 @@ class TestSingleDevice():
 
         if 'values' in device_data and 'diagnostics' in device_data['values']:
             diagnostics = device_data['values']['diagnostics']
-            assert dev.diagnostics.__getstate__() == diagnostics
+            assert get_object_properties(dev.diagnostics) == diagnostics
 
     @pytest.mark.parametrize("folder", folders)
     def test_device_attributes(self, folder):

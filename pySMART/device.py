@@ -1096,8 +1096,8 @@ class Device(object):
                         line_[1]) + int(line_[2]) + int(line_[3])
                 else:
                     self.diagnostics.Corrected_Reads = int(line_[4])
-                self.diagnostics.Reads_GB = float(line_[6])
-                self.diagnostics.Uncorrected_Reads = int(line_[7])
+                self.diagnostics._Reads_GB = float(line_[6])
+                self.diagnostics._Uncorrected_Reads = int(line_[7])
                 continue
 
             if 'write:' in line:
@@ -1110,8 +1110,8 @@ class Device(object):
                         line_[1]) + int(line_[2]) + int(line_[3])
                 else:
                     self.diagnostics.Corrected_Writes = int(line_[4])
-                self.diagnostics.Writes_GB = float(line_[6])
-                self.diagnostics.Uncorrected_Writes = int(line_[7])
+                self.diagnostics._Writes_GB = float(line_[6])
+                self.diagnostics._Uncorrected_Writes = int(line_[7])
                 continue
 
             if 'verify:' in line:
@@ -1124,8 +1124,8 @@ class Device(object):
                         line_[1]) + int(line_[2]) + int(line_[3])
                 else:
                     self.diagnostics.Corrected_Verifies = int(line_[4])
-                self.diagnostics.Verifies_GB = float(line_[6])
-                self.diagnostics.Uncorrected_Verifies = int(line_[7])
+                self.diagnostics._Verifies_GB = float(line_[6])
+                self.diagnostics._Uncorrected_Verifies = int(line_[7])
                 continue
 
             if 'non-medium error count' in line:
@@ -1184,10 +1184,14 @@ class Device(object):
                 if m:
                     self.logical_sector_size = int(m.group(1))
                     self.physical_sector_size = int(m.group(2))
+                    # set diagnostics block size to physical sector size
+                    self.diagnostics._block_size = self.physical_sector_size
                 continue
             if 'Logical block size:' in line:  # SCSI 1/2
                 self.logical_sector_size = int(
                     line.split(':')[1].strip().split(' ')[0])
+                # set diagnostics block size to logical sector size
+                self.diagnostics._block_size = self.logical_sector_size
                 continue
             if 'Physical block size:' in line:  # SCSI 2/2
                 self.physical_sector_size = int(
