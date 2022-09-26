@@ -40,6 +40,7 @@ from .diagnostics import Diagnostics
 from .testentry import TestEntry
 from .smartctl import Smartctl, SMARTCTL
 from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
+from .interface import *
 
 logger = logging.getLogger('pySMART')
 
@@ -223,6 +224,11 @@ class Device(object):
         self.physical_sector_size: int = None
         """
         **(int):** The physical sector size of the device.
+        """
+        self.if_attributes: Union[None, NvmeAttributes] = None
+        """
+        **(NvmeAttributes):** This object may vary for each device interface attributes.
+        It will store all data obtained from smartctl
         """
 
         if self.name is None:
@@ -838,7 +844,21 @@ class Device(object):
         self._test_progress = None
         # Lets skip the first couple of non-useful lines
         _stdout = raw[4:]
-        for line in _stdout:
+
+        #######################################
+        #   Dedicated interface attributes    #
+        #######################################
+
+        if interface == 'nvme':
+            self.if_attributes = NvmeAttributes(iter(_stdout))
+        else:
+            self.if_attributes = None
+
+        #######################################
+        #    Global / generic  attributes     #
+        #######################################
+        stdout_iter = iter(_stdout)
+        for line in stdout_iter:
             if line.strip() == '':  # Blank line stops sub-captures
                 if parse_self_tests is True:
                     parse_self_tests = False

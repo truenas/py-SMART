@@ -79,7 +79,7 @@ def update_device(folder, device_name, interface_name=None):
         json_dict['values']['tests'] = test_list
 
     # Direct transform for other properties
-    to_transform = ['diagnostics']
+    to_transform = ['diagnostics', 'if_attributes']
     for prop in json_dict['values']:
         if prop in to_transform:
             json_dict['values'][prop] = get_object_properties(

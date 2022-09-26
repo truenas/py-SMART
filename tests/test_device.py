@@ -65,7 +65,8 @@ class TestSingleDevice():
 
         if 'values' in device_data:
             values = device_data['values']
-            skip_values = ['attributes', 'tests', 'diagnostics']
+            skip_values = ['attributes', 'tests',
+                           'diagnostics', 'if_attributes']
             for value in values:
                 # Special comparators
                 if value == 'temperatures':
@@ -87,6 +88,31 @@ class TestSingleDevice():
         if 'values' in device_data and 'diagnostics' in device_data['values']:
             diagnostics = device_data['values']['diagnostics']
             assert get_object_properties(dev.diagnostics) == diagnostics
+
+    @pytest.mark.parametrize("folder", folders)
+    def test_device_iface_attributes(self, folder):
+        """
+        Test if dedicated-interface attributes have been correctly loaded
+        """
+
+        device_data = self.get_device_data(folder)
+
+        dev: Device = self.create_device(folder, device_data)
+
+        if 'values' in device_data and 'if_attributes' in device_data['values']:
+            if_attributes = device_data['values']['if_attributes']
+            if dev.if_attributes is None:
+                assert if_attributes is None
+            else:
+                dev_if_attributes = get_object_properties(
+                    dev.if_attributes)
+
+                # Handle NvmeAtrributes/errors
+                if 'errors' in dev_if_attributes:
+                    dev_if_attributes['errors'] = [get_object_properties(
+                        err) for err in dev_if_attributes['errors']]
+
+                assert dev_if_attributes == if_attributes
 
     @pytest.mark.parametrize("folder", folders)
     def test_device_attributes(self, folder):

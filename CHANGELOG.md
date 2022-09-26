@@ -7,6 +7,10 @@ Version 1.2.0
 - Added "sudo" property to the Smartctl class for POSIX systems.
 - Added global SMARTCTL object used for defaults.
 - Added sector sizes to diagnostics class and other minor improvements to its structure.
+- Added class NvmeAttributes to handle specific attributes on NVMe devices.
+- Added device property: `if_attributes` to return the device's interface attributes. This is
+    currently only implemented for NVMe devices but ATA/SCSI devices will be implemented in the
+    future.
 - Minor changes on parsing regexes
 - Checks for temperature units (farenheit) and converts to celsius
 - Fixed MacOS compatibility issues up to version 11.x

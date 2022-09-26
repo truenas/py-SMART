@@ -799,6 +799,7 @@
         "temperatures": {},
         "logical_sector_size": 512,
         "physical_sector_size": 4096,
+        "if_attributes": null,
         "capacity": "12.0 TB",
         "dev_reference": "/dev/sdau",
         "diags": {

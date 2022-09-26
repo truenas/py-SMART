@@ -86,7 +86,7 @@ setup(
     version=get_version(os.path.join('pySMART', '__init__.py')),
     author='Marc Herndon',
     author_email='Herndon.MarcT@gmail.com',
-    packages=['pySMART'],
+    packages=['pySMART', 'pySMART.interface'],
     url='https://github.com/truenas/py-SMART',
     license='GNU LGPLv2.1',
     description='Wrapper for smartctl (smartmontools)',

@@ -759,6 +759,7 @@
         "temperatures": {},
         "logical_sector_size": 512,
         "physical_sector_size": 4096,
+        "if_attributes": null,
         "capacity": "120 GB",
         "dev_reference": "/dev/bus/0",
         "diags": {

@@ -157,7 +157,13 @@ def smartctl_type(interface_type: str) -> str:
         return None
 
 
-def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool = False) -> Dict[str, Any]:
+def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool = False, recursive: bool = True) -> Dict[str, Any]:
+    if obj is None:
+        return None
+
+    if not hasattr(obj, '__dict__'):
+        return obj
+
     prop_names = dir(obj)
 
     if deep_copy:
@@ -166,13 +172,38 @@ def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool
         ret = vars(obj)
 
     available_types = ['dict', 'str', 'int', 'float', 'list', 'NoneType']
+    recursion_types = ['object', 'NvmeError']
 
     for prop_name in prop_names:
         prop_val = getattr(obj, prop_name)
         prop_val_type_name = type(prop_val).__name__
 
-        if (prop_name[0] != '_') and (prop_val_type_name in available_types) and (prop_name not in ret):
-            ret[prop_name] = prop_val
+        if (prop_name[0] != '_'):
+            # Get properties from objects
+            if (prop_val_type_name in available_types) and (prop_name not in ret):
+                ret[prop_name] = prop_val
+
+            # Do recursion
+            if recursive:
+                if prop_val_type_name in recursion_types:
+                    ret[prop_name] = get_object_properties(
+                        prop_val, deep_copy, remove_private, recursive)
+                elif prop_val_type_name == 'list':
+                    ret[prop_name] = []
+                    for item in prop_val:
+                        if type(item).__name__ in recursion_types:
+                            ret[prop_name].append(get_object_properties(
+                                item, deep_copy, remove_private, recursive))
+                        else:
+                            ret[prop_name].append(item)
+                elif prop_val_type_name == 'dict':
+                    ret[prop_name] = {}
+                    for key, value in prop_val.items():
+                        if type(value).__name__ in recursion_types:
+                            ret[prop_name][key] = get_object_properties(
+                                value, deep_copy, remove_private, recursive)
+                        else:
+                            ret[prop_name][key] = value
 
     if remove_private:
         for key in ret.keys():
