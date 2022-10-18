@@ -1016,14 +1016,15 @@ class Device(object):
                 self.test_capabilities['conveyance'] = 'No' not in line
                 continue
 
-            if 'Self-test supported' in line:
-                self.test_capabilities['short'] = 'No' not in line
+            if 'Selective Self-test supported' in line:
+                self.test_capabilities['selective'] = 'No' not in line
                 continue
 
-            # Note: Currently I have not added any support in pySMART for selective Self-tests
-            # Thus commenting it out
-            # if 'Selective Self-test supported' in line:
-            #     self.test_capabilities['selective'] = False if 'No' in line else True
+            if 'Self-test supported' in line:
+                self.test_capabilities['short'] = 'No' not in line
+                self.test_capabilities['long'] = 'No' not in line
+                continue
+
             # SMART Attribute table parsing
             if all_in(line, '0x0', '_') and not interface == 'nvme':
                 # Replace multiple space separators with a single space, then

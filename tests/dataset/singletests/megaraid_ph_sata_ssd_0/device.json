@@ -703,7 +703,7 @@
             "short": true,
             "long": true,
             "conveyance": true,
-            "selective": false
+            "selective": true
         },
         "tests": [
             {

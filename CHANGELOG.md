@@ -15,6 +15,8 @@ Version 1.2.0
 - Checks for temperature units (farenheit) and converts to celsius
 - Fixed MacOS compatibility issues up to version 11.x
 - Fixed some localization (lang) issues
+- Fixed issue ([#49](https://github.com/truenas/py-SMART/issues/49)) detecting selective test 
+    capabilities as short/long tests on device parsing
 
 Version 1.1.0
 =============
