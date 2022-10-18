@@ -1018,7 +1018,6 @@ class Device(object):
 
             if 'Self-test supported' in line:
                 self.test_capabilities['short'] = 'No' not in line
-                self.test_capabilities['short'] = 'No' not in line
                 continue
 
             # Note: Currently I have not added any support in pySMART for selective Self-tests
