@@ -37,10 +37,10 @@ from typing import Tuple, Union, List, Dict
 # pySMART module imports
 from .attribute import Attribute
 from .diagnostics import Diagnostics
-from .testentry import TestEntry
-from .smartctl import Smartctl, SMARTCTL
-from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 from .interface import *
+from .smartctl import Smartctl, SMARTCTL
+from .testentry import TestEntry
+from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 
 logger = logging.getLogger('pySMART')
 
