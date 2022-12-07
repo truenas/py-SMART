@@ -1116,7 +1116,7 @@ class Device(object):
                         line_[1]) + int(line_[2]) + int(line_[3])
                 else:
                     self.diagnostics.Corrected_Reads = int(line_[4])
-                self.diagnostics._Reads_GB = float(line_[6])
+                self.diagnostics._Reads_GB = float(line_[6].replace(',', '.'))
                 self.diagnostics._Uncorrected_Reads = int(line_[7])
                 continue
 
@@ -1130,7 +1130,7 @@ class Device(object):
                         line_[1]) + int(line_[2]) + int(line_[3])
                 else:
                     self.diagnostics.Corrected_Writes = int(line_[4])
-                self.diagnostics._Writes_GB = float(line_[6])
+                self.diagnostics._Writes_GB = float(line_[6].replace(',', '.'))
                 self.diagnostics._Uncorrected_Writes = int(line_[7])
                 continue
 
@@ -1144,7 +1144,8 @@ class Device(object):
                         line_[1]) + int(line_[2]) + int(line_[3])
                 else:
                     self.diagnostics.Corrected_Verifies = int(line_[4])
-                self.diagnostics._Verifies_GB = float(line_[6])
+                self.diagnostics._Verifies_GB = float(
+                    line_[6].replace(',', '.'))
                 self.diagnostics._Uncorrected_Verifies = int(line_[7])
                 continue
 
