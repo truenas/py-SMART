@@ -846,6 +846,15 @@ class Device(object):
         _stdout = raw[4:]
 
         #######################################
+        #           Encoding fixing           #
+        #######################################
+        # In some scenarios, smartctl returns some lines with a different/strange encoding
+        # This is a workaround to fix that
+        for i, line in enumerate(_stdout):
+            # character ' ' (U+202F) should be removed
+            _stdout[i] = line.replace('\u202f', '')
+
+        #######################################
         #   Dedicated interface attributes    #
         #######################################
 
