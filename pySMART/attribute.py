@@ -21,6 +21,7 @@ individual SMART attributes associated with a `Device`.
 """
 
 import re
+from typing import Optional
 
 
 class Attribute(object):
@@ -98,13 +99,13 @@ class Attribute(object):
         return int(self._worst)
 
     @property
-    def thresh(self) -> int:
+    def thresh(self) -> Optional[int]:
         """Gets the threshold value
 
         Returns:
             int: The attribute threshold field in integer format
         """
-        return int(self._thresh)
+        return None if self._thresh == '---' else int(self._thresh)
 
     @property
     def raw_int(self) -> int:
