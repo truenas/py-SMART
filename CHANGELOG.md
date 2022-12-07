@@ -1,3 +1,9 @@
+Version 1.2.1
+=============
+- Fixed some issues with scsi devices parsing ([#51](https://github.com/truenas/py-SMART/issues/51))
+- Fixed some issues with ATA attributes parsing on ssd+usb+arm devices ([#50](https://github.com/truenas/py-SMART/issues/50)
+- Removed support for python 3.6 (just for testing convenience, probably it will still works for months)
+
 Version 1.2.0
 =============
 - Added property *vendor* to *Device* object
