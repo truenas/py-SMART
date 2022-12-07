@@ -953,7 +953,8 @@ class Device(object):
 
             if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
-                self._capacity = line.replace(']', '[').split('[')[1].strip()
+                self._capacity = line.replace(']', '[').split('[')[
+                    1].strip().replace(',', '.')
 
             if 'SMART support' in line:
                 # self.smart_capable = 'Available' in line
