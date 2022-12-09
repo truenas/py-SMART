@@ -58,3 +58,6 @@ class TestListDevice():
         data = self.get_device_data(folder)
 
         device_data: DeviceList = self.create_list_device(folder, data)
+
+        # Check that the number of devices is correct
+        assert len(device_data.devices) == data['count']
