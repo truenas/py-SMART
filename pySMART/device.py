@@ -960,7 +960,7 @@ class Device(object):
             if any_in(line, 'Firmware Version', 'Revision'):
                 self.firmware = line.split(':')[1].strip()
 
-            if any_in(line, 'User Capacity', 'Namespace 1 Size/Capacity'):
+            if any_in(line, 'User Capacity', 'Total NVM Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
                 self._capacity = line.replace(']', '[').split('[')[
                     1].strip().replace(',', '.')
