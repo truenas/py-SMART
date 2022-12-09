@@ -348,7 +348,7 @@
             "Non-Medium_Errors": "-"
         },
         "sector_size": 512,
-        "size": 118000000000,
+        "size": 118999744512,
         "size_raw": "118 GB"
     }
 }

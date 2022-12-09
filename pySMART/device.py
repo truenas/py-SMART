@@ -118,8 +118,10 @@ class Device(object):
         occur. Otherwise, this value overrides the auto-detected type and could
         produce unexpected or no data.
         """
-        self._capacity: str = None
+        self._capacity: int = None
         """**(str):** Device's user capacity as reported directly by smartctl (RAW)."""
+        self._capacity_human: str = None
+        """**(str):** Device's user capacity (human readable) as reported directly by smartctl (RAW)."""
         self.firmware: str = None
         """**(str):** Device's firmware version."""
         self.smart_capable: bool = 'nvme' in self.name
@@ -308,7 +310,7 @@ class Device(object):
         Returns:
             str: The capacity in the raw smartctl format
         """
-        return self._capacity
+        return self._capacity_human
 
     @property
     def diags(self) -> Dict[str, str]:
@@ -323,7 +325,7 @@ class Device(object):
         Returns:
             str: The capacity in the raw smartctl format
         """
-        return self._capacity
+        return self._capacity_human
 
     @property
     def size(self) -> int:
@@ -334,7 +336,10 @@ class Device(object):
         """
         import humanfriendly
 
-        return humanfriendly.parse_size(self._capacity)
+        if self._capacity is not None:
+            return self._capacity
+        else:
+            return humanfriendly.parse_size(self._capacity_human)
 
     @property
     def sector_size(self) -> int:
@@ -385,7 +390,7 @@ class Device(object):
                 'serial': self.serial,
                 'is_ssd': self.is_ssd,
                 'rotation_rate': self.rotation_rate,
-                'capacity': self._capacity
+                'capacity': self._capacity_human
             })
         return state_dict
 
@@ -962,8 +967,16 @@ class Device(object):
 
             if any_in(line, 'User Capacity', 'Total NVM Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
-                self._capacity = line.replace(']', '[').split('[')[
-                    1].strip().replace(',', '.')
+                m = re.match(
+                    r'.*:\s+([\d,.]+)\s\D*\[?([^\]]+)?\]?', line.strip())
+
+                if m is not None:
+                    tmp = m.groups()
+                    self._capacity = int(
+                        tmp[0].strip().replace(',', '').replace('.', ''))
+
+                    if len(tmp) == 2 and tmp[1] is not None:
+                        self._capacity_human = tmp[1].strip().replace(',', '.')
 
             if 'SMART support' in line:
                 # self.smart_capable = 'Available' in line
