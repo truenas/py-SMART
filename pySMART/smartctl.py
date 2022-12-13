@@ -188,7 +188,7 @@ class Smartctl:
         """
         return self.generic_call(['-d', disk_type, '-X', disk])[1]
 
-    def test_start(self, disk_type: str, test_type: str, disk: str) -> int:
+    def test_start(self, disk_type: str, test_type: str, disk: str) -> Tuple[List[str], int]:
         """Queries smartctl with option -t <test_type>
 
         Args:
@@ -197,9 +197,9 @@ class Smartctl:
             disk (str): the disk os-full-path
 
         Returns:
-            int: the smartctl process return code
+            Tuple[List[str], int]: A raw line-by-line output from smartctl and the process return code
         """
-        return self.generic_call(['-d', disk_type, '-t', test_type, disk])[0]
+        return self.generic_call(['-d', disk_type, '-t', test_type, disk])
 
 
 # A global smartctl object used as the defaults in Device and DeviceList.

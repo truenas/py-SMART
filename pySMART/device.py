@@ -709,7 +709,7 @@ class Device(object):
         except KeyError:
             return 2, "Unknown test type '{0}' requested.".format(test_type), None
 
-        raw = self.smartctl.test_start(
+        raw, rc = self.smartctl.test_start(
             interface, test_type, self.dev_reference)
         _success = False
         _running = False
