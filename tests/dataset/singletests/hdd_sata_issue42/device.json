@@ -657,7 +657,7 @@
         "tests": [
             {
                 "_format": "ata",
-                "num": "1",
+                "num": 1,
                 "type": "Extended offline",
                 "status": "Self-test routine in progress",
                 "hours": "252",
@@ -670,7 +670,7 @@
             },
             {
                 "_format": "ata",
-                "num": "2",
+                "num": 2,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "238",
@@ -683,7 +683,7 @@
             },
             {
                 "_format": "ata",
-                "num": "3",
+                "num": 3,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "214",
@@ -696,7 +696,7 @@
             },
             {
                 "_format": "ata",
-                "num": "4",
+                "num": 4,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "190",
@@ -709,7 +709,7 @@
             },
             {
                 "_format": "ata",
-                "num": "5",
+                "num": 5,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "166",
@@ -722,7 +722,7 @@
             },
             {
                 "_format": "ata",
-                "num": "6",
+                "num": 6,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "142",
@@ -735,7 +735,7 @@
             },
             {
                 "_format": "ata",
-                "num": "7",
+                "num": 7,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "118",
@@ -748,7 +748,7 @@
             },
             {
                 "_format": "ata",
-                "num": "8",
+                "num": 8,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "94",

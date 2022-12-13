@@ -538,7 +538,7 @@
         "tests": [
             {
                 "_format": "ata",
-                "num": "1",
+                "num": 1,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "2376",
@@ -551,7 +551,7 @@
             },
             {
                 "_format": "ata",
-                "num": "2",
+                "num": 2,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "2376",
@@ -564,7 +564,7 @@
             },
             {
                 "_format": "ata",
-                "num": "3",
+                "num": 3,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "1501",
@@ -577,7 +577,7 @@
             },
             {
                 "_format": "ata",
-                "num": "4",
+                "num": 4,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "1499",
@@ -590,7 +590,7 @@
             },
             {
                 "_format": "ata",
-                "num": "5",
+                "num": 5,
                 "type": "Extended offline",
                 "status": "Aborted by host",
                 "hours": "1499",
@@ -603,7 +603,7 @@
             },
             {
                 "_format": "ata",
-                "num": "6",
+                "num": 6,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "1498",
@@ -616,7 +616,7 @@
             },
             {
                 "_format": "ata",
-                "num": "7",
+                "num": 7,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "1498",
@@ -629,7 +629,7 @@
             },
             {
                 "_format": "ata",
-                "num": "8",
+                "num": 8,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "1498",
@@ -642,7 +642,7 @@
             },
             {
                 "_format": "ata",
-                "num": "9",
+                "num": 9,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "1454",

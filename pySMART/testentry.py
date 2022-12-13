@@ -20,6 +20,8 @@ This module contains the definition of the `Test_Entry` class, used to
 represent individual entries in a `Device`'s SMART Self-test Log.
 """
 
+from typing import Optional
+
 
 class TestEntry(object):
     """
@@ -28,14 +30,14 @@ class TestEntry(object):
     smartctl.
     """
 
-    def __init__(self, format, num: int, test_type, status, hours, lba, remain=None, segment=None, sense=None, asc=None,
+    def __init__(self, format, num: Optional[int], test_type, status, hours, lba, remain=None, segment=None, sense=None, asc=None,
                  ascq=None):
         self._format = format
         """
         **(str):** Indicates whether this entry was taken from an 'ata' or
         'scsi' self-test log. Used to display the content properly.
         """
-        self.num: int = num
+        self.num: Optional[int] = num
         """
         **(int):** Entry's position in the log from 1 (most recent) to 21
         (least recent).  ATA logs save the last 21 entries while SCSI logs
@@ -91,12 +93,8 @@ class TestEntry(object):
         """
 
     def __getstate__(self):
-        try:
-            num = int(self.num)
-        except:
-            num = None
         return {
-            'num': num,
+            'num': self.num,
             'type': self.type,
             'status': self.status,
             'hours': self.hours,

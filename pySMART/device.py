@@ -32,7 +32,7 @@ import os
 import re
 import warnings
 from time import time, strptime, mktime, sleep
-from typing import Tuple, Union, List, Dict
+from typing import Tuple, Union, List, Dict, Optional
 
 # pySMART module imports
 from .attribute import Attribute
@@ -76,7 +76,7 @@ class Device(object):
     (considered SATA) but excludes other external devices (USB, Firewire).
     """
 
-    def __init__(self, name: str, interface: str = None, abridged: bool = False, smart_options: Union[str, List[str]] = None, smartctl: Smartctl = SMARTCTL):
+    def __init__(self, name: str, interface: Optional[str] = None, abridged: bool = False, smart_options: Union[str, List[str], None] = None, smartctl: Smartctl = SMARTCTL):
         """Instantiates and initializes the `pySMART.device.Device`."""
         if not (
                 interface is None or
@@ -97,13 +97,13 @@ class Device(object):
         **(str):** Device's hardware ID, without the '/dev/' prefix.
         (ie: sda (Linux), pd0 (Windows))
         """
-        self.model: str = None
+        self.model: Optional[str] = None
         """**(str):** Device's model number."""
-        self.serial: str = None
+        self.serial: Optional[str] = None
         """**(str):** Device's serial number."""
-        self.vendor: str = None
+        self.vendor: Optional[str] = None
         """**(str):** Device's vendor (if any)."""
-        self.interface: str = None if interface == 'UNKNOWN INTERFACE' else interface
+        self.interface: Optional[str] = None if interface == 'UNKNOWN INTERFACE' else interface
         """
         **(str):** Device's interface type. Must be one of:
             * **ATA** - Advanced Technology Attachment
@@ -118,11 +118,11 @@ class Device(object):
         occur. Otherwise, this value overrides the auto-detected type and could
         produce unexpected or no data.
         """
-        self._capacity: int = None
+        self._capacity: Optional[int] = None
         """**(str):** Device's user capacity as reported directly by smartctl (RAW)."""
-        self._capacity_human: str = None
+        self._capacity_human: Optional[str] = None
         """**(str):** Device's user capacity (human readable) as reported directly by smartctl (RAW)."""
-        self.firmware: str = None
+        self.firmware: Optional[str] = None
         """**(str):** Device's firmware version."""
         self.smart_capable: bool = 'nvme' in self.name
         """
@@ -134,7 +134,7 @@ class Device(object):
         **(bool):** True if the device supports SMART (or SCSI equivalent) and
         has the feature set enabled. False otherwise.
         """
-        self.assessment: str = None
+        self.assessment: Optional[str] = None
         """
         **(str):** SMART health self-assessment as reported by the device.
         """
@@ -148,12 +148,12 @@ class Device(object):
         **(bool):** True if this device is a Solid State Drive.
         False otherwise.
         """
-        self.rotation_rate: int = None
+        self.rotation_rate: Optional[int] = None
         """
         **(int):** The Roatation Rate of the Drive if it is not a SSD.
         The Metric is RPM.
         """
-        self.attributes: List[Attribute] = [None] * 256
+        self.attributes: List[Optional[Attribute]] = [None] * 256
         """
         **(list of `Attribute`):** Contains the complete SMART table
         information for this device, as provided by smartctl. Indexed by
@@ -204,7 +204,7 @@ class Device(object):
         SAS and SCSI devices, since ATA/SATA SMART attributes are manufacturer
         proprietary.
         """
-        self.temperature: int = None
+        self.temperature: Optional[int] = None
         """
         **(int or None): Since SCSI disks do not report attributes like ATA ones
         we need to grep/regex the shit outta the normal "smartctl -a" output.
@@ -219,11 +219,11 @@ class Device(object):
         output data.
         Note: Temperatures are always in Celsius (if possible).
         """
-        self.logical_sector_size: int = None
+        self.logical_sector_size: Optional[int] = None
         """
         **(int):** The logical sector size of the device (or LBA).
         """
-        self.physical_sector_size: int = None
+        self.physical_sector_size: Optional[int] = None
         """
         **(int):** The physical sector size of the device.
         """
@@ -303,7 +303,7 @@ class Device(object):
         return os.path.join('/dev/', self.name)
 
     @property
-    def capacity(self) -> str:
+    def capacity(self) -> Optional[str]:
         """Returns the capacity in the raw smartctl format.
         This may be deprecated in the future and its only retained for compatibility.
 
@@ -319,7 +319,7 @@ class Device(object):
         return self.diagnostics.get_classic_format()
 
     @property
-    def size_raw(self) -> str:
+    def size_raw(self) -> Optional[str]:
         """Returns the capacity in the raw smartctl format.
 
         Returns:
@@ -338,8 +338,10 @@ class Device(object):
 
         if self._capacity is not None:
             return self._capacity
-        else:
+        elif self._capacity_human is not None:
             return humanfriendly.parse_size(self._capacity_human)
+        else:
+            return 0
 
     @property
     def sector_size(self) -> int:
@@ -412,18 +414,18 @@ class Device(object):
         """
         # Lets make the action verb all lower case
         if self.interface == 'nvme':
-            return False, 'NVME devices do not currently support toggling SMART enabled'
+            return False, ['NVME devices do not currently support toggling SMART enabled']
         action_lower = action.lower()
         if action_lower not in ['on', 'off']:
-            return False, 'Unsupported action {0}'.format(action)
+            return False, ['Unsupported action {0}'.format(action)]
         # Now lets check if the device's smart enabled status is already that of what
         # the supplied action is intending it to be. If so then just return successfully
         if self.smart_enabled:
             if action_lower == 'on':
-                return True, None
+                return True, []
         else:
             if action_lower == 'off':
-                return True, None
+                return True, []
         raw, returncode = self.smartctl.generic_call(
             ['-s', action_lower, self.dev_reference])
 
@@ -432,10 +434,10 @@ class Device(object):
         # if everything worked out so far lets perform an update() and check the result
         self.update()
         if action_lower == 'off' and self.smart_enabled:
-            return False, 'Failed to turn SMART off.'
+            return False, ['Failed to turn SMART off.']
         if action_lower == 'on' and not self.smart_enabled:
-            return False, 'Failed to turn SMART on.'
-        return True, None
+            return False, ['Failed to turn SMART on.']
+        return True, []
 
     def all_attributes(self, print_fn=print):
         """
@@ -936,6 +938,12 @@ class Device(object):
                     remain = parsed[3]
                     hours = parsed[4]
                     lba = parsed[5]
+
+                    try:
+                        num = int(num)
+                    except:
+                        num = None
+
                     self.tests.append(
                         TestEntry(format, num, test_type, status,
                                   hours, lba, remain=remain)

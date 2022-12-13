@@ -572,7 +572,7 @@
         "tests": [
             {
                 "_format": "ata",
-                "num": "1",
+                "num": 1,
                 "type": "Short offline",
                 "status": "Completed without error",
                 "hours": "47396",
