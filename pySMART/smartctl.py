@@ -114,11 +114,22 @@ class Smartctl:
 
         logger.trace("Executing the following cmd: {0}".format(popen_list))
 
-        cmd = Popen(popen_list, stdout=PIPE, stderr=PIPE)
+        return self._exec(popen_list)
 
-        _stdout, _stderr = [i.decode('utf8') for i in cmd.communicate()]
+    def _exec(self, cmd: List[str]) -> Tuple[List[str], int]:
+        """Executes a command and returns the output and the return code
 
-        return _stdout.split('\n'), cmd.returncode
+        Args:
+            cmd (List[str]): The command to be executed
+
+        Returns:
+            Tuple[List[str], int]: A raw line-by-line output from smartctl and the process return code
+        """
+        proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
+
+        _stdout, _stderr = [i.decode('utf8') for i in proc.communicate()]
+
+        return _stdout.split('\n'), proc.returncode
 
     def scan(self) -> List[str]:
         """Queries smartctl with option --scan-open
