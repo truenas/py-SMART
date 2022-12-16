@@ -426,8 +426,12 @@ class Device(object):
         else:
             if action_lower == 'off':
                 return True, []
-        raw, returncode = self.smartctl.generic_call(
-            ['-s', action_lower, self.dev_reference])
+        if self.interface is not None:
+            raw, returncode = self.smartctl.generic_call(
+                ['-s', action_lower, '-d', self.interface, self.dev_reference])
+        else:
+            raw, returncode = self.smartctl.generic_call(
+                ['-s', action_lower, self.dev_reference])
 
         if returncode != 0:
             return False, raw
