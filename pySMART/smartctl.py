@@ -154,30 +154,37 @@ class Smartctl:
         else:
             return self.generic_call(['--health', disk])[0]
 
-    def info(self, disk: str) -> List[str]:
+    def info(self, disk: str, interface: Optional[str] = None) -> List[str]:
         """Queries smartctl with option --info
 
         Args:
             disk (str): the disk os-full-path
+            interface (str, optional): the disk interface (ata,scsi,nvme,...). Defaults to None.
 
         Returns:
             List[str]: A raw line-by-line output from smartctl
         """
 
-        return self.generic_call(['--info', disk], pass_options=True)[0]
+        if interface:
+            return self.generic_call(['-d', interface, '--info', disk], pass_options=True)[0]
+        else:
+            return self.generic_call(['--info', disk], pass_options=True)[0]
 
-    def all(self, disk_type: str, disk: str) -> List[str]:
+    def all(self, disk: str, interface: Optional[str] = None) -> List[str]:
         """Queries smartctl with option --all
 
         Args:
-            disk_type (str): the disk type
             disk (str): the disk os-full-path
+            interface (str, optional): the disk interface (ata,scsi,nvme,...). Defaults to None.
 
         Returns:
             List[str]: A raw line-by-line output from smartctl
         """
 
-        return self.generic_call(['-d', disk_type, '--all', disk], pass_options=True)[0]
+        if interface:
+            return self.generic_call(['-d', interface, '--all', disk], pass_options=True)[0]
+        else:
+            return self.generic_call(['--all', disk], pass_options=True)[0]
 
     def test_stop(self, disk_type: str, disk: str) -> int:
         """Queries smartctl with option -X

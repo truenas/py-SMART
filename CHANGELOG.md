@@ -1,8 +1,15 @@
 Version 1.2.2
 =============
+- Fixing more python typing issues
+- Fixed issue with device interfaces on some methods [#56](https://github.com/truenas/py-SMART/issues/56)
+- Smartctl now has exec method for better overloadings. Requested in [#54](https://github.com/truenas/py-SMART/issues/54)
 - Fix disk capacity parsing: Now we retrieve the human and the "real" values. Size() will return the real/machine value instead the expanded human value wich introduces some inaccuracies.
 - Fix disk capacity parsing on NVMe devices ([#53](https://github.com/truenas/py-SMART/issues/53))
 - Fixed some strange issues with char \u202f ([#52](https://github.com/truenas/py-SMART/issues/52))
+- **Breaking changes**
+    - **smartctl.all**:
+        - Paramerers where reordered to make it more consistent with the rest of the library.
+
 Version 1.2.1
 =============
 - Fixed some issues with scsi devices parsing ([#51](https://github.com/truenas/py-SMART/issues/51))

@@ -536,7 +536,7 @@ class Device(object):
             # For these, see if smartmontools reports a transport protocol.
             else:
                 raw = self.smartctl.all(
-                    'scsi', self.dev_reference)
+                    self.dev_reference, 'scsi')
 
                 for line in raw:
                     if 'Transport protocol' in line and 'SAS' in line:
@@ -852,7 +852,7 @@ class Device(object):
         else:
             interface = smartctl_type(self.interface)
             raw = self.smartctl.all(
-                interface, self.dev_reference)
+                self.dev_reference, interface)
 
         parse_self_tests = False
         parse_running_test = False
