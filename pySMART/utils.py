@@ -26,7 +26,7 @@ import logging
 import logging.handlers
 import os
 import traceback
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from shutil import which
 
 _srcfile = __file__
@@ -137,7 +137,7 @@ def smartctl_isvalid_type(interface_type: str) -> bool:
         return False
 
 
-def smartctl_type(interface_type: str) -> str:
+def smartctl_type(interface_type: Optional[str]) -> Optional[str]:
     """This method basically searchs on smartctl_type_dict to convert from internal
        smartctl interface type to an understable type for smartctl. However, further
        transforms may be performed for some special interfaces
@@ -149,6 +149,9 @@ def smartctl_type(interface_type: str) -> str:
         str: Returns the corresponding smartctl interface_type that matches with the internal interface representation.
              In case it is not supported, None would be returned
     """
+    if interface_type is None:
+        return 'test'
+
     if interface_type in smartctl_type_dict:
         return smartctl_type_dict[interface_type]
     elif 'megaraid,' in interface_type:
@@ -157,7 +160,7 @@ def smartctl_type(interface_type: str) -> str:
         return None
 
 
-def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool = False, recursive: bool = True) -> Dict[str, Any]:
+def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool = False, recursive: bool = True) -> Optional[Dict[str, Any]]:
     if obj is None:
         return None
 
