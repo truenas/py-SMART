@@ -32,7 +32,7 @@ import os
 import re
 import warnings
 from time import time, strptime, mktime, sleep
-from typing import Tuple, Union, List, Dict, Optional, Literal
+from typing import Tuple, Union, List, Dict, Optional
 
 # pySMART module imports
 from .attribute import Attribute
@@ -45,7 +45,7 @@ from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 logger = logging.getLogger('pySMART')
 
 
-def smart_health_assement(disk_name: str, interface: Optional[str] = None, smartctl: Smartctl = SMARTCTL) -> Optional[Literal['PASS', 'FAIL']]:
+def smart_health_assement(disk_name: str, interface: Optional[str] = None, smartctl: Smartctl = SMARTCTL) -> Optional[str]:
     """
     This function gets the SMART Health Status of the disk (IF the disk
     is SMART capable and smart is enabled on it else returns None).
