@@ -32,7 +32,7 @@ import os
 import re
 import warnings
 from time import time, strptime, mktime, sleep
-from typing import Tuple, Union, List, Dict, Optional
+from typing import Tuple, Union, List, Dict, Optional, Literal
 
 # pySMART module imports
 from .attribute import Attribute
@@ -45,16 +45,24 @@ from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 logger = logging.getLogger('pySMART')
 
 
-def smart_health_assement(disk_name, smartctl: Smartctl = SMARTCTL):
+def smart_health_assement(disk_name, interface: Optional[str] = None, smartctl: Smartctl = SMARTCTL) -> Optional[Literal['PASS', 'FAIL']]:
     """
     This function gets the SMART Health Status of the disk (IF the disk
     is SMART capable and smart is enabled on it else returns None).
     This function is to be used only in abridged mode and not otherwise,
     since in non-abridged mode update gets this information anyways.
+
+    Args:
+        disk_name (str): name of the disk
+        interface (str, optional): interface type of the disk (e.g. 'sata', 'scsi', 'nvme',... Defaults to None.)
+
+    Returns:
+        str: SMART Health Status of the disk. Returns None if the disk is not SMART capable or smart is not enabled on it.
+             Possible values are 'PASS', 'FAIL' or None.
     """
     assessment = None
     raw = smartctl.health(os.path.join(
-        '/dev/', disk_name.replace('nvd', 'nvme')))
+        '/dev/', disk_name.replace('nvd', 'nvme')), interface)
     line = raw[4]  # We only need this line
     if 'SMART overall-health self-assessment' in line:  # ATA devices
         if line.split(':')[1].strip() == 'PASSED':

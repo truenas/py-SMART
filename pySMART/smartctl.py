@@ -17,7 +17,7 @@
 ################################################################
 from subprocess import Popen, PIPE
 from .utils import SMARTCTL_PATH
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 
 import logging
 import os
@@ -139,17 +139,20 @@ class Smartctl:
         """
         return self.generic_call(['--scan-open'])[0]
 
-    def health(self, disk: str) -> List[str]:
+    def health(self, disk: str, interface: Optional[str] = None) -> List[str]:
         """Queries smartctl with option --health
 
         Args:
             disk (str): the disk os-full-path
+            interface (str, optional): the disk interface (ata,scsi,nvme,...). Defaults to None.
 
         Returns:
             List[str]: A raw line-by-line output from smartctl
         """
-
-        return self.generic_call(['--health', disk])[0]
+        if interface:
+            return self.generic_call(['-d', interface, '--health', disk])[0]
+        else:
+            return self.generic_call(['--health', disk])[0]
 
     def info(self, disk: str) -> List[str]:
         """Queries smartctl with option --info
