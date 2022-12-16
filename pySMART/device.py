@@ -45,7 +45,7 @@ from .utils import smartctl_type, smartctl_isvalid_type, any_in, all_in
 logger = logging.getLogger('pySMART')
 
 
-def smart_health_assement(disk_name, interface: Optional[str] = None, smartctl: Smartctl = SMARTCTL) -> Optional[Literal['PASS', 'FAIL']]:
+def smart_health_assement(disk_name: str, interface: Optional[str] = None, smartctl: Smartctl = SMARTCTL) -> Optional[Literal['PASS', 'FAIL']]:
     """
     This function gets the SMART Health Status of the disk (IF the disk
     is SMART capable and smart is enabled on it else returns None).
