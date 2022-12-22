@@ -1,2 +1,3 @@
 /dev/nvme0 -d nvme # /dev/nvme0, NVMe device
 /dev/nvme1 -d nvme # /dev/nvme1, NVMe device
+/dev/bus/0 -d sat+megaraid,60 # /dev/bus/0 [megaraid_disk_60] [SAT], ATA device
