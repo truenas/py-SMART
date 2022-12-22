@@ -116,6 +116,24 @@ class Smartctl:
 
         return self._exec(popen_list)
 
+    def try_generic_call(self, params: List[str], pass_options=False) -> Tuple[List[str], int]:
+        """Generic smartctl query
+           However, if the command fails or crashes, it will return an empty list and a return code of 1 instead of raising an exception
+
+        Args:
+            params (List[str]): The list of arguments to be passed
+            pass_options (bool, optional): If true options list would be passed. Defaults to False.
+
+        Returns:
+            Tuple[List[str], int]: A raw line-by-line output from smartctl and the process return code
+        """
+
+        try:
+            return self.generic_call(params, pass_options)
+        except Exception as e:
+            logger.debug(f"Exception while executing smartctl: {e}")
+            return [], 1
+
     def _exec(self, cmd: List[str]) -> Tuple[List[str], int]:
         """Executes a command and returns the output and the return code
 

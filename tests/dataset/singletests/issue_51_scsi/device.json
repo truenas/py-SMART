@@ -347,7 +347,7 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
-        "interface": "scsi",
+        "interface": "sas",
         "sector_size": 4096,
         "size": 12000138625024,
         "size_raw": "12.0 TB",

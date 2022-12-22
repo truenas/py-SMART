@@ -302,21 +302,17 @@ class Device(object):
                  None if the interface type could not be determined.
         """
         # Try to get the fine-tuned interface type
-        try:
-            return self._classify()
-        except:
-            # If something fails, return the generic interface type
-            pass
+        fineType = self._classify()
 
-        # For now, return the same as smartctl_interface except for megaraid
-        if 'megaraid' in self._interface:
+        # If return still contains a megaraid, just asume it's type
+        if 'megaraid' in fineType:
             # If any attributes is not None and has at least non None value, then it is a sat+megaraid device
             if self.attributes and any(self.attributes):
                 return 'ata'
             else:
                 return 'sas'
 
-        return self._interface
+        return fineType
 
     @property
     def smartctl_interface(self) -> Optional[str]:
@@ -548,33 +544,38 @@ class Device(object):
         # SCSI devices might be SCSI, SAS or SAT
         # ATA device might be ATA or SATA
         if fine_interface in ['scsi', 'ata'] or 'megaraid' in fine_interface:
-            test = 'sat' if fine_interface == 'scsi' else 'sata'
+            if 'megaraid' in fine_interface:
+                if not 'sat+' in fine_interface:
+                    test = 'sat'+fine_interface
+                else:
+                    test = fine_interface
+            else:
+                test = 'sat' if fine_interface == 'scsi' else 'sata'
             # Look for a SATA PHY to detect SAT and SATA
-            raw, returncode = self.smartctl.generic_call([
+            raw, returncode = self.smartctl.try_generic_call([
                 '-d',
                 smartctl_type(test),
                 '-l',
                 'sataphy',
                 self.dev_reference])
 
-            if 'GP Log 0x11' in raw[3]:
+            if returncode == 0 and 'GP Log 0x11' in raw[3]:
                 fine_interface = test
         # If device type is still SCSI (not changed to SAT above), then
         # check for a SAS PHY
         if fine_interface in ['scsi'] or 'megaraid' in fine_interface:
-            raw, returncode = self.smartctl.generic_call([
+            raw, returncode = self.smartctl.try_generic_call([
                 '-d',
                 smartctl_type(fine_interface),
                 '-l',
                 'sasphy',
                 self.dev_reference])
-            if 'SAS SSP' in raw[4]:
+            if returncode == 0 and 'SAS SSP' in raw[4]:
                 fine_interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
             # For these, see if smartmontools reports a transport protocol.
             else:
-                raw = self.smartctl.all(
-                    self.dev_reference, 'scsi')
+                raw = self.smartctl.all(self.dev_reference, fine_interface)
 
                 for line in raw:
                     if 'Transport protocol' in line and 'SAS' in line:
