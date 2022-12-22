@@ -7,7 +7,6 @@
         "model": "KCM61VUL1T60",
         "serial": "61B0A067T1K8",
         "vendor": null,
-        "interface": "nvme",
         "firmware": "0105",
         "smart_capable": true,
         "smart_enabled": true,
@@ -389,8 +388,10 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
+        "interface": "nvme",
         "sector_size": 512,
         "size": 1600321314816,
-        "size_raw": "1.60 TB"
+        "size_raw": "1.60 TB",
+        "smartctl_interface": "nvme"
     }
 }

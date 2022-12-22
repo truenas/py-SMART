@@ -7,7 +7,6 @@
         "model": "HUS726040AL5210",
         "serial": "XXXXXXXX",
         "vendor": "HGST",
-        "interface": "megaraid,44",
         "firmware": "A907",
         "smart_capable": true,
         "smart_enabled": true,
@@ -362,8 +361,10 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
+        "interface": "sas",
         "sector_size": 512,
         "size": 4000787030016,
-        "size_raw": "4.00 TB"
+        "size_raw": "4.00 TB",
+        "smartctl_interface": "megaraid,44"
     }
 }

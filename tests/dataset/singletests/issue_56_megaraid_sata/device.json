@@ -7,7 +7,6 @@
         "model": "INTEL SSDSC2KB480G8",
         "serial": "PHYF110005YA480BGN",
         "vendor": null,
-        "interface": "sat+megaraid,60",
         "firmware": "XCV10132",
         "smart_capable": true,
         "smart_enabled": true,
@@ -807,8 +806,10 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
+        "interface": "ata",
         "sector_size": 512,
         "size": 480103981056,
-        "size_raw": "480 GB"
+        "size_raw": "480 GB",
+        "smartctl_interface": "sat+megaraid,60"
     }
 }

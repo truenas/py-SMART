@@ -7,7 +7,6 @@
         "model": "OOS12000G",
         "serial": "00008AXB",
         "vendor": null,
-        "interface": "ata",
         "firmware": "OOS1",
         "smart_capable": true,
         "smart_enabled": true,
@@ -827,8 +826,10 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
+        "interface": "ata",
         "sector_size": 512,
         "size": 12000138625024,
-        "size_raw": "12.0 TB"
+        "size_raw": "12.0 TB",
+        "smartctl_interface": "ata"
     }
 }

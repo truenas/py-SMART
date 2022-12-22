@@ -6,7 +6,6 @@
         "model": "KBG30ZMV256G TOSHIBA",
         "serial": "XXXXXXXXXXXX",
         "vendor": null,
-        "interface": "nvme",
         "firmware": "ADHA0101",
         "smart_capable": true,
         "smart_enabled": true,
@@ -390,8 +389,10 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
+        "interface": "nvme",
         "sector_size": 512,
         "size": 256060514304,
-        "size_raw": "256 GB"
+        "size_raw": "256 GB",
+        "smartctl_interface": "nvme"
     }
 }

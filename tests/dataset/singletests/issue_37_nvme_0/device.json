@@ -7,7 +7,6 @@
         "model": "Samsung SSD 970 EVO Plus 500GB",
         "serial": "S4EVNX0NA32843N",
         "vendor": null,
-        "interface": "nvme",
         "firmware": "2B2QEXM7",
         "smart_capable": true,
         "smart_enabled": true,
@@ -373,8 +372,10 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
+        "interface": "nvme",
         "sector_size": 512,
         "size": 500107862016,
-        "size_raw": "500 GB"
+        "size_raw": "500 GB",
+        "smartctl_interface": "nvme"
     }
 }

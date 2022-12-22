@@ -7,7 +7,6 @@
         "model": "HUH721212AL4204",
         "serial": "8DG3J2ZD",
         "vendor": "HGST",
-        "interface": "scsi",
         "firmware": "C3D0",
         "smart_capable": true,
         "smart_enabled": true,
@@ -348,8 +347,10 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
+        "interface": "scsi",
         "sector_size": 4096,
         "size": 12000138625024,
-        "size_raw": "12.0 TB"
+        "size_raw": "12.0 TB",
+        "smartctl_interface": "scsi"
     }
 }

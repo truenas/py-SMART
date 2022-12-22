@@ -7,7 +7,6 @@
         "model": "INTEL SSDSC2BB120G6",
         "serial": "BXXXXXXXXXXXXXXXXN",
         "vendor": null,
-        "interface": "megaraid,28",
         "firmware": "G2010130",
         "smart_capable": true,
         "smart_enabled": true,
@@ -787,8 +786,10 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
+        "interface": "ata",
         "sector_size": 512,
         "size": 120034123776,
-        "size_raw": "120 GB"
+        "size_raw": "120 GB",
+        "smartctl_interface": "megaraid,28"
     }
 }

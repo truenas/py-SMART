@@ -7,7 +7,6 @@
         "model": "APPLE SSD SM0256F",
         "serial": "S1XXXXXXXXXXXX",
         "vendor": null,
-        "interface": "ata",
         "firmware": "UXM2JA1Q",
         "smart_capable": true,
         "smart_enabled": true,
@@ -569,8 +568,10 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
+        "interface": "ata",
         "sector_size": 512,
         "size": 251000193024,
-        "size_raw": "251 GB"
+        "size_raw": "251 GB",
+        "smartctl_interface": "ata"
     }
 }

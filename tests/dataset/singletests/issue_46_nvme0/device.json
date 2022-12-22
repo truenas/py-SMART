@@ -7,7 +7,6 @@
         "model": "WDC PC SN730 SDBPNTY-512G-1101",
         "serial": "211515805454",
         "vendor": null,
-        "interface": "nvme",
         "firmware": "11190001",
         "smart_capable": true,
         "smart_enabled": true,
@@ -370,8 +369,10 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
+        "interface": "nvme",
         "sector_size": 512,
         "size": 512110190592,
-        "size_raw": "512 GB"
+        "size_raw": "512 GB",
+        "smartctl_interface": "nvme"
     }
 }

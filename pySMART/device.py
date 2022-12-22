@@ -111,7 +111,7 @@ class Device(object):
         """**(str):** Device's serial number."""
         self.vendor: Optional[str] = None
         """**(str):** Device's vendor (if any)."""
-        self.interface: Optional[str] = None if interface == 'UNKNOWN INTERFACE' else interface
+        self._interface: Optional[str] = None if interface == 'UNKNOWN INTERFACE' else interface
         """
         **(str):** Device's interface type. Must be one of:
             * **ATA** - Advanced Technology Attachment
@@ -250,7 +250,7 @@ class Device(object):
         # If no interface type was provided, scan for the device
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
-        elif self.interface is None and not self.abridged:
+        elif self._interface is None and not self.abridged:
             logger.trace(
                 "Determining interface of disk: {0}".format(self.name))
             raw, returncode = self.smartctl.generic_call(
@@ -269,14 +269,14 @@ class Device(object):
                 # ]
                 # The above example should be enough for anyone to understand the line below
                 try:
-                    self.interface = raw[-2].split("'")[1]
-                    if self.interface == "nvme":  # if nvme set SMART to true
+                    self._interface = raw[-2].split("'")[1]
+                    if self._interface == "nvme":  # if nvme set SMART to true
                         self.smart_capable = True
                         self.smart_enabled = True
                 except:
                     # for whatever reason we could not get the interface type
                     # we should mark this as an `abbridged` case and move on
-                    self.interface = None
+                    self._interface = None
                     self.abbridged = True
                 # TODO: Uncomment the classify call if we ever find out that we need it
                 # Disambiguate the generic interface to a specific type
@@ -289,8 +289,44 @@ class Device(object):
                 return
         # If a valid device was detected, populate its information
         # OR if in unabridged mode, then do it even without interface info
-        if self.interface is not None or self.abridged:
+        if self._interface is not None or self.abridged:
             self.update()
+
+    @property
+    def interface(self) -> Optional[str]:
+        """Returns the internal interface type of the device.
+           It may not be the same as the interface type as used by smartctl.
+
+        Returns:
+            str: The interface type of the device. (example: ata, scsi, nvme)
+                 None if the interface type could not be determined.
+        """
+        # Try to get the fine-tuned interface type
+        try:
+            return self._classify()
+        except:
+            # If something fails, return the generic interface type
+            pass
+
+        # For now, return the same as smartctl_interface except for megaraid
+        if 'megaraid' in self._interface:
+            # If any attributes is not None and has at least non None value, then it is a sat+megaraid device
+            if self.attributes and any(self.attributes):
+                return 'ata'
+            else:
+                return 'sas'
+
+        return self._interface
+
+    @property
+    def smartctl_interface(self) -> Optional[str]:
+        """Returns the interface type of the device as it is used in smartctl.
+
+        Returns:
+            str: The interface type of the device. (example: ata, scsi, nvme)
+                 None if the interface type could not be determined.
+        """
+        return self._interface
 
     @property
     def dev_reference(self) -> str:
@@ -368,7 +404,7 @@ class Device(object):
     def __repr__(self):
         """Define a basic representation of the class object."""
         return "<{0} device on /dev/{1} mod:{2} sn:{3}>".format(
-            self.interface.upper() if self.interface else 'UNKNOWN INTERFACE',
+            self._interface.upper() if self._interface else 'UNKNOWN INTERFACE',
             self.name,
             self.model,
             self.serial
@@ -380,7 +416,7 @@ class Device(object):
         medium which uses json (or the likes of json) payloads
         """
         state_dict = {
-            'interface': self.interface if self.interface else 'UNKNOWN INTERFACE',
+            'interface': self._interface if self._interface else 'UNKNOWN INTERFACE',
             'model': self.model,
             'firmware': self.firmware,
             'smart_capable': self.smart_capable,
@@ -421,7 +457,7 @@ class Device(object):
         * **(List[str]):** None if option succeded else contains the error message.
         """
         # Lets make the action verb all lower case
-        if self.interface == 'nvme':
+        if self._interface == 'nvme':
             return False, ['NVME devices do not currently support toggling SMART enabled']
         action_lower = action.lower()
         if action_lower not in ['on', 'off']:
@@ -434,9 +470,9 @@ class Device(object):
         else:
             if action_lower == 'off':
                 return True, []
-        if self.interface is not None:
+        if self._interface is not None:
             raw, returncode = self.smartctl.generic_call(
-                ['-s', action_lower, '-d', self.interface, self.dev_reference])
+                ['-s', action_lower, '-d', self._interface, self.dev_reference])
         else:
             raw, returncode = self.smartctl.generic_call(
                 ['-s', action_lower, self.dev_reference])
@@ -476,7 +512,7 @@ class Device(object):
         """
         if self.tests:
             all_tests = []
-            if smartctl_type(self.interface) == 'scsi':
+            if smartctl_type(self._interface) == 'scsi':
                 header = "{0:3}{1:17}{2:23}{3:7}{4:14}{5:15}".format(
                     'ID',
                     'Test Description',
@@ -502,15 +538,17 @@ class Device(object):
             no_tests = 'No self-tests have been logged for this device.'
             return no_tests
 
-    def _classify(self):
+    def _classify(self) -> str:
         """
         Disambiguates generic device types ATA and SCSI into more specific
         ATA, SATA, SAS, SAT and SCSI.
         """
+
+        fine_interface = self._interface or ''
         # SCSI devices might be SCSI, SAS or SAT
         # ATA device might be ATA or SATA
-        if self.interface in ['scsi', 'ata']:
-            test = 'sat' if self.interface == 'scsi' else 'sata'
+        if fine_interface in ['scsi', 'ata'] or 'megaraid' in fine_interface:
+            test = 'sat' if fine_interface == 'scsi' else 'sata'
             # Look for a SATA PHY to detect SAT and SATA
             raw, returncode = self.smartctl.generic_call([
                 '-d',
@@ -520,18 +558,18 @@ class Device(object):
                 self.dev_reference])
 
             if 'GP Log 0x11' in raw[3]:
-                self.interface = test
+                fine_interface = test
         # If device type is still SCSI (not changed to SAT above), then
         # check for a SAS PHY
-        if self.interface == 'scsi':
+        if fine_interface in ['scsi'] or 'megaraid' in fine_interface:
             raw, returncode = self.smartctl.generic_call([
                 '-d',
-                'scsi',
+                smartctl_type(fine_interface),
                 '-l',
                 'sasphy',
                 self.dev_reference])
             if 'SAS SSP' in raw[4]:
-                self.interface = 'sas'
+                fine_interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
             # For these, see if smartmontools reports a transport protocol.
             else:
@@ -540,7 +578,9 @@ class Device(object):
 
                 for line in raw:
                     if 'Transport protocol' in line and 'SAS' in line:
-                        self.interface = 'sas'
+                        fine_interface = 'sas'
+
+        return fine_interface
 
     def _guess_smart_type(self, line):
         """
@@ -555,7 +595,7 @@ class Device(object):
         value set. Generates an warning message for any such attributes and
         updates the self-assessment value if necessary.
         """
-        if smartctl_type(self.interface) == 'scsi':
+        if smartctl_type(self._interface) == 'scsi':
             return
         for attr in self.attributes:
             if attr is not None:
@@ -601,7 +641,7 @@ class Device(object):
         Otherwise 'None'.
         """
         # SCSI self-test logs hold 20 entries while ATA logs hold 21
-        if smartctl_type(self.interface) == 'scsi':
+        if smartctl_type(self._interface) == 'scsi':
             maxlog = 20
         else:
             maxlog = 21
@@ -659,7 +699,7 @@ class Device(object):
         # Returns:
         * **(int):** The returncode of calling `smartctl -X device_path`
         """
-        return self.smartctl.test_stop(smartctl_type(self.interface), self.dev_reference)
+        return self.smartctl.test_stop(smartctl_type(self._interface), self.dev_reference)
 
     def run_selftest(self, test_type, ETA_type='date'):
         """
@@ -711,7 +751,7 @@ class Device(object):
         if self._test_running:
             return 1, 'Self-test in progress. Please wait.', self._test_ECD
         test_type = test_type.lower()
-        interface = smartctl_type(self.interface)
+        interface = smartctl_type(self._interface)
         try:
             if not self.test_capabilities[test_type]:
                 return (
@@ -850,7 +890,7 @@ class Device(object):
             raw = self.smartctl.info(self.dev_reference)
 
         else:
-            interface = smartctl_type(self.interface)
+            interface = smartctl_type(self._interface)
             raw = self.smartctl.all(
                 self.dev_reference, interface)
 

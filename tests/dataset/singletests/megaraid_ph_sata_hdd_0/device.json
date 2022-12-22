@@ -7,7 +7,6 @@
         "model": "HGST HUS724040ALE640",
         "serial": "PKXXXXXXXXXXGB",
         "vendor": null,
-        "interface": "megaraid,16",
         "firmware": "MJAOA580",
         "smart_capable": true,
         "smart_enabled": true,
@@ -651,8 +650,10 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
+        "interface": "ata",
         "sector_size": 512,
         "size": 4000787030016,
-        "size_raw": "4.00 TB"
+        "size_raw": "4.00 TB",
+        "smartctl_interface": "megaraid,16"
     }
 }

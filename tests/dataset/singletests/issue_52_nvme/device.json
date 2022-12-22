@@ -7,7 +7,6 @@
         "model": null,
         "serial": null,
         "vendor": null,
-        "interface": "nvme",
         "firmware": null,
         "smart_capable": true,
         "smart_enabled": true,
@@ -370,8 +369,10 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
+        "interface": "nvme",
         "sector_size": 512,
         "size": 1000204886016,
-        "size_raw": "1.00 TB"
+        "size_raw": "1.00 TB",
+        "smartctl_interface": "nvme"
     }
 }
