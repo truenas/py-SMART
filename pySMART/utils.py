@@ -150,7 +150,7 @@ def smartctl_type(interface_type: Optional[str]) -> Optional[str]:
              In case it is not supported, None would be returned
     """
     if interface_type is None:
-        return 'test'
+        return None
 
     if interface_type in smartctl_type_dict:
         return smartctl_type_dict[interface_type]
