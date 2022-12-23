@@ -126,6 +126,11 @@ def main():
                     with open(json_path) as json_file:
                         data = json.load(json_file)
 
+                    # Check if we should skip this device
+                    if 'skip' in data and data['skip'] == True:
+                        continue
+
+                    # Check if interface is present
                     if 'interface' not in data:
                         update_device(subdir, data['name'])
 
