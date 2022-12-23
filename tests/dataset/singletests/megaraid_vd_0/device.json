@@ -320,6 +320,7 @@
         "physical_sector_size": 4096,
         "if_attributes": null,
         "capacity": "118 GB",
+        "dev_interface": "scsi",
         "dev_reference": "/dev/sda",
         "diags": {
             "Reallocated_Sector_Ct": "-",

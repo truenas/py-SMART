@@ -343,6 +343,7 @@
             "criticalWarning": 0
         },
         "capacity": "1.00 TB",
+        "dev_interface": "nvme",
         "dev_reference": "/dev/nvme0n1",
         "diags": {
             "Reallocated_Sector_Ct": "-",

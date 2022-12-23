@@ -780,6 +780,7 @@
         "physical_sector_size": 4096,
         "if_attributes": null,
         "capacity": "480 GB",
+        "dev_interface": "ata",
         "dev_reference": "/dev/bus/0",
         "diags": {
             "Reallocated_Sector_Ct": "-",
@@ -806,7 +807,7 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
-        "interface": "ata",
+        "interface": "sat+megaraid,60",
         "sector_size": 512,
         "size": 480103981056,
         "size_raw": "480 GB",

@@ -335,6 +335,7 @@
         "physical_sector_size": 4096,
         "if_attributes": null,
         "capacity": "4.00 TB",
+        "dev_interface": "sas",
         "dev_reference": "/dev/bus/7",
         "diags": {
             "Reallocated_Sector_Ct": "0",
@@ -361,7 +362,7 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
-        "interface": "sas",
+        "interface": "megaraid,44",
         "sector_size": 512,
         "size": 4000787030016,
         "size_raw": "4.00 TB",

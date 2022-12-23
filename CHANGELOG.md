@@ -9,10 +9,11 @@ Version 1.2.2
 - **Breaking changes**
     - **smartctl.all**:
         - Paramerers where reordered to make it more consistent with the rest of the library.
-    - **device.interface** and **device.smartctl_interface**:
+    - **device.interface**, **device.smartctl_interface** and **device.dev_interface**:
         - Attribute `interface` moved into `_interface`
         - Added new property `smartctl_interface` which returns the interface value used by smartctl
-        - Added new property `interface` which returns a fine tuned interface value that reflects more accurately the device interface
+        - Added new property `dev_interface` which returns a fine tuned interface value that reflects more accurately the device interface
+        - Added new property `interface` that wraps around `smartctl_interface` for compatibility.
 
 Version 1.2.1
 =============

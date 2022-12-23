@@ -800,6 +800,7 @@
         "physical_sector_size": 4096,
         "if_attributes": null,
         "capacity": "12.0 TB",
+        "dev_interface": "ata",
         "dev_reference": "/dev/sdau",
         "diags": {
             "Reallocated_Sector_Ct": "-",

@@ -293,7 +293,7 @@ class Device(object):
             self.update()
 
     @property
-    def interface(self) -> Optional[str]:
+    def dev_interface(self) -> Optional[str]:
         """Returns the internal interface type of the device.
            It may not be the same as the interface type as used by smartctl.
 
@@ -323,6 +323,16 @@ class Device(object):
                  None if the interface type could not be determined.
         """
         return self._interface
+
+    @property
+    def interface(self) -> Optional[str]:
+        """Returns the interface type of the device as it is used in smartctl.
+
+        Returns:
+            str: The interface type of the device. (example: ata, scsi, nvme)
+                 None if the interface type could not be determined.
+        """
+        return self.smartctl_interface
 
     @property
     def dev_reference(self) -> str:

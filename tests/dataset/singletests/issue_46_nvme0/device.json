@@ -343,6 +343,7 @@
             "criticalWarning": 0
         },
         "capacity": "512 GB",
+        "dev_interface": "nvme",
         "dev_reference": "/dev/nvme0",
         "diags": {
             "Reallocated_Sector_Ct": "-",

@@ -321,6 +321,7 @@
         "physical_sector_size": null,
         "if_attributes": null,
         "capacity": "12.0 TB",
+        "dev_interface": "sas",
         "dev_reference": "/dev/sdc",
         "diags": {
             "Reallocated_Sector_Ct": "0",
@@ -347,7 +348,7 @@
             "block_size": "4096",
             "Non-Medium_Errors": "-"
         },
-        "interface": "sas",
+        "interface": "scsi",
         "sector_size": 4096,
         "size": 12000138625024,
         "size_raw": "12.0 TB",
