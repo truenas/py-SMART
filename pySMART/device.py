@@ -364,15 +364,14 @@ class Device(object):
         if self._vendor:
             return self._vendor
 
-        # If family is present, try to stract from family
+        # If family is present, try to stract from family. Skip anything but letters.
         elif self.family:
             filter = re.search(r'^[a-zA-Z]+', self.family.strip())
             if filter:
                 return filter.group(0)
 
-        # If model is present, try to stract from model
+        # If model is present, try to stract from model. Skip anything but letters.
         elif self.model:
-            # Try to extract the vendor from the model, getting the first characters (whithout spaces, dashes, underscores, dots, commas, slashes nor numbers)
             filter = re.search(r'^[a-zA-Z]+', self.model.strip())
             if filter:
                 return filter.group(0)
