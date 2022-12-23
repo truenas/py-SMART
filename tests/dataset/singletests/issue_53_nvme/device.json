@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "nvme0",
+        "family": null,
         "model": "KCM61VUL1T60",
         "serial": "61B0A067T1K8",
-        "vendor": null,
         "firmware": "0105",
         "smart_capable": true,
         "smart_enabled": true,
@@ -393,6 +393,7 @@
         "sector_size": 512,
         "size": 1600321314816,
         "size_raw": "1.60 TB",
-        "smartctl_interface": "nvme"
+        "smartctl_interface": "nvme",
+        "vendor": "KCM"
     }
 }

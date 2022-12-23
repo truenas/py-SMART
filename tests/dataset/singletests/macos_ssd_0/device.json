@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "IOService:/AppleACPIPlatformExpert/PCI0@0/AppleACPIPCI/RP06@1C,5/IOPP/SSD0@0/AppleAHCI/PRT0@0/IOAHCIDevice@0/AppleAHCIDiskDriver/IOAHCIBlockStorageDevice",
+        "family": "Apple SD/SM/TS...E/F/G SSDs",
         "model": "APPLE SSD SM0256F",
         "serial": "S1XXXXXXXXXXXX",
-        "vendor": null,
         "firmware": "UXM2JA1Q",
         "smart_capable": true,
         "smart_enabled": true,
@@ -573,6 +573,7 @@
         "sector_size": 512,
         "size": 251000193024,
         "size_raw": "251 GB",
-        "smartctl_interface": "ata"
+        "smartctl_interface": "ata",
+        "vendor": "Apple"
     }
 }

@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "sda",
+        "family": null,
         "model": "LITEONIT LCT-512L9S-11 2.5 7mm 512GB",
         "serial": "TW0HN71H5508549A1220",
-        "vendor": null,
         "firmware": "HC9110D",
         "smart_capable": true,
         "smart_enabled": true,
@@ -895,6 +895,7 @@
         "sector_size": 512,
         "size": 512110190592,
         "size_raw": "512 GB",
-        "smartctl_interface": "ata"
+        "smartctl_interface": "ata",
+        "vendor": "LITEONIT"
     }
 }

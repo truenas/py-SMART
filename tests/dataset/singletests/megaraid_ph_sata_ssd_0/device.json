@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "bus/0",
+        "family": "Intel 730 and DC S35x0/3610/3700 Series SSDs",
         "model": "INTEL SSDSC2BB120G6",
         "serial": "BXXXXXXXXXXXXXXXXN",
-        "vendor": null,
         "firmware": "G2010130",
         "smart_capable": true,
         "smart_enabled": true,
@@ -791,6 +791,7 @@
         "sector_size": 512,
         "size": 120034123776,
         "size_raw": "120 GB",
-        "smartctl_interface": "megaraid,28"
+        "smartctl_interface": "megaraid,28",
+        "vendor": "Intel"
     }
 }

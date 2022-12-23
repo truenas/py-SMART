@@ -3,9 +3,9 @@
     "values": {
         "abridged": false,
         "name": "sda",
+        "family": null,
         "model": "RS3DC080",
         "serial": "00907d49075932d81f9044090ab00506",
-        "vendor": "Intel",
         "firmware": "4.23",
         "smart_capable": false,
         "smart_enabled": false,
@@ -351,6 +351,7 @@
         "sector_size": 512,
         "size": 118999744512,
         "size_raw": "118 GB",
-        "smartctl_interface": "scsi"
+        "smartctl_interface": "scsi",
+        "vendor": "Intel"
     }
 }

@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "bus/7",
+        "family": null,
         "model": "HUS726040AL5210",
         "serial": "XXXXXXXX",
-        "vendor": "HGST",
         "firmware": "A907",
         "smart_capable": true,
         "smart_enabled": true,
@@ -366,6 +366,7 @@
         "sector_size": 512,
         "size": 4000787030016,
         "size_raw": "4.00 TB",
-        "smartctl_interface": "megaraid,44"
+        "smartctl_interface": "megaraid,44",
+        "vendor": "HGST"
     }
 }

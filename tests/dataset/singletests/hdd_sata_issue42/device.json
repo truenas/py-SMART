@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "sdau",
+        "family": null,
         "model": "OOS12000G",
         "serial": "00008AXB",
-        "vendor": null,
         "firmware": "OOS1",
         "smart_capable": true,
         "smart_enabled": true,
@@ -831,6 +831,7 @@
         "sector_size": 512,
         "size": 12000138625024,
         "size_raw": "12.0 TB",
-        "smartctl_interface": "ata"
+        "smartctl_interface": "ata",
+        "vendor": "OOS"
     }
 }

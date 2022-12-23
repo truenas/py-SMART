@@ -3,9 +3,9 @@
     "values": {
         "abridged": false,
         "name": "sda",
+        "family": null,
         "model": "WDS100T3X0C-00SJG0",
         "serial": "20093F800129",
-        "vendor": null,
         "firmware": "111110WD",
         "smart_capable": true,
         "smart_enabled": true,
@@ -373,6 +373,7 @@
         "sector_size": 512,
         "size": 1000204886016,
         "size_raw": "1.00 TB",
-        "smartctl_interface": "nvme"
+        "smartctl_interface": "nvme",
+        "vendor": "WDS"
     }
 }

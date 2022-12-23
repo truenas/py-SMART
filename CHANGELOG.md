@@ -1,3 +1,7 @@
+Version 1.2.3
+=============
+- Improved parsing of device vendor (requested in [#58](https://github.com/truenas/py-SMART/issues/58))
+
 Version 1.2.2
 =============
 - Fixing more python typing issues

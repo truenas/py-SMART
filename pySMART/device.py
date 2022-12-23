@@ -105,11 +105,13 @@ class Device(object):
         **(str):** Device's hardware ID, without the '/dev/' prefix.
         (ie: sda (Linux), pd0 (Windows))
         """
+        self.family: Optional[str] = None
+        """**(str):** Device's family (if any)."""
         self.model: Optional[str] = None
-        """**(str):** Device's model number."""
+        """**(str):** Device's model number (if any)."""
         self.serial: Optional[str] = None
-        """**(str):** Device's serial number."""
-        self.vendor: Optional[str] = None
+        """**(str):** Device's serial number (if any)."""
+        self._vendor: Optional[str] = None
         """**(str):** Device's vendor (if any)."""
         self._interface: Optional[str] = None if interface == 'UNKNOWN INTERFACE' else interface
         """
@@ -351,6 +353,32 @@ class Device(object):
 
         # otherwise asume we are on unix-like systems
         return os.path.join('/dev/', self.name)
+
+    @property
+    def vendor(self) -> Optional[str]:
+        """Returns the vendor of the device.
+
+        Returns:
+            str: The vendor of the device.
+        """
+        if self._vendor:
+            return self._vendor
+
+        # If family is present, try to stract from family
+        elif self.family:
+            filter = re.search(r'^[a-zA-Z]+', self.family.strip())
+            if filter:
+                return filter.group(0)
+
+        # If model is present, try to stract from model
+        elif self.model:
+            # Try to extract the vendor from the model, getting the first characters (whithout spaces, dashes, underscores, dots, commas, slashes nor numbers)
+            filter = re.search(r'^[a-zA-Z]+', self.model.strip())
+            if filter:
+                return filter.group(0)
+
+        # If all else fails, return None
+        return None
 
     @property
     def capacity(self) -> Optional[str]:
@@ -1018,6 +1046,7 @@ class Device(object):
                 continue
 
             if 'Model Family' in line:
+                self.family = line.split(':')[1].strip()
                 self._guess_smart_type(line.lower())
                 continue
 
@@ -1031,7 +1060,7 @@ class Device(object):
 
             vendor = re.compile(r'^Vendor:\s+(\w+)').match(line)
             if vendor is not None:
-                self.vendor = vendor.groups()[0]
+                self._vendor = vendor.groups()[0]
 
             if any_in(line, 'Firmware Version', 'Revision'):
                 self.firmware = line.split(':')[1].strip()

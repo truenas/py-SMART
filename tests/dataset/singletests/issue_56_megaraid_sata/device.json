@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "bus/0",
+        "family": "Intel S4510/S4610/S4500/S4600 Series SSDs",
         "model": "INTEL SSDSC2KB480G8",
         "serial": "PHYF110005YA480BGN",
-        "vendor": null,
         "firmware": "XCV10132",
         "smart_capable": true,
         "smart_enabled": true,
@@ -811,6 +811,7 @@
         "sector_size": 512,
         "size": 480103981056,
         "size_raw": "480 GB",
-        "smartctl_interface": "sat+megaraid,60"
+        "smartctl_interface": "sat+megaraid,60",
+        "vendor": "Intel"
     }
 }

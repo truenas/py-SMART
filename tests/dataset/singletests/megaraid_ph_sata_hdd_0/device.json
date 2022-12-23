@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "bus/0",
+        "family": "Hitachi/HGST Ultrastar 7K4000",
         "model": "HGST HUS724040ALE640",
         "serial": "PKXXXXXXXXXXGB",
-        "vendor": null,
         "firmware": "MJAOA580",
         "smart_capable": true,
         "smart_enabled": true,
@@ -655,6 +655,7 @@
         "sector_size": 512,
         "size": 4000787030016,
         "size_raw": "4.00 TB",
-        "smartctl_interface": "megaraid,16"
+        "smartctl_interface": "megaraid,16",
+        "vendor": "Hitachi"
     }
 }

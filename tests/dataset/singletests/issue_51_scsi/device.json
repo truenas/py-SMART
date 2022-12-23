@@ -4,9 +4,9 @@
     "values": {
         "abridged": false,
         "name": "sdc",
+        "family": null,
         "model": "HUH721212AL4204",
         "serial": "8DG3J2ZD",
-        "vendor": "HGST",
         "firmware": "C3D0",
         "smart_capable": true,
         "smart_enabled": true,
@@ -352,6 +352,7 @@
         "sector_size": 4096,
         "size": 12000138625024,
         "size_raw": "12.0 TB",
-        "smartctl_interface": "scsi"
+        "smartctl_interface": "scsi",
+        "vendor": "HGST"
     }
 }
