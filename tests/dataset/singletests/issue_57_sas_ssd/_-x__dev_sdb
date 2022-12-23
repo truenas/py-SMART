@@ -1,0 +1,116 @@
+smartctl 7.3 2022-02-28 r5338 [x86_64-linux-5.4.0-99-generic] (local build)
+Copyright (C) 2002-22, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Vendor:               SAMSUNG
+Product:              MZILT7T6HALA/007
+Revision:             GXA0
+Compliance:           SPC-5
+User Capacity:        7 681 501 126 656 bytes [7,68 TB]
+Logical block size:   512 bytes
+Physical block size:  4096 bytes
+LU is resource provisioned, LBPRZ=1
+Rotation Rate:        Solid State Device
+Form Factor:          2.5 inches
+Logical Unit id:      0x5002538b1184df60
+Serial number:        S5DDNE0R801692
+Device type:          disk
+Transport protocol:   SAS (SPL-4)
+Local Time is:        Fri Dec 23 16:00:21 2022 MSK
+SMART support is:     Available - device has SMART capability.
+SMART support is:     Enabled
+Temperature Warning:  Enabled
+Read Cache is:        Enabled
+Writeback Cache is:   Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART Health Status: OK
+
+Percentage used endurance indicator: 0%
+Current temperature = 25
+Lifetime maximum temperature = 54
+Lifetime minimum temperature = 19
+Maximum temperature since power on = 25
+Minimum temperature since power on = 23
+Manufactured in week 32 of year 2021
+Accumulated start-stop cycles:  892
+Specified load-unload count over device lifetime:  0
+Accumulated load-unload cycles:  0
+Elements in grown defect list: 0
+
+Error counter log:
+           Errors Corrected by           Total   Correction     Gigabytes    Total
+               ECC          rereads/    errors   algorithm      processed    uncorrected
+           fast | delayed   rewrites  corrected  invocations   [10^9 bytes]  errors
+read:          0        0         0         0          0      10311,154           0
+write:         0        0         0         0          0      11472,811           0
+verify:        0        0         0         0          0          0,000           0
+
+Non-medium error count:    10237
+
+  Pending defect count:0 Pending Defects
+SMART Self-test log
+Num  Test              Status                 segment  LifeTime  LBA_first_err [SK ASC ASQ]
+     Description                              number   (hours)
+# 1  Background short  Completed                   -     134                 - [-   -    -]
+# 2  Background short  Completed                   -     130                 - [-   -    -]
+# 3  Background short  Completed                   -     128                 - [-   -    -]
+# 4  Background short  Completed                   -     128                 - [-   -    -]
+# 5  Background short  Completed                   -     128                 - [-   -    -]
+
+Long (extended) Self-test duration: 3600 seconds [60,0 minutes]
+
+Background scan results log
+  Status: scan is active
+    Accumulated power on time, hours:minutes 146:02 [8762 minutes]
+    Number of background scans performed: 0,  scan progress: 9,34%
+    Number of background medium scans performed: 0
+
+
+Protocol Specific port log page for SAS SSP
+relative target port id = 1
+  generation code = 3
+  number of phys = 1
+  phy identifier = 0
+    attached device type: SAS or SATA device
+    attached reason: unknown
+    reason: loss of dword synchronization
+    negotiated logical link rate: phy enabled; 12 Gbps
+    attached initiator port: ssp=1 stp=1 smp=1
+    attached target port: ssp=0 stp=0 smp=0
+    SAS address = 0x5002538b1184df62
+    attached SAS address = 0x50000d1704b53280
+    attached phy identifier = 3
+    Invalid DWORD count = 4
+    Running disparity error count = 4
+    Loss of DWORD synchronization count = 1
+    Phy reset problem count = 0
+    Phy event descriptors:
+     Received ERROR count: 0
+     Received address frame error count: 0
+     Received abandon-class OPEN_REJECT count: 0
+     Received retry-class OPEN_REJECT count: 8
+     Received SSP frame error count: 0
+relative target port id = 2
+  generation code = 3
+  number of phys = 1
+  phy identifier = 1
+    attached device type: no device attached
+    attached reason: unknown
+    reason: unknown
+    negotiated logical link rate: phy enabled; unknown
+    attached initiator port: ssp=0 stp=0 smp=0
+    attached target port: ssp=0 stp=0 smp=0
+    SAS address = 0x5002538b1184df63
+    attached SAS address = 0x0
+    attached phy identifier = 0
+    Invalid DWORD count = 0
+    Running disparity error count = 0
+    Loss of DWORD synchronization count = 0
+    Phy reset problem count = 0
+    Phy event descriptors:
+     Received ERROR count: 0
+     Received address frame error count: 0
+     Received abandon-class OPEN_REJECT count: 0
+     Received retry-class OPEN_REJECT count: 0
+     Received SSP frame error count: 0

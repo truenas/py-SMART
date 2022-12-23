@@ -1204,7 +1204,7 @@ class Device(object):
             if 'Accumulated start-stop cycles' in line:
                 self.diagnostics.Start_Stop_Cycles = int(
                     line.split(':')[1].strip())
-                if self.diagnostics.Start_Stop_Spec != 0:
+                if self.diagnostics.Start_Stop_Spec and self.diagnostics.Start_Stop_Spec != 0:
                     self.diagnostics.Start_Stop_Pct_Left = int(round(
                         100 - (self.diagnostics.Start_Stop_Cycles /
                                self.diagnostics.Start_Stop_Spec), 0))
@@ -1218,7 +1218,7 @@ class Device(object):
             if 'Accumulated load-unload cycles' in line:
                 self.diagnostics.Load_Cycle_Count = int(
                     line.split(':')[1].strip())
-                if self.diagnostics.Load_Cycle_Spec != 0:
+                if self.diagnostics.Load_Cycle_Spec and self.diagnostics.Load_Cycle_Spec != 0:
                     self.diagnostics.Load_Cycle_Pct_Left = int(round(
                         100 - (self.diagnostics.Load_Cycle_Count /
                                self.diagnostics.Load_Cycle_Spec), 0))
