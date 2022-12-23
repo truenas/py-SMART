@@ -23,7 +23,7 @@ Currently it merges the nvme (v2) and scsi diagnostics structures.
 """
 
 import copy
-from typing import Dict, Union
+from typing import Dict, Union, Optional
 
 
 class Diagnostics(object):
@@ -43,52 +43,52 @@ class Diagnostics(object):
         """The block size of the device in Bytes (512 for most disks)"""
 
         # Generic counters
-        self.Reallocated_Sector_Ct: int = None
+        self.Reallocated_Sector_Ct: Optional[int] = None
         """**(int):** Reallocated sector count."""
 
-        self.Start_Stop_Spec: int = None
-        self.Start_Stop_Cycles: int = None
-        self.Start_Stop_Pct_Left: int = None
+        self.Start_Stop_Spec: Optional[int] = None
+        self.Start_Stop_Cycles: Optional[int] = None
+        self.Start_Stop_Pct_Left: Optional[int] = None
         """**(int):** Percent left of the life-time start-stop cycles."""
 
-        self.Load_Cycle_Spec: int = None
-        self.Load_Cycle_Count: int = None
-        self.Load_Cycle_Pct_Left: int = None
+        self.Load_Cycle_Spec: Optional[int] = None
+        self.Load_Cycle_Count: Optional[int] = None
+        self.Load_Cycle_Pct_Left: Optional[int] = None
         """**(int):** Percent left of the life-time load cycles."""
 
-        self.Power_On_Hours: int = None
+        self.Power_On_Hours: Optional[int] = None
         """**(int):** Number of hours the device have been powered on."""
-        self.Life_Left: int = None
+        self.Life_Left: Optional[int] = None
         """**(int):** Percent left of the whole disk life."""
 
         # Error counters
-        self.Corrected_Reads: int = None
+        self.Corrected_Reads: Optional[int] = None
         """**(float):** Total number of read operations that had an error but were corrected."""
-        self.Corrected_Writes: int = None
+        self.Corrected_Writes: Optional[int] = None
         """**(float):** Total number of write operations that had an error but were corrected."""
-        self.Corrected_Verifies: int = None
+        self.Corrected_Verifies: Optional[int] = None
 
-        self._Uncorrected_Reads: int = None
+        self._Uncorrected_Reads: Optional[int] = None
         """**(float):** Total number of read operations that had an uncorrectable error."""
-        self._Uncorrected_Writes: int = None
+        self._Uncorrected_Writes: Optional[int] = None
         """**(float):** Total number of write operations that had an uncorrectable error."""
-        self._Uncorrected_Verifies: int = None
+        self._Uncorrected_Verifies: Optional[int] = None
 
-        self._Reads_GB: float = None
+        self._Reads_GB: Optional[float] = None
         """**(float):** Total number of GBs readed in the disk life."""
-        self._Writes_GB: float = None
+        self._Writes_GB: Optional[float] = None
         """**(float):** Total number of GBs written in the disk life."""
-        self._Verifies_GB: float = None
+        self._Verifies_GB: Optional[float] = None
         """**(float):** Total number of GBs verified in the disk life."""
 
-        self._Reads_count: int = None
+        self._Reads_count: Optional[int] = None
         """**(int):** Total number of blocks readed in the disk life."""
-        self._Writes_count: int = None
+        self._Writes_count: Optional[int] = None
         """**(int):** Total number of blocks written in the disk life."""
-        self._Verifies_count: int = None
+        self._Verifies_count: Optional[int] = None
         """**(int):** Total number of blocks verified in the disk life."""
 
-        self.Non_Medium_Errors: int = None
+        self.Non_Medium_Errors: Optional[int] = None
         """**(int):** Other errors not caused by this disk."""
 
     # Properties
