@@ -1,6 +1,7 @@
 Version 1.2.3
 =============
 - Improved parsing of device vendor (requested in [#58](https://github.com/truenas/py-SMART/issues/58))
+- As reported in [#57](https://github.com/truenas/py-SMART/issues/57), sometimes there is a None vale in some device diagnostics. This is now handled.
 
 Version 1.2.2
 =============
