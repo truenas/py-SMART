@@ -4,10 +4,10 @@
     "values": {
         "abridged": false,
         "name": "nvme0n1",
-        "model": null,
-        "serial": null,
-        "vendor": null,
-        "firmware": null,
+        "family": null,
+        "model": "WDC WDS100T2B0C-00PXH0",
+        "serial": "220312800929",
+        "firmware": "233010WD",
         "smart_capable": true,
         "smart_enabled": true,
         "assessment": "PASS",
@@ -374,6 +374,7 @@
         "sector_size": 512,
         "size": 1000204886016,
         "size_raw": "1.00 TB",
-        "smartctl_interface": "nvme"
+        "smartctl_interface": "nvme",
+        "vendor": "WDC"
     }
 }
