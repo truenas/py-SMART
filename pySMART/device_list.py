@@ -38,7 +38,7 @@ class DeviceList(object):
     Represents a list of all the storage devices connected to this computer.
     """
 
-    def __init__(self, init: bool = True, smartctl=SMARTCTL):
+    def __init__(self, init: bool = True, smartctl=SMARTCTL, catch_errors: bool = False):
         """Instantiates and optionally initializes the `DeviceList`.
 
         Args:
@@ -49,6 +49,7 @@ class DeviceList(object):
             smartctl ([type], optional): This stablish the smartctl wrapper.
                 Defaults the global `SMARTCTL` object and should be only
                 overwritten on tests.
+            catch_errors (bool, optional): If True, individual device-parsing errors will be caught
         """
 
         self.devices: List[Device] = []
@@ -60,7 +61,7 @@ class DeviceList(object):
         """The smartctl wrapper
         """
         if init:
-            self._initialize()
+            self._initialize(catch_errors)
 
     def __repr__(self):
         """Define a basic representation of the class object."""
@@ -94,20 +95,43 @@ class DeviceList(object):
         self.devices[:] = [v for i, v in enumerate(self.devices)
                            if i not in to_delete]
 
-    def _initialize(self):
+    def _initialize(self, catch_errors: bool = False):
         """
         Scans system busses for attached devices and add them to the
         `DeviceList` as `Device` objects.
+        If device list is already populated, it will be cleared first.
+
+        Args:
+            catch_errors (bool, optional): If True, individual device-parsing errors will be caught
         """
 
+        # Clear the list if it's already populated
+        if len(self.devices):
+            self.devices = []
+
+        # Scan for devices
         for line in self.smartctl.scan():
             if not ('failed:' in line or line == ''):
                 groups = re.compile(
                     '^(\S+)\s+-d\s+(\S+)').match(line).groups()
                 name = groups[0]
                 interface = groups[1]
-                self.devices.append(
-                    Device(name, interface=interface, smartctl=self.smartctl))
+
+                try:
+                    # Add the device to the list
+                    self.devices.append(
+                        Device(name, interface=interface, smartctl=self.smartctl))
+
+                except Exception as e:
+                    if catch_errors:
+                        # Print the exception
+                        import logging
+
+                        logging.exception(f"Error parsing device {name}")
+
+                    else:
+                        # Reraise the exception
+                        raise e
 
         # Remove duplicates and unwanted devices (optical, etc.) from the list
         self._cleanup()
