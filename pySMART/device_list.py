@@ -61,7 +61,7 @@ class DeviceList(object):
         """The smartctl wrapper
         """
         if init:
-            self._initialize(catch_errors)
+            self.initialize(catch_errors)
 
     def __repr__(self):
         """Define a basic representation of the class object."""
@@ -95,7 +95,7 @@ class DeviceList(object):
         self.devices[:] = [v for i, v in enumerate(self.devices)
                            if i not in to_delete]
 
-    def _initialize(self, catch_errors: bool = False):
+    def initialize(self, catch_errors: bool = False):
         """
         Scans system busses for attached devices and add them to the
         `DeviceList` as `Device` objects.
