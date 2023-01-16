@@ -2,6 +2,7 @@ Version 1.2.3
 =============
 - Improved parsing of device vendor (requested in [#58](https://github.com/truenas/py-SMART/issues/58))
 - As reported in [#57](https://github.com/truenas/py-SMART/issues/57), sometimes there is a None vale in some device diagnostics. This is now handled.
+- DeviceList: Added init param `catch_errors` (defaults to `False`) to catch errors when parsing devices. This is useful when you want to parse a list of devices and you don't want to stop the parsing if one of the devices fails. The error will be printed to logger.exception and the device will be skipped. Requested in [#59](https://github.com/truenas/py-SMART/issues/59).
 
 Version 1.2.2
 =============
