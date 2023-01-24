@@ -9,6 +9,8 @@ pySMART
 ![](https://img.shields.io/github/issues-pr/truenas/py-smart)
 ![](https://img.shields.io/pypi/dm/pysmart)
 
+Copyright (C) 2021-2023 [Rafael Leira](https://github.com/ralequi)\
+Copyright (C) 2021 [Truenas team](https://www.truenas.com/)\
 Copyright (C) 2015 Marc Herndon
 
 pySMART is a simple Python wrapper for the ``smartctl`` component of
