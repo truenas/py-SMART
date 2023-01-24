@@ -4,7 +4,7 @@ pySMART
 ![](https://img.shields.io/pypi/v/pySMART?label=release)
 ![](https://img.shields.io/pypi/pyversions/pySMART)
 [![Python Tests](https://github.com/truenas/py-SMART/actions/workflows/check.yml/badge.svg)](https://github.com/truenas/py-SMART/actions/workflows/check.yml)
-![](https://img.shields.io/github/actions/workflow/status/truenas/py-smart/check.yml)
+![](https://img.shields.io/github/actions/workflow/status/truenas/py-smart/publish-to-test-pypi.yml)
 ![](https://img.shields.io/github/issues/truenas/py-smart)
 ![](https://img.shields.io/github/issues-pr/truenas/py-smart)
 ![](https://img.shields.io/pypi/dm/pysmart)
