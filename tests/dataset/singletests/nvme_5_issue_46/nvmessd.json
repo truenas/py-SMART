@@ -1,0 +1,117 @@
+{
+    "json_format_version": [
+        1,
+        0
+    ],
+    "smartctl": {
+        "version": [
+            7,
+            3
+        ],
+        "svn_revision": "5338",
+        "platform_info": "x86_64-w64-mingw32-w10-21H2",
+        "build_info": "(sf-7.3-1)",
+        "argv": [
+            "smartctl",
+            "-d",
+            "nvme",
+            "--all",
+            "/dev/sdc",
+            "-j"
+        ],
+        "exit_status": 0
+    },
+    "local_time": {
+        "time_t": 1676126180,
+        "asctime": "Sat Feb 11 22:36:20 2023 "
+    },
+    "device": {
+        "name": "/dev/sdc",
+        "info_name": "/dev/sdc",
+        "type": "nvme",
+        "protocol": "NVMe"
+    },
+    "model_name": "WD_BLACK SN770 500GB",
+    "serial_number": "22050Y803439",
+    "firmware_version": "731030WD",
+    "nvme_pci_vendor": {
+        "id": 5559,
+        "subsystem_id": 5559
+    },
+    "nvme_ieee_oui_identifier": 6980,
+    "nvme_total_capacity": 500107862016,
+    "nvme_unallocated_capacity": 0,
+    "nvme_controller_id": 0,
+    "nvme_version": {
+        "string": "1.4",
+        "value": 66560
+    },
+    "nvme_number_of_namespaces": 1,
+    "nvme_namespaces": [
+        {
+            "id": 1,
+            "size": {
+                "blocks": 976773168,
+                "bytes": 500107862016
+            },
+            "capacity": {
+                "blocks": 976773168,
+                "bytes": 500107862016
+            },
+            "utilization": {
+                "blocks": 976773168,
+                "bytes": 500107862016
+            },
+            "formatted_lba_size": 512,
+            "eui64": {
+                "oui": 6980,
+                "ext_id": 598168793101
+            }
+        }
+    ],
+    "user_capacity": {
+        "blocks": 976773168,
+        "bytes": 500107862016
+    },
+    "logical_block_size": 512,
+    "smart_support": {
+        "available": true,
+        "enabled": true
+    },
+    "smart_status": {
+        "passed": true,
+        "nvme": {
+            "value": 0
+        }
+    },
+    "nvme_smart_health_information_log": {
+        "critical_warning": 0,
+        "temperature": 33,
+        "available_spare": 100,
+        "available_spare_threshold": 10,
+        "percentage_used": 0,
+        "data_units_read": 1622859,
+        "data_units_written": 3820586,
+        "host_reads": 22105337,
+        "host_writes": 34938016,
+        "controller_busy_time": 39,
+        "power_cycles": 81,
+        "power_on_hours": 670,
+        "unsafe_shutdowns": 29,
+        "media_errors": 0,
+        "num_err_log_entries": 0,
+        "warning_temp_time": 0,
+        "critical_comp_time": 0,
+        "temperature_sensors": [
+            48,
+            33
+        ]
+    },
+    "temperature": {
+        "current": 33
+    },
+    "power_cycle_count": 81,
+    "power_on_time": {
+        "hours": 670
+    }
+}
