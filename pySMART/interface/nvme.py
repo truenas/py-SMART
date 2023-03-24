@@ -524,21 +524,21 @@ class NvmeAttributes(object):
                         elif name == 'Data Units Read':
                             # Format: 1,234,567 [2.00 TB]
                             self.dataUnitsRead = int(
-                                value.split(' ')[0].replace(',', '').replace('.', ''))
+                                value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
                             self.bytesRead = humanfriendly.parse_size(
                                 value.split(' ', 1)[1][1:-1].replace(',', '.'))
                         elif name == 'Data Units Written':
                             # Format: 1,234,567 [2.00 TB]
                             self.dataUnitsWritten = int(
-                                value.split(' ')[0].replace(',', '').replace('.', ''))
+                                value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
                             self.bytesWritten = humanfriendly.parse_size(
                                 value.split(' ', 1)[1][1:-1].replace(',', '.'))
                         elif name == 'Host Read Commands':
                             self.hostReadCommands = int(
-                                value.replace(',', '').replace('.', ''))
+                                value.replace(',', '').replace('.', '').replace('’', ''))
                         elif name == 'Host Write Commands':
                             self.hostWriteCommands = int(
-                                value.replace(',', '').replace('.', ''))
+                                value.replace(',', '').replace('.', '').replace('’', ''))
                         elif name == 'Controller Busy Time':
                             self.controllerBusyTime = int(
                                 value.replace(',', '').replace('.', ''))
@@ -547,7 +547,7 @@ class NvmeAttributes(object):
                                 value.replace(',', '').replace('.', ''))
                         elif name == 'Power On Hours':
                             self.powerOnHours = int(
-                                value.replace(',', '').replace('.', ''))
+                                value.replace(',', '').replace('.', '').replace('’', ''))
                         elif name == 'Unsafe Shutdowns':
                             self.unsafeShutdowns = int(
                                 value.replace(',', '').replace('.', ''))
