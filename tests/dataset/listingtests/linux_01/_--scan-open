@@ -1,2 +1,1 @@
 /dev/nvme0 -d nvme # /dev/nvme0, NVMe device
-/dev/nvme0n1 -d nvme # /dev/nvme0n1, NVMe device
