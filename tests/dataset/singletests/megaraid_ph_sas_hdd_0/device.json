@@ -291,7 +291,10 @@
                 "segment": "-",
                 "sense": "-",
                 "ASC": "-",
-                "ASCQ": "-"
+                "ASCQ": "-",
+                "nsid": null,
+                "sct": null,
+                "code": null
             }
         ],
         "diagnostics": {

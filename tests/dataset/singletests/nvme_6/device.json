@@ -1,13 +1,12 @@
 {
-    "name": "/dev/nvme0n1",
-    "interface": "nvme",
+    "name": "/dev/nvme0",
     "values": {
         "abridged": false,
-        "name": "nvme0n1",
+        "name": "nvme0",
         "family": null,
-        "model": "WDS200T1X0E-00AFY0",
-        "serial": "XXXXXXXXXXXX",
-        "firmware": "614600WD",
+        "model": "KBG30ZMV256G TOSHIBA",
+        "serial": "68APC048P12P",
+        "firmware": "ADHA0101",
         "smart_capable": true,
         "smart_enabled": true,
         "assessment": "PASS",
@@ -279,7 +278,24 @@
             "conveyance": false,
             "selective": false
         },
-        "tests": [],
+        "tests": [
+            {
+                "_format": "nvme",
+                "num": 0,
+                "type": "Short",
+                "status": "Completed without error",
+                "hours": 8737,
+                "LBA": null,
+                "remain": 0,
+                "segment": null,
+                "sense": null,
+                "ASC": null,
+                "ASCQ": null,
+                "nsid": null,
+                "sct": "-",
+                "code": "-"
+            }
+        ],
         "diagnostics": {
             "_block_size": 512,
             "Reallocated_Sector_Ct": null,
@@ -315,37 +331,65 @@
             "Writes_count": null,
             "block_size": 512
         },
-        "temperature": 44,
-        "temperatures": {},
+        "temperature": 59,
+        "temperatures": {
+            "1": 59
+        },
         "logical_sector_size": 512,
         "physical_sector_size": null,
         "if_attributes": {
             "critialWarning": null,
-            "temperature": 44,
+            "temperature": 59,
             "availableSpare": 100,
             "availableSpareThreshold": 10,
-            "percentageUsed": 0,
-            "dataUnitsRead": 24646582,
-            "bytesRead": 12600000000000,
-            "dataUnitsWritten": 19487218,
-            "bytesWritten": 9970000000000,
-            "hostReadCommands": 243374162,
-            "hostWriteCommands": 696541267,
-            "controllerBusyTime": 403,
-            "powerCycles": 25,
-            "powerOnHours": 3457,
-            "unsafeShutdowns": 10,
+            "percentageUsed": 32,
+            "dataUnitsRead": 33835011,
+            "bytesRead": 17300000000000,
+            "dataUnitsWritten": 36580058,
+            "bytesWritten": 18700000000000,
+            "hostReadCommands": 661971168,
+            "hostWriteCommands": 1017975532,
+            "controllerBusyTime": 14050,
+            "powerCycles": 1545,
+            "powerOnHours": 8737,
+            "unsafeShutdowns": 102,
             "integrityErrors": 0,
-            "errorEntries": 0,
+            "errorEntries": 2597,
             "warningTemperatureTime": null,
             "criticalTemperatureTime": 0,
-            "errors": [],
-            "tests": [],
+            "errors": [
+                {
+                    "num": 0,
+                    "errCount": 2597,
+                    "sqId": 0,
+                    "cmdId": 4097,
+                    "status": 49157,
+                    "peLoc": 40,
+                    "lba": null,
+                    "nsid": 0,
+                    "vs": null,
+                    "cs": null,
+                    "status_str": "Unknown"
+                }
+            ],
+            "tests": [
+                {
+                    "num": 0,
+                    "description": "Short",
+                    "status": "Completed without error",
+                    "powerOnHours": 8737,
+                    "failingLBA": null,
+                    "nsid": null,
+                    "sct": "-",
+                    "code": "-",
+                    "progress": 100
+                }
+            ],
             "criticalWarning": 0
         },
-        "capacity": null,
+        "capacity": "256 GB",
         "dev_interface": "nvme",
-        "dev_reference": "/dev/nvme0n1",
+        "dev_reference": "/dev/nvme0",
         "diags": {
             "Reallocated_Sector_Ct": "-",
             "Start_Stop_Spec": "-",
@@ -373,9 +417,9 @@
         },
         "interface": "nvme",
         "sector_size": 512,
-        "size": 0,
-        "size_raw": null,
+        "size": 256060514304,
+        "size_raw": "256 GB",
         "smartctl_interface": "nvme",
-        "vendor": "WDS"
+        "vendor": "KBG"
     }
 }

@@ -1,0 +1,5 @@
+smartctl pre-7.4 2023-03-21 r5470 [x86_64-linux-6.2.7-200.fc37.x86_64] (CircleCI)
+Copyright (C) 2002-23, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/nvme0: Device of type 'nvme' [NVMe] detected
+/dev/nvme0: Device of type 'nvme' [NVMe] opened

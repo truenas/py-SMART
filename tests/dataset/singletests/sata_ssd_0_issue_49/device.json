@@ -546,7 +546,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -559,7 +562,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -572,7 +578,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -585,7 +594,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -598,7 +610,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -611,7 +626,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -624,7 +642,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -637,7 +658,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             },
             {
                 "_format": "ata",
@@ -650,7 +674,10 @@
                 "segment": null,
                 "sense": null,
                 "ASC": null,
-                "ASCQ": null
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
             }
         ],
         "diagnostics": {

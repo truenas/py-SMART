@@ -340,6 +340,7 @@
             "warningTemperatureTime": null,
             "criticalTemperatureTime": 0,
             "errors": [],
+            "tests": [],
             "criticalWarning": 0
         },
         "capacity": "512 GB",

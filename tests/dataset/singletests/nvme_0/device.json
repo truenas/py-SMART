@@ -342,24 +342,20 @@
             "criticalTemperatureTime": 0,
             "errors": [
                 {
-                    "id": null,
-                    "count": null,
-                    "sqid": null,
-                    "cmdid": null,
-                    "status": 49157,
-                    "peloc": null,
-                    "lba": null,
-                    "nsid": 0,
-                    "vs": null,
-                    "cs": null,
                     "num": 0,
                     "errCount": 1356,
                     "sqId": 0,
                     "cmdId": 18,
+                    "status": 49157,
                     "peLoc": 40,
+                    "lba": null,
+                    "nsid": 0,
+                    "vs": null,
+                    "cs": null,
                     "status_str": "Unknown"
                 }
             ],
+            "tests": [],
             "criticalWarning": 0
         },
         "capacity": "256 GB",

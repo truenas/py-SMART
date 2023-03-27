@@ -957,6 +957,11 @@ class Device(object):
 
         if interface == 'nvme':
             self.if_attributes = NvmeAttributes(iter(_stdout))
+
+            # Get Tests
+            for test in self.if_attributes.tests:
+                self.tests.append(TestEntry('nvme', test.num, test.description, test.status, test.powerOnHours,
+                                  test.failingLBA, nsid=test.nsid, sct=test.sct, code=test.code, remain=100-test.progress))
         else:
             self.if_attributes = None
 
@@ -974,10 +979,6 @@ class Device(object):
             if parse_ascq:
                 message += ' ' + line.lstrip().rstrip()
             if parse_self_tests:
-                num = line[0:3]
-                if '#' not in num:
-                    continue
-
                 # Detect Test Format
 
                 ## SCSI/SAS FORMAT ##
@@ -987,7 +988,15 @@ class Device(object):
                 #      Description                              number   (hours)
                 # # 1  Background short  Completed                   -   33124                 - [-   -    -]
                 format_scsi = re.compile(
-                    r'^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s+\[([^\s]+)\s+([^\s]+)\s+([^\s]+)\]$').match(line)
+                    r'^[#\s]*(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s+\[([^\s]+)\s+([^\s]+)\s+([^\s]+)\]$').match(line)
+
+                ## ATA FORMAT ##
+                # Example smartctl output:
+                # SMART Self-test log structure revision number 1
+                # Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
+                # # 1  Extended offline    Completed without error       00%     46660         -
+                format_ata = re.compile(
+                    r'^[#\s]*(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{1,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])$').match(line)
 
                 if format_scsi is not None:
                     format = 'scsi'
@@ -1013,15 +1022,10 @@ class Device(object):
                         asc=asc,
                         ascq=ascq
                     ))
-                else:
+                elif format_ata is not None:
                     ## ATA FORMAT ##
-                    # Example smartctl output:
-                    # SMART Self-test log structure revision number 1
-                    # Num  Test_Description    Status                  Remaining  LifeTime(hours)  LBA_of_first_error
-                    # # 1  Extended offline    Completed without error       00%     46660         -
                     format = 'ata'
-                    parsed = re.compile(
-                        r'^[#\s]*([^\s]+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{1,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])$').match(line).groups()
+                    parsed = format_ata.groups()
                     num = parsed[0]
                     test_type = parsed[1]
                     status = parsed[2]
@@ -1038,6 +1042,9 @@ class Device(object):
                         TestEntry(format, num, test_type, status,
                                   hours, lba, remain=remain)
                     )
+                else:
+                    pass
+
             # Basic device information parsing
             if any_in(line, 'Device Model', 'Product', 'Model Number'):
                 self.model = line.split(':')[1].lstrip().rstrip()
@@ -1182,8 +1189,9 @@ class Device(object):
                     pass
                 parse_running_test = False
 
-            if all_in(line, 'Description', '(hours)'):
+            if "Self-test log" in line:
                 parse_self_tests = True  # Set flag to capture test entries
+                continue
 
             #######################################
             #              SCSI only              #

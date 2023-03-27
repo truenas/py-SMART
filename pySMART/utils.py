@@ -175,7 +175,7 @@ def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool
         ret = vars(obj)
 
     available_types = ['dict', 'str', 'int', 'float', 'list', 'NoneType']
-    recursion_types = ['object', 'NvmeError']
+    recursion_types = ['object', 'NvmeError', 'NvmeSelfTest']
 
     for prop_name in prop_names:
         prop_val = getattr(obj, prop_name)
