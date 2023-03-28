@@ -1,6 +1,9 @@
 Version 1.2.4
 =============
-
+- [dev tools] Test reorganization
+- [dev tools] Added new tests (issues [#46](https://github.com/truenas/py-SMART/issues/46))
+- Fixed parsing of NVMe devices on some systems / languages (issue [#63](https://github.com/truenas/py-SMART/issues/63))
+- Fixed parsing of NVMe tests on smartmontools >=7.4 (issue [#64](https://github.com/truenas/py-SMART/issues/64))
 
 Version 1.2.3
 =============

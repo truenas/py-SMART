@@ -152,7 +152,7 @@ from .device import Device, smart_health_assement
 # autopep8: on
 
 
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 __all__ = [
     'TestEntry', 'Attribute', 'utils', 'SMARTCTL', 'DeviceList', 'Device',
     'smart_health_assement'
