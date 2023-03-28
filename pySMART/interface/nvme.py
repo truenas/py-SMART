@@ -711,6 +711,8 @@ class NvmeAttributes(object):
                                 progress=int(match.group(2))
                             )
 
+                            self.tests.append(currentTest)
+
                 # Parse tests
                 for line in data:
                     line = line.strip()
@@ -747,10 +749,6 @@ class NvmeAttributes(object):
                         )
 
                         self.tests.append(test)
-
-                if currentTest is not None:
-                    currentTest.num = len(self.tests)
-                    self.tests.append(currentTest)
 
     def __getstate__(self, all_info=True):
         """
