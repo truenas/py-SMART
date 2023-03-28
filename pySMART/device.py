@@ -1163,6 +1163,12 @@ class Device(object):
                 self.test_capabilities['long'] = 'No' not in line
                 continue
 
+            # Parse SMART test capabilities (NVMe only)
+            if 'Optional Admin Commands' in line:
+                if 'Self_Test' in line:
+                    self.test_capabilities['short'] = True
+                    self.test_capabilities['long'] = True
+
             # SMART Attribute table parsing
             if all_in(line, '0x0', '_') and not interface == 'nvme':
                 # Replace multiple space separators with a single space, then

@@ -273,8 +273,8 @@
         ],
         "test_capabilities": {
             "offline": false,
-            "short": false,
-            "long": false,
+            "short": true,
+            "long": true,
             "conveyance": false,
             "selective": false
         },
