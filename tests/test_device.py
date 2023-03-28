@@ -106,6 +106,7 @@ class TestSingleDevice():
             else:
                 dev_if_attributes = get_object_properties(
                     dev.if_attributes)
+                assert dev_if_attributes is not None
 
                 # Handle NvmeAtrributes/errors
                 if 'errors' in dev_if_attributes:
@@ -150,5 +151,7 @@ class TestSingleDevice():
                     assert dev.tests[i] == test
                 else:
                     assert get_object_properties(dev.tests[i]) == test
+
+                print(dev.tests[i])
 
                 i = i + 1

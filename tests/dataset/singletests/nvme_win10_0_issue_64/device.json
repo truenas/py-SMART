@@ -282,6 +282,22 @@
         "tests": [
             {
                 "_format": "nvme",
+                "num": -1,
+                "type": "Extended",
+                "status": "Running",
+                "hours": 3441,
+                "LBA": null,
+                "remain": 72,
+                "segment": null,
+                "sense": null,
+                "ASC": null,
+                "ASCQ": null,
+                "nsid": null,
+                "sct": null,
+                "code": null
+            },
+            {
+                "_format": "nvme",
                 "num": 0,
                 "type": "Extended",
                 "status": "Completed without error",
@@ -375,22 +391,6 @@
                 "nsid": null,
                 "sct": "-",
                 "code": "-"
-            },
-            {
-                "_format": "nvme",
-                "num": 6,
-                "type": "Extended",
-                "status": "Running",
-                "hours": 3441,
-                "LBA": null,
-                "remain": 72,
-                "segment": null,
-                "sense": null,
-                "ASC": null,
-                "ASCQ": null,
-                "nsid": null,
-                "sct": null,
-                "code": null
             }
         ],
         "diagnostics": {
@@ -458,6 +458,17 @@
             "errors": [],
             "tests": [
                 {
+                    "num": -1,
+                    "description": "Extended",
+                    "status": "Running",
+                    "powerOnHours": 3441,
+                    "failingLBA": null,
+                    "nsid": null,
+                    "sct": null,
+                    "code": null,
+                    "progress": 28
+                },
+                {
                     "num": 0,
                     "description": "Extended",
                     "status": "Completed without error",
@@ -522,17 +533,6 @@
                     "sct": "-",
                     "code": "-",
                     "progress": 100
-                },
-                {
-                    "num": 6,
-                    "description": "Extended",
-                    "status": "Running",
-                    "powerOnHours": 3441,
-                    "failingLBA": null,
-                    "nsid": null,
-                    "sct": null,
-                    "code": null,
-                    "progress": 28
                 }
             ],
             "criticalWarning": 0

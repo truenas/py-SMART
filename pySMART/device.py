@@ -962,6 +962,15 @@ class Device(object):
             for test in self.if_attributes.tests:
                 self.tests.append(TestEntry('nvme', test.num, test.description, test.status, test.powerOnHours,
                                   test.failingLBA, nsid=test.nsid, sct=test.sct, code=test.code, remain=100-test.progress))
+
+            # Set running test
+            if any(test.status == 'Running' for test in self.if_attributes.tests):
+                self._test_running = True
+                self._test_progress = self.if_attributes.tests[0].progress
+            else:
+                self._test_running = False
+                self._test_progress = None
+
         else:
             self.if_attributes = None
 
