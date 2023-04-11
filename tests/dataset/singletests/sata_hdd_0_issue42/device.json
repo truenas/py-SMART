@@ -19,7 +19,7 @@
             {
                 "num": 1,
                 "name": "Raw_Read_Error_Rate",
-                "flags": 1,
+                "flags": 15,
                 "_value": "082",
                 "_worst": "066",
                 "_thresh": "044",
@@ -56,7 +56,7 @@
             {
                 "num": 4,
                 "name": "Start_Stop_Count",
-                "flags": 4,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "020",
@@ -74,7 +74,7 @@
             {
                 "num": 5,
                 "name": "Reallocated_Sector_Ct",
-                "flags": 5,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "010",
@@ -93,7 +93,7 @@
             {
                 "num": 7,
                 "name": "Seek_Error_Rate",
-                "flags": 7,
+                "flags": 15,
                 "_value": "068",
                 "_worst": "060",
                 "_thresh": "045",
@@ -112,7 +112,7 @@
             {
                 "num": 9,
                 "name": "Power_On_Hours",
-                "flags": 9,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -130,7 +130,7 @@
             {
                 "num": 10,
                 "name": "Spin_Retry_Count",
-                "flags": 0,
+                "flags": 19,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "097",
@@ -149,7 +149,7 @@
             {
                 "num": 12,
                 "name": "Power_Cycle_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "020",
@@ -341,7 +341,7 @@
             {
                 "num": 187,
                 "name": "Reported_Uncorrect",
-                "flags": 7,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -359,7 +359,7 @@
             {
                 "num": 188,
                 "name": "Command_Timeout",
-                "flags": 8,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -378,14 +378,14 @@
             {
                 "num": 190,
                 "name": "Airflow_Temperature_Cel",
-                "flags": 0,
+                "flags": 34,
                 "_value": "062",
                 "_worst": "060",
                 "_thresh": "040",
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "38",
+                "raw": "38 (Min/Max 22/40)",
                 "raw_int": 38,
                 "thresh": 40,
                 "value": "062",
@@ -397,7 +397,7 @@
             {
                 "num": 192,
                 "name": "Power-Off_Retract_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -415,7 +415,7 @@
             {
                 "num": 193,
                 "name": "Load_Cycle_Count",
-                "flags": 3,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -433,14 +433,14 @@
             {
                 "num": 194,
                 "name": "Temperature_Celsius",
-                "flags": 4,
+                "flags": 34,
                 "_value": "038",
                 "_worst": "040",
                 "_thresh": "000",
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "38",
+                "raw": "38 (0 16 0 0 0)",
                 "raw_int": 38,
                 "thresh": 0,
                 "value": "038",
@@ -451,7 +451,7 @@
             {
                 "num": 195,
                 "name": "Hardware_ECC_Recovered",
-                "flags": 5,
+                "flags": 26,
                 "_value": "032",
                 "_worst": "015",
                 "_thresh": "000",
@@ -470,7 +470,7 @@
             {
                 "num": 197,
                 "name": "Current_Pending_Sector",
-                "flags": 7,
+                "flags": 18,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -488,7 +488,7 @@
             {
                 "num": 198,
                 "name": "Offline_Uncorrectable",
-                "flags": 8,
+                "flags": 16,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -506,7 +506,7 @@
             {
                 "num": 199,
                 "name": "UDMA_CRC_Error_Count",
-                "flags": 9,
+                "flags": 62,
                 "_value": "200",
                 "_worst": "200",
                 "_thresh": "000",
@@ -524,7 +524,7 @@
             {
                 "num": 200,
                 "name": "Multi_Zone_Error_Rate",
-                "flags": 0,
+                "flags": 35,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "001",
@@ -588,7 +588,7 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "when_failed": "-",
-                "raw": "17",
+                "raw": "17 (198 87 0)",
                 "raw_int": 17,
                 "thresh": 0,
                 "value": "100",
@@ -599,7 +599,7 @@
             {
                 "num": 241,
                 "name": "Total_LBAs_Written",
-                "flags": 1,
+                "flags": 0,
                 "_value": "100",
                 "_worst": "253",
                 "_thresh": "000",
@@ -617,7 +617,7 @@
             {
                 "num": 242,
                 "name": "Total_LBAs_Read",
-                "flags": 2,
+                "flags": 0,
                 "_value": "100",
                 "_worst": "253",
                 "_thresh": "000",

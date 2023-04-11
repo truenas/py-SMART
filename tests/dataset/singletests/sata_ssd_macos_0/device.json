@@ -19,7 +19,7 @@
             {
                 "num": 1,
                 "name": "Raw_Read_Error_Rate",
-                "flags": 1,
+                "flags": 26,
                 "_value": "200",
                 "_worst": "200",
                 "_thresh": "000",
@@ -40,7 +40,7 @@
             {
                 "num": 5,
                 "name": "Reallocated_Sector_Ct",
-                "flags": 5,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -61,7 +61,7 @@
             {
                 "num": 9,
                 "name": "Power_On_Hours",
-                "flags": 9,
+                "flags": 50,
                 "_value": "095",
                 "_worst": "095",
                 "_thresh": "000",
@@ -81,7 +81,7 @@
             {
                 "num": 12,
                 "name": "Power_Cycle_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "083",
                 "_worst": "083",
                 "_thresh": "000",
@@ -255,7 +255,7 @@
             {
                 "num": 169,
                 "name": "Unknown_Apple_Attrib",
-                "flags": 9,
+                "flags": 19,
                 "_value": "253",
                 "_worst": "253",
                 "_thresh": "010",
@@ -276,7 +276,7 @@
             {
                 "num": 173,
                 "name": "Wear_Leveling_Count",
-                "flags": 3,
+                "flags": 50,
                 "_value": "165",
                 "_worst": "165",
                 "_thresh": "100",
@@ -294,7 +294,7 @@
             {
                 "num": 174,
                 "name": "Host_Reads_MiB",
-                "flags": 4,
+                "flags": 34,
                 "_value": "099",
                 "_worst": "099",
                 "_thresh": "000",
@@ -312,7 +312,7 @@
             {
                 "num": 175,
                 "name": "Host_Writes_MiB",
-                "flags": 5,
+                "flags": 34,
                 "_value": "099",
                 "_worst": "099",
                 "_thresh": "000",
@@ -346,7 +346,7 @@
             {
                 "num": 192,
                 "name": "Power-Off_Retract_Count",
-                "flags": 2,
+                "flags": 18,
                 "_value": "099",
                 "_worst": "099",
                 "_thresh": "000",
@@ -365,14 +365,14 @@
             {
                 "num": 194,
                 "name": "Temperature_Celsius",
-                "flags": 4,
+                "flags": 34,
                 "_value": "048",
                 "_worst": "048",
                 "_thresh": "000",
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "52",
+                "raw": "52 (Min/Max 13/71)",
                 "raw_int": 52,
                 "thresh": 0,
                 "value": "048",
@@ -385,7 +385,7 @@
             {
                 "num": 197,
                 "name": "Current_Pending_Sector",
-                "flags": 7,
+                "flags": 34,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -404,7 +404,7 @@
             {
                 "num": 199,
                 "name": "UDMA_CRC_Error_Count",
-                "flags": 9,
+                "flags": 26,
                 "_value": "200",
                 "_worst": "200",
                 "_thresh": "000",
@@ -462,7 +462,7 @@
             {
                 "num": 240,
                 "name": "Unknown_SSD_Attribute",
-                "flags": 0,
+                "flags": 34,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",

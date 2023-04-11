@@ -23,7 +23,7 @@
             {
                 "num": 5,
                 "name": "Reallocated_Sector_Ct",
-                "flags": 5,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -44,7 +44,7 @@
             {
                 "num": 9,
                 "name": "Power_On_Hours",
-                "flags": 9,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -64,7 +64,7 @@
             {
                 "num": 12,
                 "name": "Power_Cycle_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -234,7 +234,7 @@
             {
                 "num": 165,
                 "name": "Unknown_Attribute",
-                "flags": 5,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -252,7 +252,7 @@
             {
                 "num": 166,
                 "name": "Unknown_Attribute",
-                "flags": 6,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -270,7 +270,7 @@
             {
                 "num": 167,
                 "name": "Unknown_Attribute",
-                "flags": 7,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -288,7 +288,7 @@
             {
                 "num": 168,
                 "name": "Unknown_Attribute",
-                "flags": 8,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -306,7 +306,7 @@
             {
                 "num": 169,
                 "name": "Unknown_Attribute",
-                "flags": 9,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -324,7 +324,7 @@
             {
                 "num": 170,
                 "name": "Unknown_Attribute",
-                "flags": 0,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -342,7 +342,7 @@
             {
                 "num": 171,
                 "name": "Unknown_Attribute",
-                "flags": 1,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -360,7 +360,7 @@
             {
                 "num": 172,
                 "name": "Unknown_Attribute",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -378,7 +378,7 @@
             {
                 "num": 173,
                 "name": "Unknown_Attribute",
-                "flags": 3,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -396,7 +396,7 @@
             {
                 "num": 174,
                 "name": "Unknown_Attribute",
-                "flags": 4,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -423,7 +423,7 @@
             {
                 "num": 184,
                 "name": "End-to-End_Error",
-                "flags": 4,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -443,7 +443,7 @@
             {
                 "num": 187,
                 "name": "Reported_Uncorrect",
-                "flags": 7,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -461,7 +461,7 @@
             {
                 "num": 188,
                 "name": "Command_Timeout",
-                "flags": 8,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -484,14 +484,14 @@
             {
                 "num": 194,
                 "name": "Temperature_Celsius",
-                "flags": 4,
+                "flags": 34,
                 "_value": "067",
                 "_worst": "039",
                 "_thresh": "---",
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "33",
+                "raw": "33 (Min/Max 18/39)",
                 "raw_int": 33,
                 "thresh": null,
                 "value": "067",
@@ -506,7 +506,7 @@
             {
                 "num": 199,
                 "name": "UDMA_CRC_Error_Count",
-                "flags": 9,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -554,7 +554,7 @@
             {
                 "num": 230,
                 "name": "Unknown_SSD_Attribute",
-                "flags": 0,
+                "flags": 50,
                 "_value": "001",
                 "_worst": "001",
                 "_thresh": "---",
@@ -573,7 +573,7 @@
             {
                 "num": 232,
                 "name": "Available_Reservd_Space",
-                "flags": 2,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "004",
@@ -591,7 +591,7 @@
             {
                 "num": 233,
                 "name": "Media_Wearout_Indicator",
-                "flags": 3,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -609,7 +609,7 @@
             {
                 "num": 234,
                 "name": "Unknown_Attribute",
-                "flags": 4,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "---",
@@ -633,7 +633,7 @@
             {
                 "num": 241,
                 "name": "Total_LBAs_Written",
-                "flags": 1,
+                "flags": 48,
                 "_value": "253",
                 "_worst": "253",
                 "_thresh": "---",
@@ -651,7 +651,7 @@
             {
                 "num": 242,
                 "name": "Total_LBAs_Read",
-                "flags": 2,
+                "flags": 48,
                 "_value": "253",
                 "_worst": "253",
                 "_thresh": "---",
@@ -670,7 +670,7 @@
             {
                 "num": 244,
                 "name": "Unknown_Attribute",
-                "flags": 4,
+                "flags": 50,
                 "_value": "000",
                 "_worst": "100",
                 "_thresh": "---",

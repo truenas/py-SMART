@@ -1175,13 +1175,23 @@ class Device(object):
                     self.test_capabilities['long'] = True
 
             # SMART Attribute table parsing
-            if all_in(line, '0x0', '_') and not interface == 'nvme':
-                # Replace multiple space separators with a single space, then
-                # tokenize the string on space delimiters
-                line_ = ' '.join(line.split()).split(' ')
-                if '' not in line_:
-                    self.attributes[int(line_[0])] = Attribute(
-                        int(line_[0]), line_[1], int(line[2], base=16), line_[3], line_[4], line_[5], line_[6], line_[7], line_[8], line_[9])
+            if 'Specific SMART Attributes' in line:
+                attribute_re = re.compile(
+                    r'^\s*(?P<id>\d+)\s+(?P<name>\S+)\s+(?P<flag>\S+)\s+(?P<value>\d+)\s+(?P<worst>\d+)\s+(?P<thresh>\S+)\s+(?P<type>\S+)\s+(?P<updated>\S+)\s+(?P<whenfailed>\S+)\s+(?P<raw>.+)$')
+
+                # loop until we reach the end of the table (empty line)
+                while True:
+                    line = next(stdout_iter).strip()
+                    if line == '':
+                        break
+
+                    # Parse the line
+                    m = attribute_re.match(line)
+                    if m is not None:
+                        tmp = m.groupdict()
+                        self.attributes[int(tmp['id'])] = Attribute(
+                            int(tmp['id']), tmp['name'], int(tmp['flag'], base=16), tmp['value'], tmp['worst'], tmp['thresh'], tmp['type'], tmp['updated'], tmp['whenfailed'], tmp['raw'])
+
             # For some reason smartctl does not show a currently running test
             # for 'ATA' in the Test log so I just have to catch it this way i guess!
             # For 'scsi' I still do it since it is the only place I get % remaining in scsi
@@ -1403,7 +1413,8 @@ class Device(object):
                 # Some disks report temperature to attribute number 190 ('Airflow_Temperature_Cel')
                 # see https://bugs.freenas.org/issues/20860
                 temp_attr = self.attributes[194] or self.attributes[190]
-                self.temperature = int(temp_attr.raw)
+                if temp_attr is not None and temp_attr.raw_int is not None:
+                    self.temperature = temp_attr.raw_int
             except (ValueError, AttributeError):
                 pass
         # Now that we have finished the update routine, if we did not find a runnning selftest

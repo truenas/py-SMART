@@ -23,7 +23,7 @@
             {
                 "num": 5,
                 "name": "Reallocated_Sector_Ct",
-                "flags": 5,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -44,7 +44,7 @@
             {
                 "num": 9,
                 "name": "Power_On_Hours",
-                "flags": 9,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -64,7 +64,7 @@
             {
                 "num": 12,
                 "name": "Power_Cycle_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -239,7 +239,7 @@
             {
                 "num": 170,
                 "name": "Available_Reservd_Space",
-                "flags": 0,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "010",
@@ -257,7 +257,7 @@
             {
                 "num": 171,
                 "name": "Program_Fail_Count",
-                "flags": 1,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -275,7 +275,7 @@
             {
                 "num": 172,
                 "name": "Erase_Fail_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -294,7 +294,7 @@
             {
                 "num": 174,
                 "name": "Unsafe_Shutdown_Count",
-                "flags": 4,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -312,14 +312,14 @@
             {
                 "num": 175,
                 "name": "Power_Loss_Cap_Test",
-                "flags": 5,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "010",
                 "type": "Pre-fail",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "4170",
+                "raw": "4170 (247 9539)",
                 "raw_int": 4170,
                 "thresh": 10,
                 "value": "100",
@@ -337,7 +337,7 @@
             {
                 "num": 183,
                 "name": "SATA_Downshift_Count",
-                "flags": 3,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -355,7 +355,7 @@
             {
                 "num": 184,
                 "name": "End-to-End_Error",
-                "flags": 4,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "090",
@@ -375,7 +375,7 @@
             {
                 "num": 187,
                 "name": "Reported_Uncorrect",
-                "flags": 7,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -395,14 +395,14 @@
             {
                 "num": 190,
                 "name": "Temperature_Case",
-                "flags": 0,
+                "flags": 34,
                 "_value": "068",
                 "_worst": "056",
                 "_thresh": "000",
                 "type": "Old_age",
                 "updated": "Always",
                 "when_failed": "-",
-                "raw": "32",
+                "raw": "32 (Min/Max 28/44)",
                 "raw_int": 32,
                 "thresh": 0,
                 "value": "068",
@@ -414,7 +414,7 @@
             {
                 "num": 192,
                 "name": "Unsafe_Shutdown_Count",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -433,7 +433,7 @@
             {
                 "num": 194,
                 "name": "Temperature_Internal",
-                "flags": 4,
+                "flags": 34,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -453,7 +453,7 @@
             {
                 "num": 197,
                 "name": "Current_Pending_Sector",
-                "flags": 7,
+                "flags": 18,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -472,7 +472,7 @@
             {
                 "num": 199,
                 "name": "CRC_Error_Count",
-                "flags": 9,
+                "flags": 62,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -515,7 +515,7 @@
             {
                 "num": 225,
                 "name": "Host_Writes_32MiB",
-                "flags": 5,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -533,7 +533,7 @@
             {
                 "num": 226,
                 "name": "Workld_Media_Wear_Indic",
-                "flags": 6,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -551,7 +551,7 @@
             {
                 "num": 227,
                 "name": "Workld_Host_Reads_Perc",
-                "flags": 7,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -569,7 +569,7 @@
             {
                 "num": 228,
                 "name": "Workload_Minutes",
-                "flags": 8,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -590,7 +590,7 @@
             {
                 "num": 232,
                 "name": "Available_Reservd_Space",
-                "flags": 2,
+                "flags": 51,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "010",
@@ -608,7 +608,7 @@
             {
                 "num": 233,
                 "name": "Media_Wearout_Indicator",
-                "flags": 3,
+                "flags": 50,
                 "_value": "086",
                 "_worst": "086",
                 "_thresh": "000",
@@ -626,7 +626,7 @@
             {
                 "num": 234,
                 "name": "Thermal_Throttle",
-                "flags": 4,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -650,7 +650,7 @@
             {
                 "num": 241,
                 "name": "Host_Writes_32MiB",
-                "flags": 1,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",
@@ -668,7 +668,7 @@
             {
                 "num": 242,
                 "name": "Host_Reads_32MiB",
-                "flags": 2,
+                "flags": 50,
                 "_value": "100",
                 "_worst": "100",
                 "_thresh": "000",

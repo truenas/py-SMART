@@ -108,7 +108,7 @@ class Attribute(object):
         return None if self._thresh == '---' else int(self._thresh)
 
     @property
-    def raw_int(self) -> int:
+    def raw_int(self) -> Optional[int]:
         """Gets the raw value converted to int
         NOTE: Some values may not be correctly converted!
 
