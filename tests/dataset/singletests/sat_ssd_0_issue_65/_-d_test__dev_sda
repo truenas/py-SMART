@@ -1,0 +1,6 @@
+smartctl 7.2 2020-12-30 r5155 [x86_64-linux-5.10.0-19-amd64] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/sda: Device of type 'scsi' [SCSI] detected
+/dev/sda [SAT]: Device open changed type from 'scsi' to 'sat'
+/dev/sda [SAT]: Device of type 'sat' [ATA] opened

@@ -271,10 +271,15 @@ class Device(object):
                 # ]
                 # The above example should be enough for anyone to understand the line below
                 try:
-                    self._interface = raw[-2].split("'")[1]
-                    if self._interface == "nvme":  # if nvme set SMART to true
-                        self.smart_capable = True
-                        self.smart_enabled = True
+                    for line in reversed(raw):
+                        if "opened" in line:
+                            self._interface = line.split("'")[1]
+
+                            if self._interface == "nvme":  # if nvme set SMART to true
+                                self.smart_capable = True
+                                self.smart_enabled = True
+
+                            break
                 except:
                     # for whatever reason we could not get the interface type
                     # we should mark this as an `abbridged` case and move on

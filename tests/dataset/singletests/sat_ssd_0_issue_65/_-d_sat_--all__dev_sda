@@ -1,0 +1,102 @@
+smartctl 7.2 2020-12-30 r5155 [x86_64-linux-5.10.0-19-amd64] (local build)
+Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Device Model: HS-SSD-C100 120G
+Serial Number: 30087840294
+LU WWN Device Id: 5 000000 0000027b6
+Firmware Version: SN11913
+User Capacity: 120,034,123,776 bytes [120 GB]
+Sector Size: 512 bytes logical/physical
+Rotation Rate: Solid State Device
+Form Factor: 2.5 inches
+TRIM Command: Available, deterministic, zeroed
+Device is: Not in smartctl database [for details use: -P showall]
+ATA Version is: ACS-4 (minor revision not indicated)
+SATA Version is: SATA 3.2, 6.0 Gb/s (current: 6.0 Gb/s)
+Local Time is: Tue Apr 11 14:26:57 2023 MSK
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+
+General SMART Values:
+Offline data collection status: (0x00) Offline data collection activity
+was never started.
+Auto Offline Data Collection: Disabled.
+Self-test execution status: ( 0) The previous self-test routine completed
+without error or no self-test has ever
+been run.
+Total time to complete Offline
+data collection: ( 33) seconds.
+Offline data collection
+capabilities: (0x7b) SMART execute Offline immediate.
+Auto Offline data collection on/off support.
+Suspend Offline collection upon new
+command.
+Offline surface scan supported.
+Self-test supported.
+Conveyance Self-test supported.
+Selective Self-test supported.
+SMART capabilities: (0x0003) Saves SMART data before entering
+power-saving mode.
+Supports SMART auto save timer.
+Error logging capability: (0x01) Error logging supported.
+General Purpose Logging supported.
+Short self-test routine
+recommended polling time: ( 2) minutes.
+Extended self-test routine
+recommended polling time: ( 85) minutes.
+Conveyance self-test routine
+recommended polling time: ( 2) minutes.
+SCT capabilities: (0x0031) SCT Status supported.
+SCT Feature Control supported.
+SCT Data Table supported.
+
+SMART Attributes Data Structure revision number: 20
+Vendor Specific SMART Attributes with Thresholds:
+ID# ATTRIBUTE_NAME FLAG VALUE WORST THRESH TYPE UPDATED WHEN_FAILED RAW_VALUE
+5 Reallocated_Sector_Ct 0x1300 100 100 050 Old_age Offline - 0
+9 Power_On_Hours 0x1200 100 100 000 Old_age Offline - 133
+12 Power_Cycle_Count 0x1200 100 100 000 Old_age Offline - 9
+167 Unknown_Attribute 0x2200 100 100 000 Old_age Offline - 0
+168 Unknown_Attribute 0x1200 100 100 000 Old_age Offline - 0
+169 Unknown_Attribute 0x1300 100 100 010 Old_age Offline - 327690
+171 Unknown_Attribute 0x3200 100 100 000 Old_age Offline - 0
+172 Unknown_Attribute 0x3200 100 100 000 Old_age Offline - 0
+173 Unknown_Attribute 0x1200 200 200 000 Old_age Offline - 4296605716
+175 Program_Fail_Count_Chip 0x2200 100 100 010 Old_age Offline - 0
+180 Unused_Rsvd_Blk_Cnt_Tot 0x3300 100 100 000 Old_age Offline - 121
+187 Reported_Uncorrect 0x3200 100 000 000 Old_age Offline - 0
+192 Power-Off_Retract_Count 0x1200 100 100 000 Old_age Offline - 9
+194 Temperature_Celsius 0x2200 032 032 000 Old_age Offline - 32 (Min/Max 27/35)
+206 Unknown_SSD_Attribute 0x3200 200 200 000 Old_age Offline - 1
+207 Unknown_SSD_Attribute 0x3200 200 200 000 Old_age Offline - 25
+208 Unknown_SSD_Attribute 0x3200 200 200 000 Old_age Offline - 20
+209 Unknown_SSD_Attribute 0x3200 200 200 000 Old_age Offline - 1
+210 Unknown_Attribute 0x3200 200 200 000 Old_age Offline - 10
+211 Unknown_Attribute 0x3200 200 200 000 Old_age Offline - 7
+231 Unknown_SSD_Attribute 0x2300 100 100 005 Old_age Offline - 0
+233 Media_Wearout_Indicator 0x2300 100 100 000 Old_age Offline - 896
+234 Unknown_Attribute 0x3200 100 100 005 Old_age Offline - 86959
+241 Total_LBAs_Written 0x3200 100 100 000 Old_age Offline - 714
+242 Total_LBAs_Read 0x3200 100 100 000 Old_age Offline - 19
+245 Unknown_Attribute 0x3200 100 100 000 Old_age Offline - 0
+
+SMART Error Log Version: 1
+No Errors Logged
+
+SMART Self-test log structure revision number 1
+No self-tests have been logged. [To run self-tests, use: smartctl -t]
+
+SMART Selective self-test log data structure revision number 1
+SPAN MIN_LBA MAX_LBA CURRENT_TEST_STATUS
+1 0 0 Not_testing
+2 0 0 Not_testing
+3 0 0 Not_testing
+4 0 0 Not_testing
+5 0 0 Not_testing
+Selective self-test flags (0x0):
+After scanning selected spans, do NOT read-scan remainder of disk.
+If Selective self-test is pending on power-up, resume after 0 minute delay.
