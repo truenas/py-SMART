@@ -6,6 +6,7 @@ Version 1.2.4
 - Fixed parsing of NVMe tests on smartmontools >=7.4 (issue [#64](https://github.com/truenas/py-SMART/issues/64))
 - Fixed parsing of ATA attributes on some systems (issue [#65](https://github.com/truenas/py-SMART/issues/65))
 - Fixed parsing of Drive type detection (calling -d test) (issue [#65](https://github.com/truenas/py-SMART/issues/65))
+- Removed setup.py and moved to pyproject.toml 
 
 Version 1.2.3
 =============

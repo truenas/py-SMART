@@ -149,11 +149,12 @@ utils.configure_trace_logging()
 from .smartctl import SMARTCTL
 from .device_list import DeviceList
 from .device import Device, smart_health_assement
+from .version import __version__,__version_tuple__
 # autopep8: on
 
 
-__version__ = '1.2.4'
 __all__ = [
+    '__version__', '__version_tuple__',
     'TestEntry', 'Attribute', 'utils', 'SMARTCTL', 'DeviceList', 'Device',
     'smart_health_assement'
 ]

@@ -12,3 +12,4 @@ dist/
 .coverage
 cov.xml
 htmlcov
+version.py

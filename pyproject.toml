@@ -1,0 +1,67 @@
+# Copyright (C) 2023 Rafael Leira
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program; if not, see <http://www.gnu.org/licenses/>.
+#
+################################################################
+[build-system]
+requires = ["setuptools", "setuptools-scm[toml]"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ['pySMART']
+
+[tool.setuptools_scm]
+write_to = "pySMART/version.py"
+local_scheme = "no-local-version"
+
+[project]
+name = "pySMART"
+
+authors = [
+    # Current maintainer & author
+    { name = "Rafael Leira", email = "rafael.leira@naudit.es" },
+    # Original author
+    { name = "Marc Herndon", email = "Herndon.MarcT@gmail.com" },
+]
+license = { text = 'GNU LGPLv2.1' }
+description = 'Wrapper for smartctl (smartmontools)'
+readme = "README.md"
+requires-python = ">=3.7"
+
+classifiers = [
+    'Development Status :: 5 - Production/Stable',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: GNU Lesser General Public License v2 or later (LGPLv2+)',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Topic :: Software Development',
+    'Topic :: Software Development :: Libraries',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+dependencies = ['humanfriendly']
+dynamic = ["version"]
+
+
+[project.urls]
+"Homepage" = "https://github.com/truenas/py-SMART"
+
+[project.optional-dependencies]
+# Requirements only needed for development
+dev = ['pytest', 'pytest-cov', 'coveralls', 'pdoc']
