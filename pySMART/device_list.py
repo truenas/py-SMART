@@ -113,7 +113,7 @@ class DeviceList(object):
         for line in self.smartctl.scan():
             if not ('failed:' in line or line == ''):
                 groups = re.compile(
-                    '^(\S+)\s+-d\s+(\S+)').match(line).groups()
+                    r'^(\S+)\s+-d\s+(\S+)').match(line).groups()
                 name = groups[0]
                 interface = groups[1]
 
