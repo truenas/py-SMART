@@ -25,7 +25,7 @@ jobs:
           pip install .[dev]
 
       - name: Test with pytest
-        run: pytest --cov-report term --cov=pySMART
+        run: pytest --cov-report term --cov=pySMART -Werror
 
       - name: Generate coverage report
         if: ${{ matrix.os == 'ubuntu-latest' }}
