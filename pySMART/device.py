@@ -1075,7 +1075,11 @@ class Device(object):
                 continue
 
             if any_in(line, 'Serial Number', 'Serial number'):
-                self.serial = line.split(':')[1].split()[0].rstrip()
+                try:
+                    self.serial = line.split(':')[1].split()[0].rstrip()
+                except IndexError:
+                    # Serial reported empty
+                    self.serial = ""
                 continue
 
             vendor = re.compile(r'^Vendor:\s+(\w+)').match(line)
