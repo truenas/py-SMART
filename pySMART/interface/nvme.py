@@ -591,8 +591,8 @@ class NvmeAttributes(object):
                             # Format: 1,234,567 [2.00 TB]
                             # Or    : 0
                             if value.isdigit():
-                                self.dataUnitsWritten = 0
-                                self.bytesWritten = 0
+                                self.dataUnitsWritten = int(value)
+                                self.bytesWritten = int(value)
                             else:
                                 self.dataUnitsWritten = int(
                                     value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
