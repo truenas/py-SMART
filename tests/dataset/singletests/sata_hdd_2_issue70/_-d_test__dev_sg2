@@ -1,0 +1,6 @@
+smartctl 6.4 2014-10-07 r4002 [x86_64-linux-4.9.0-0.bpo.12-amd64] (local build)
+Copyright (C) 2002-14, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/sg2: Device of type 'scsi' [SCSI] detected
+/dev/sg2 [SAT]: Device open changed type from 'scsi' to 'sat'
+/dev/sg2 [SAT]: Device of type 'sat' [ATA] opened

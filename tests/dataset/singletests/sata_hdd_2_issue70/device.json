@@ -1,6 +1,5 @@
 {
     "name": "/dev/sg2",
-    "interface": "ata",
     "values": {
         "abridged": false,
         "name": "sg2",
@@ -728,7 +727,7 @@
         "physical_sector_size": null,
         "if_attributes": null,
         "capacity": "000\u00a0398\u00a0934\u00a0016 bytes [2.00 TB",
-        "dev_interface": "ata",
+        "dev_interface": "sat",
         "dev_reference": "/dev/sg2",
         "diags": {
             "Reallocated_Sector_Ct": "-",
@@ -755,11 +754,11 @@
             "block_size": "512",
             "Non-Medium_Errors": "-"
         },
-        "interface": "ata",
+        "interface": "sat",
         "sector_size": 512,
         "size": 2,
         "size_raw": "000\u00a0398\u00a0934\u00a0016 bytes [2.00 TB",
-        "smartctl_interface": "ata",
+        "smartctl_interface": "sat",
         "vendor": "ST"
     }
 }
