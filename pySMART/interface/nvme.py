@@ -589,10 +589,15 @@ class NvmeAttributes(object):
                                 value.split(' ', 1)[1][1:-1].replace(',', '.'))
                         elif name == 'Data Units Written':
                             # Format: 1,234,567 [2.00 TB]
-                            self.dataUnitsWritten = int(
-                                value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
-                            self.bytesWritten = humanfriendly.parse_size(
-                                value.split(' ', 1)[1][1:-1].replace(',', '.'))
+                            # Or    : 0
+                            if value.isdigit():
+                                self.dataUnitsWritten = 0
+                                self.bytesWritten = 0
+                            else:
+                                self.dataUnitsWritten = int(
+                                    value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
+                                self.bytesWritten = humanfriendly.parse_size(
+                                    value.split(' ', 1)[1][1:-1].replace(',', '.'))
                         elif name == 'Host Read Commands':
                             self.hostReadCommands = int(
                                 value.replace(',', '').replace('.', '').replace('’', ''))
