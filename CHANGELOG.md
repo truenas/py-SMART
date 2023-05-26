@@ -1,6 +1,8 @@
 Version 1.2.5
 =============
 - Minnor fix on serial NVME readings (MR [#69](https://github.com/truenas/py-SMART/pull/69)). Thanks @Heidistein
+- Minnor fix on reads/writes NVME readings (MR [#71](https://github.com/truenas/py-SMART/pull/71). Thanks @Heidistein
+- Fixed capacity detection in some devices & envirorments (issue [#72](https://github.com/truenas/py-SMART/issues/72)). Thanks @Shablykinm
 
 
 Version 1.2.4
