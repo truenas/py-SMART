@@ -18,8 +18,8 @@
 requires = ["setuptools", "setuptools-scm[toml]"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ['pySMART']
+[tool.setuptools.packages.find]
+include = ["pySMART*"]
 
 [tool.setuptools_scm]
 write_to = "pySMART/version.py"
