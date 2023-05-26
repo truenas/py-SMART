@@ -726,7 +726,7 @@
         "logical_sector_size": null,
         "physical_sector_size": null,
         "if_attributes": null,
-        "capacity": "000\u00a0398\u00a0934\u00a0016 bytes [2.00 TB",
+        "capacity": "2.00 TB",
         "dev_interface": "sat",
         "dev_reference": "/dev/sg2",
         "diags": {
@@ -756,8 +756,8 @@
         },
         "interface": "sat",
         "sector_size": 512,
-        "size": 2,
-        "size_raw": "000\u00a0398\u00a0934\u00a0016 bytes [2.00 TB",
+        "size": 2000398934016,
+        "size_raw": "2.00 TB",
         "smartctl_interface": "sat",
         "vendor": "ST"
     }
