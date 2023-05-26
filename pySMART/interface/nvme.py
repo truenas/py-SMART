@@ -583,10 +583,15 @@ class NvmeAttributes(object):
                             self.percentageUsed = int(value[:-1])
                         elif name == 'Data Units Read':
                             # Format: 1,234,567 [2.00 TB]
-                            self.dataUnitsRead = int(
-                                value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
-                            self.bytesRead = humanfriendly.parse_size(
-                                value.split(' ', 1)[1][1:-1].replace(',', '.'))
+                            # Or    : 0
+                            if value.isdigit():
+                                self.dataUnitsRead = int(value)
+                                self.bytesRead = int(value)
+                            else:
+                                self.dataUnitsRead = int(
+                                    value.split(' ')[0].replace(',', '').replace('.', '').replace('’', ''))
+                                self.bytesRead = humanfriendly.parse_size(
+                                    value.split(' ', 1)[1][1:-1].replace(',', '.'))
                         elif name == 'Data Units Written':
                             # Format: 1,234,567 [2.00 TB]
                             # Or    : 0
