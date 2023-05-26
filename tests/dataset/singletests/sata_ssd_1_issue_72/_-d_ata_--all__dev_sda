@@ -1,0 +1,102 @@
+smartctl 7.3 2022-02-28 r5338 [x86_64-w64-mingw32-w10-b19045] (sf-7.3-1)
+Copyright (C) 2002-22, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Model Family:     Apacer AS340 SSDs
+Device Model:     Apacer AS340 240GB
+Serial Number:    LKC125R001176
+LU WWN Device Id: 5 02b2a2 01d1c1b1a
+Add. Product Id:  mavlsata
+Firmware Version: V4.25.0
+User Capacity:    240 057 409 536 bytes [240 GB]
+Sector Size:      512 bytes logical/physical
+Rotation Rate:    Solid State Device
+TRIM Command:     Available
+Device is:        In smartctl database 7.3/5319
+ATA Version is:   ACS-3 T13/2161-D revision 4
+SATA Version is:  SATA 3.2, 6.0 Gb/s (current: 6.0 Gb/s)
+Local Time is:    Fri May 26 11:16:44 2023 RTZ
+SMART support is: Available - device has SMART capability.
+SMART support is: Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART overall-health self-assessment test result: PASSED
+
+General SMART Values:
+Offline data collection status:  (0x02) Offline data collection activity
+                                        was completed without error.
+                                        Auto Offline Data Collection: Disabled.
+Self-test execution status:      (   0) The previous self-test routine completed
+                                        without error or no self-test has ever
+                                        been run.
+Total time to complete Offline
+data collection:                (    0) seconds.
+Offline data collection
+capabilities:                    (0x75) SMART execute Offline immediate.
+                                        No Auto Offline data collection support.
+                                        Abort Offline collection upon new
+                                        command.
+                                        No Offline surface scan supported.
+                                        Self-test supported.
+                                        Conveyance Self-test supported.
+                                        Selective Self-test supported.
+SMART capabilities:            (0x0002) Does not save SMART data before
+                                        entering power-saving mode.
+                                        Supports SMART auto save timer.
+Error logging capability:        (0x00) Error logging NOT supported.
+                                        General Purpose Logging supported.
+Short self-test routine
+recommended polling time:        (   2) minutes.
+Extended self-test routine
+recommended polling time:        (  90) minutes.
+Conveyance self-test routine
+recommended polling time:        (   2) minutes.
+
+SMART Attributes Data Structure revision number: 5
+Vendor Specific SMART Attributes with Thresholds:
+ID# ATTRIBUTE_NAME          FLAG     VALUE WORST THRESH TYPE      UPDATED  WHEN_FAILED RAW_VALUE
+  5 Reallocated_Sector_Ct   0x0033   100   100   010    Pre-fail  Always       -       0
+  9 Power_On_Hours          0x0033   100   100   010    Pre-fail  Always       -       3517
+ 12 Power_Cycle_Count       0x0033   100   100   010    Pre-fail  Always       -       7
+161 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+164 Average_Erase_Count     0x0033   100   100   010    Pre-fail  Always       -       66135
+165 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       87
+166 Later_Bad_Block_Count   0x0033   100   100   010    Pre-fail  Always       -       3
+167 SSD_Protect_Mode        0x0033   100   100   010    Pre-fail  Always       -       64
+169 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+176 Erase_Fail_Count_Chip   0x0033   100   100   010    Pre-fail  Always       -       0
+177 Wear_Leveling_Count     0x0033   100   100   010    Pre-fail  Always       -       0
+178 Used_Rsvd_Blk_Cnt_Chip  0x0033   100   100   010    Pre-fail  Always       -       0
+192 Unexpect_Power_Loss_Ct  0x0033   100   100   010    Pre-fail  Always       -       0
+194 Temperature_Celsius     0x0033   100   100   010    Pre-fail  Always       -       47
+195 Hardware_ECC_Recovered  0x0033   100   100   010    Pre-fail  Always       -       0
+199 UDMA_CRC_Error_Count    0x0033   100   100   010    Pre-fail  Always       -       0
+241 Total_LBAs_Written      0x0033   100   100   010    Pre-fail  Always       -       3848
+242 Total_LBAs_Read         0x0033   100   100   010    Pre-fail  Always       -       1268
+243 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+244 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+245 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+246 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+248 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+249 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+250 Read_Error_Retry_Rate   0x0033   100   100   010    Pre-fail  Always       -       0
+251 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+252 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+253 Unknown_Attribute       0x0033   100   100   010    Pre-fail  Always       -       0
+254 Unknown_SSD_Attribute   0x0033   100   100   010    Pre-fail  Always       -       0
+
+SMART Error Log not supported
+
+SMART Self-test log structure revision number 1
+No self-tests have been logged.  [To run self-tests, use: smartctl -t]
+
+SMART Selective self-test log data structure revision number 1
+ SPAN  MIN_LBA  MAX_LBA  CURRENT_TEST_STATUS
+    1        0        0  Not_testing
+    2        0        0  Not_testing
+    3        0        0  Not_testing
+    4        0        0  Not_testing
+    5        0        0  Not_testing
+Selective self-test flags (0x0):
+  After scanning selected spans, do NOT read-scan remainder of disk.
+If Selective self-test is pending on power-up, resume after 0 minute delay.

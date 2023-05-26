@@ -155,6 +155,11 @@ Documentation
 API documentation for ``pySMART`` was generated using ``pdoc`` and can be
 found in the /docs folder within the package archive.
 
+Development
+===========
+Tests are run using ``pytest``.  Under [folder tests](tests), there is a
+readme with instructions on how to run the tests.
+
 Acknowledgements
 ================
 I would like to thank the entire team behind smartmontools for creating and

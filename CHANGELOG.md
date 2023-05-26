@@ -1,3 +1,8 @@
+Version 1.2.5
+=============
+- Minnor fix on serial NVME readings (MR [#69](https://github.com/truenas/py-SMART/pull/69)). Thanks @Heidistein
+
+
 Version 1.2.4
 =============
 - [dev tools] Test reorganization

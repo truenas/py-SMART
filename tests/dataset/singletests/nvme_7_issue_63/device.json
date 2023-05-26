@@ -343,7 +343,7 @@
             "tests": [],
             "criticalWarning": 0
         },
-        "capacity": null,
+        "capacity": "2.00 TB",
         "dev_interface": "nvme",
         "dev_reference": "/dev/nvme0n1",
         "diags": {
@@ -373,8 +373,8 @@
         },
         "interface": "nvme",
         "sector_size": 512,
-        "size": 0,
-        "size_raw": null,
+        "size": 2000398934016,
+        "size_raw": "2.00 TB",
         "smartctl_interface": "nvme",
         "vendor": "WDS"
     }

@@ -1075,7 +1075,11 @@ class Device(object):
                 continue
 
             if any_in(line, 'Serial Number', 'Serial number'):
-                self.serial = line.split(':')[1].split()[0].rstrip()
+                try:
+                    self.serial = line.split(':')[1].split()[0].rstrip()
+                except IndexError:
+                    # Serial reported empty
+                    self.serial = ""
                 continue
 
             vendor = re.compile(r'^Vendor:\s+(\w+)').match(line)
@@ -1088,12 +1092,12 @@ class Device(object):
             if any_in(line, 'User Capacity', 'Total NVM Capacity', 'Namespace 1 Size/Capacity'):
                 # TODO: support for multiple NVMe namespaces
                 m = re.match(
-                    r'.*:\s+([\d,.]+)\s\D*\[?([^\]]+)?\]?', line.strip())
+                    r'.*:\s+([\d,. \u2019\u00a0]+)\s\D*\[?([^\]]+)?\]?', line.strip())
 
                 if m is not None:
                     tmp = m.groups()
                     self._capacity = int(
-                        tmp[0].strip().replace(',', '').replace('.', ''))
+                        tmp[0].strip().replace(',', '').replace('.', '').replace(' ', '').replace('\u2019', '').replace('\u00a0', ''))
 
                     if len(tmp) == 2 and tmp[1] is not None:
                         self._capacity_human = tmp[1].strip().replace(',', '.')
