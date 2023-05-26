@@ -28,21 +28,21 @@ jobs:
         run: >-
           python -m
           pdoc -o docs -n pySMART
-      # - name: Build the test wheel and a source tarball
-      #   run: >-
-      #     PACKAGE_NAME=pySMART.truenas python -m
-      #     build
-      #     --sdist
-      #     --wheel
-      #     --outdir distTest/
-      #     .
-      # - name: Publish distribution 📦 to Test PyPI
-      #   uses: pypa/gh-action-pypi-publish@master
-      #   with:
-      #     password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-      #     repository_url: https://test.pypi.org/legacy/
-      #     packages_dir: distTest/
-      #     skip_existing: true
+      - name: Build the test wheel and a source tarball
+        run: >-
+          PACKAGE_NAME=pySMART.truenas python -m
+          build
+          --sdist
+          --wheel
+          --outdir distTest/
+          .
+      - name: Publish distribution 📦 to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          packages_dir: distTest/
+          skip_existing: true
       - name: Build the binary wheel and a source tarball
         run: >-
           python -m
