@@ -55,7 +55,7 @@ classifiers = [
     'Topic :: Software Development :: Libraries',
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
-dependencies = ['humanfriendly']
+dependencies = ["chardet", 'humanfriendly']
 dynamic = ["version"]
 
 

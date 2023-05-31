@@ -59,11 +59,9 @@ class SmartctlFile(Smartctl):
         logger.trace("Opening file: {0}".format(filename))
 
         try:
-            with open(filename, encoding='utf-8') as f:
-                raw_data = f.readlines()
+            with open(filename, mode='rb') as f:
+                raw_data = f.read()
         except:
             raise SmartctlfileSampleNotFound(filename, final_params)
 
-        _stdout = [i.split('\n')[0] for i in raw_data]
-
-        return _stdout, 0
+        return self._decode_output(raw_data), 0

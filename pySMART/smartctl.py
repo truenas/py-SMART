@@ -19,6 +19,7 @@ from subprocess import Popen, PIPE
 from .utils import SMARTCTL_PATH
 from typing import List, Tuple, Union, Optional
 
+import chardet
 import logging
 import os
 
@@ -145,9 +146,37 @@ class Smartctl:
         """
         proc = Popen(cmd, stdout=PIPE, stderr=PIPE)
 
-        _stdout, _stderr = [i.decode('utf8') for i in proc.communicate()]
+        _stdout, _stderr = [i for i in proc.communicate()]
 
-        return _stdout.split('\n'), proc.returncode
+        return self._decode_output(_stdout), proc.returncode
+
+    def _decode_output(self, raw_output: bytes) -> List[str]:
+        """ Decodes the raw output from smartctl
+            This, should detect the encoding and decode the output
+
+        Args:
+            raw_output (bytes): The raw output from smartctl
+
+        Returns:
+            List[str]: A raw line-by-line output from smartctl
+        """
+        # Detect the encoding
+        encoding: Optional[str] = None
+        try:
+            encoding = chardet.detect(raw_output)['encoding']
+        except:
+            pass
+
+        if not encoding:
+            encoding = 'utf-8'
+
+        if encoding not in ['utf-8', 'ascii']:
+            logger.warning(f"Detected encoding: {encoding}")
+
+        # Decode the output
+        decoded_output = raw_output.decode(encoding).splitlines()
+
+        return decoded_output
 
     def scan(self) -> List[str]:
         """Queries smartctl with option --scan-open
