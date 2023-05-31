@@ -4,6 +4,7 @@ Version 1.2.5
 - Minnor fix on reads/writes NVME readings (MR [#71](https://github.com/truenas/py-SMART/pull/71). Thanks @Heidistein
 - Fixed capacity detection in some devices & envirorments (issue [#72](https://github.com/truenas/py-SMART/issues/72)). Thanks @Shablykinm
 - Now file/process encodings are automatically detected. This whould fix issue [#72](https://github.com/truenas/py-SMART/issues/72)).
+- Minnor refactor on interface.nvme and ata attributes. This should not affect any user.
 
 Version 1.2.4
 =============
