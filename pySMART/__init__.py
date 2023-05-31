@@ -143,7 +143,7 @@ development of future automated test tools.
 """
 # autopep8: off
 from .testentry import TestEntry
-from .attribute import Attribute
+from .interface.ata.attribute import Attribute
 from . import utils
 utils.configure_trace_logging()
 from .smartctl import SMARTCTL

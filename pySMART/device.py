@@ -35,7 +35,7 @@ from time import time, strptime, mktime, sleep
 from typing import Tuple, Union, List, Dict, Optional
 
 # pySMART module imports
-from .attribute import Attribute
+from .interface.ata.attribute import Attribute
 from .diagnostics import Diagnostics
 from .interface import *
 from .smartctl import Smartctl, SMARTCTL
