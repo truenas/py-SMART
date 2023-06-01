@@ -174,9 +174,13 @@ class Smartctl:
             logger.warning(f"Detected encoding: {encoding}")
 
         # Decode the output
-        decoded_output = raw_output.decode(encoding).splitlines()
+        decoded_output = raw_output.decode(encoding)
 
-        return decoded_output
+        if encoding != 'utf-8':
+            decoded_output = decoded_output.encode(
+                'ascii', 'ignore').decode('ascii')
+
+        return decoded_output.splitlines()
 
     def scan(self) -> List[str]:
         """Queries smartctl with option --scan-open
