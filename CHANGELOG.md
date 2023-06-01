@@ -1,3 +1,10 @@
+Version 1.3.0
+=============
+
+- **Breaking changes**
+    - **smartctl.all**:
+        - Officially removed support for python 3.7. However, pyproject.toml still allows the 3.7 version. This will be removed in the next release.
+
 Version 1.2.5
 =============
 - Minnor fix on serial NVME readings (MR [#69](https://github.com/truenas/py-SMART/pull/69)). Thanks @Heidistein
