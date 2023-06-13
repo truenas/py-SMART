@@ -86,7 +86,7 @@ def update_device(folder, device_name, interface_name=None):
                 json_dict['values'][prop])
 
     with open(os.path.join(folder, 'device.json'), "w") as f:
-        f.write(json.dumps(json_dict, indent=4))
+        f.write(json.dumps(json_dict, indent=4, sort_keys=True))
 
 
 def main():
