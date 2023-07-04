@@ -275,19 +275,10 @@
             "Load_Cycle_Spec": null,
             "Non_Medium_Errors": null,
             "Power_On_Hours": null,
-            "Reads_GB": null,
-            "Reads_count": null,
             "Reallocated_Sector_Ct": null,
             "Start_Stop_Cycles": null,
             "Start_Stop_Pct_Left": null,
             "Start_Stop_Spec": null,
-            "Uncorrected_Reads": null,
-            "Uncorrected_Verifies": null,
-            "Uncorrected_Writes": null,
-            "Verifies_GB": null,
-            "Verifies_count": null,
-            "Writes_GB": null,
-            "Writes_count": null,
             "_Reads_GB": null,
             "_Reads_count": null,
             "_Uncorrected_Reads": null,
@@ -297,8 +288,7 @@
             "_Verifies_count": null,
             "_Writes_GB": null,
             "_Writes_count": null,
-            "_block_size": 512,
-            "block_size": 512
+            "_block_size": 512
         },
         "diags": {
             "Corrected_Reads": "-",
@@ -328,6 +318,7 @@
         "family": null,
         "firmware": "5B2QGXA7",
         "if_attributes": {
+            "_temperature": 62,
             "availableSpare": 100,
             "availableSpareThreshold": 10,
             "bytesRead": 77400000000000,
@@ -346,7 +337,6 @@
             "percentageUsed": 13,
             "powerCycles": 662,
             "powerOnHours": 3441,
-            "temperature": 62,
             "tests": [
                 {
                     "code": null,
@@ -458,12 +448,11 @@
         },
         "tests": [
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": null,
                 "hours": 3441,
+                "lba": null,
                 "nsid": null,
                 "num": -1,
                 "remain": 72,
@@ -474,12 +463,11 @@
                 "type": "Extended"
             },
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": "-",
                 "hours": 3441,
+                "lba": null,
                 "nsid": null,
                 "num": 0,
                 "remain": 0,
@@ -490,12 +478,11 @@
                 "type": "Extended"
             },
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": "-",
                 "hours": 3441,
+                "lba": null,
                 "nsid": null,
                 "num": 1,
                 "remain": 0,
@@ -506,12 +493,11 @@
                 "type": "Short"
             },
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": "-",
                 "hours": 1361,
+                "lba": null,
                 "nsid": null,
                 "num": 2,
                 "remain": 0,
@@ -522,12 +508,11 @@
                 "type": "Short"
             },
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": "-",
                 "hours": 866,
+                "lba": null,
                 "nsid": null,
                 "num": 3,
                 "remain": 0,
@@ -538,12 +523,11 @@
                 "type": "Extended"
             },
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": "-",
                 "hours": 865,
+                "lba": null,
                 "nsid": null,
                 "num": 4,
                 "remain": 0,
@@ -554,12 +538,11 @@
                 "type": "Short"
             },
             {
-                "ASC": null,
-                "ASCQ": null,
-                "LBA": null,
-                "_format": "nvme",
+                "asc": null,
+                "ascq": null,
                 "code": "-",
                 "hours": 340,
+                "lba": null,
                 "nsid": null,
                 "num": 5,
                 "remain": 0,
