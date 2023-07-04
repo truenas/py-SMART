@@ -1096,6 +1096,10 @@ class Device(object):
 
                 if m is not None:
                     tmp = m.groups()
+                    if tmp[0] == ' ':
+                        # This capacity is set to 0, skip it
+                        continue
+
                     self._capacity = int(
                         tmp[0].strip().replace(',', '').replace('.', '').replace(' ', '').replace('\u2019', '').replace('\u00a0', ''))
 

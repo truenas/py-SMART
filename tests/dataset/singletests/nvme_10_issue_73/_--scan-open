@@ -1,0 +1,5 @@
+/dev/sda -d nvme # /dev/sda, NVMe device
+/dev/sdb -d nvme # /dev/sdb, NVMe device
+/dev/sdc -d sat # /dev/sdc [SAT], ATA device
+/dev/sdd -d scsi # /dev/sdd, SCSI device
+/dev/sde -d scsi # /dev/sde, SCSI device
