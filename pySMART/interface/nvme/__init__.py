@@ -2,6 +2,7 @@ from enum import Enum
 import re
 import humanfriendly
 from typing import Optional, Iterator, Union, List
+from ..common import CommonIface
 
 
 class NvmeStatus(Enum):
@@ -481,7 +482,7 @@ class NvmeSelfTest(object):
         self.__dict__.update(state)
 
 
-class NvmeAttributes(object):
+class NvmeAttributes(CommonIface):
     """This class represents the attributes of a NVMe device
 
     Attributes:
@@ -517,7 +518,7 @@ class NvmeAttributes(object):
         """
 
         self.critialWarning: Optional[int] = None
-        self.temperature: Optional[int] = None
+        self._temperature: Optional[int] = None
         self.availableSpare: Optional[int] = None
         self.availableSpareThreshold: Optional[int] = None
         self.percentageUsed: Optional[int] = None
@@ -571,9 +572,9 @@ class NvmeAttributes(object):
                         elif name == 'Temperature':
                             # Check if temperature is in Celsius or Fahrenheit
                             if value.endswith('Celsius'):
-                                self.temperature = int(value[:-7])
+                                self._temperature = int(value[:-7])
                             elif value.endswith('Fahrenheit'):
-                                self.temperature = int(
+                                self._temperature = int(
                                     (int(value[:-10]) - 32) / 1.8)
                         elif name == 'Available Spare':
                             self.availableSpare = int(value[:-1])
@@ -760,18 +761,25 @@ class NvmeAttributes(object):
 
                         self.tests.append(test)
 
-    def __getstate__(self, all_info=True):
+    def __getstate__(self):
         """
         Allows us to send a pySMART diagnostics object over a serializable
         medium which uses json (or the likes of json) payloads
         """
-        ret = vars(self)
+        import copy
+        ret = copy.copy(vars(self))
 
         if ret['errors'] is not None:
-            ret['errors'] = [vars(e) for e in ret['errors']]
+            ret['errors'] = [e.__getstate__() for e in ret['errors']]
 
         if ret['tests'] is not None:
-            ret['tests'] = [vars(e) for e in ret['tests']]
+            ret['tests'] = [e.__getstate__() for e in ret['tests']]
+
+        return ret
 
     def __setstate__(self, state):
         self.__dict__.update(state)
+
+    @property
+    def temperature(self) -> Optional[int]:
+        return self._temperature

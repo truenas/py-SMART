@@ -163,13 +163,6 @@ class Device(object):
         **(int):** The Roatation Rate of the Drive if it is not a SSD.
         The Metric is RPM.
         """
-        self.attributes: List[Optional[Attribute]] = [None] * 256
-        """
-        **(list of `Attribute`):** Contains the complete SMART table
-        information for this device, as provided by smartctl. Indexed by
-        attribute #, values are set to 'None' for attributes not suported by
-        this device.
-        """
         self.test_capabilities = {
             'offline': False,  # SMART execute Offline immediate (ATA only)
             'short': 'nvme' not in self.name,  # SMART short Self-test
@@ -214,7 +207,7 @@ class Device(object):
         SAS and SCSI devices, since ATA/SATA SMART attributes are manufacturer
         proprietary.
         """
-        self.temperature: Optional[int] = None
+        self._temperature: Optional[int] = None
         """
         **(int or None): Since SCSI disks do not report attributes like ATA ones
         we need to grep/regex the shit outta the normal "smartctl -a" output.
@@ -237,7 +230,7 @@ class Device(object):
         """
         **(int):** The physical sector size of the device.
         """
-        self.if_attributes: Union[None, NvmeAttributes] = None
+        self.if_attributes: Union[None, NvmeAttributes, AtaAttributes] = None
         """
         **(NvmeAttributes):** This object may vary for each device interface attributes.
         It will store all data obtained from smartctl
@@ -300,6 +293,20 @@ class Device(object):
             self.update()
 
     @property
+    def attributes(self) -> List[Optional[Attribute]]:
+        """Returns the SMART attributes of the device.
+        Note: This is only filled with ATA/SATA attributes. SCSI/SAS/NVMe devices will have empty lists!!
+        @deprecated: Use `if_attributes` instead.
+
+        Returns:
+            list of `Attribute`: The SMART attributes of the device.
+        """
+        if self.if_attributes is None or not isinstance(self.if_attributes, AtaAttributes):
+            return [None] * 256
+        else:
+            return self.if_attributes.legacyAttributes
+
+    @property
     def dev_interface(self) -> Optional[str]:
         """Returns the internal interface type of the device.
            It may not be the same as the interface type as used by smartctl.
@@ -314,12 +321,25 @@ class Device(object):
         # If return still contains a megaraid, just asume it's type
         if 'megaraid' in fineType:
             # If any attributes is not None and has at least non None value, then it is a sat+megaraid device
-            if self.attributes and any(self.attributes):
+            if isinstance(self.if_attributes, AtaAttributes):
                 return 'ata'
             else:
                 return 'sas'
 
         return fineType
+
+    @property
+    def temperature(self) -> Optional[int]:
+        """Returns the temperature of the device.
+
+        Returns:
+            int: The temperature of the device in Celsius.
+                 None if the temperature could not be determined.
+        """
+        if self.if_attributes is None:
+            return self._temperature
+        else:
+            return self.if_attributes.temperature or self._temperature
 
     @property
     def smartctl_interface(self) -> Optional[str]:
@@ -453,6 +473,7 @@ class Device(object):
         Allows us to send a pySMART Device object over a serializable
         medium which uses json (or the likes of json) payloads
         """
+        return None
         state_dict = {
             'interface': self._interface if self._interface else 'UNKNOWN INTERFACE',
             'model': self.model,
@@ -463,9 +484,10 @@ class Device(object):
             'messages': self.messages,
             'test_capabilities': self.test_capabilities.copy(),
             'tests': [t.__getstate__() for t in self.tests] if self.tests else [],
-            'diagnostics': self.diagnostics.__getstate__(),
+            'diagnostics': self.diagnostics.__getstate__(all_info),
             'temperature': self.temperature,
-            'attributes': [attr.__getstate__() if attr else None for attr in self.attributes]
+            'attributes': [attr.__getstate__() if attr else None for attr in self.attributes],
+            'if_attributes': self.if_attributes.__getstate__(all_info) if self.if_attributes else None,
         }
         if all_info:
             state_dict.update({
@@ -925,7 +947,7 @@ class Device(object):
         """
         # set temperature back to None so that if update() is called more than once
         # any logic that relies on self.temperature to be None to rescan it works.it
-        self.temperature = None
+        self._temperature = None
         # same for temperatures
         self.temperatures = {}
         if self.abridged:
@@ -959,8 +981,10 @@ class Device(object):
         #######################################
         #   Dedicated interface attributes    #
         #######################################
+        if AtaAttributes.has_compatible_data(iter(_stdout)):
+            self.if_attributes = AtaAttributes(iter(_stdout))
 
-        if interface == 'nvme':
+        elif self.dev_interface == 'nvme':
             self.if_attributes = NvmeAttributes(iter(_stdout))
 
             # Get Tests
@@ -1182,24 +1206,6 @@ class Device(object):
                     self.test_capabilities['short'] = True
                     self.test_capabilities['long'] = True
 
-            # SMART Attribute table parsing
-            if 'Specific SMART Attributes' in line:
-                attribute_re = re.compile(
-                    r'^\s*(?P<id>\d+)\s+(?P<name>\S+)\s+(?P<flag>\S+)\s+(?P<value>\d+)\s+(?P<worst>\d+)\s+(?P<thresh>\S+)\s+(?P<type>\S+)\s+(?P<updated>\S+)\s+(?P<whenfailed>\S+)\s+(?P<raw>.+)$')
-
-                # loop until we reach the end of the table (empty line)
-                while True:
-                    line = next(stdout_iter).strip()
-                    if line == '':
-                        break
-
-                    # Parse the line
-                    m = attribute_re.match(line)
-                    if m is not None:
-                        tmp = m.groupdict()
-                        self.attributes[int(tmp['id'])] = Attribute(
-                            int(tmp['id']), tmp['name'], int(tmp['flag'], base=16), tmp['value'], tmp['worst'], tmp['thresh'], tmp['type'], tmp['updated'], tmp['whenfailed'], tmp['raw'])
-
             # For some reason smartctl does not show a currently running test
             # for 'ATA' in the Test log so I just have to catch it this way i guess!
             # For 'scsi' I still do it since it is the only place I get % remaining in scsi
@@ -1330,11 +1336,12 @@ class Device(object):
             if 'Current Drive Temperature' in line or ('Temperature:' in
                                                        line and interface == 'nvme'):
                 try:
-                    self.temperature = int(
+                    self._temperature = int(
                         line.split(':')[-1].strip().split()[0])
 
                     if 'fahrenheit' in line.lower():
-                        self.temperature = int((self.temperature - 32) * 5 / 9)
+                        self._temperature = int(
+                            (self.temperature - 32) * 5 / 9)
 
                 except ValueError:
                     pass
@@ -1356,7 +1363,7 @@ class Device(object):
 
                         self.temperatures[tempsensor_number] = tempsensor_value
                         if self.temperature is None or tempsensor_number == 0:
-                            self.temperature = tempsensor_value
+                            self._temperature = tempsensor_value
                 except ValueError:
                     pass
 
@@ -1414,17 +1421,7 @@ class Device(object):
                         if 'power on time' in line:
                             self.diagnostics.Power_On_Hours = int(
                                 line.split(':')[1].split(' ')[1])
-        # map temperature
-        if self.temperature is None:
-            # in this case the disk is probably ata
-            try:
-                # Some disks report temperature to attribute number 190 ('Airflow_Temperature_Cel')
-                # see https://bugs.freenas.org/issues/20860
-                temp_attr = self.attributes[194] or self.attributes[190]
-                if temp_attr is not None and temp_attr.raw_int is not None:
-                    self.temperature = temp_attr.raw_int
-            except (ValueError, AttributeError):
-                pass
+
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress
         if self._test_running is False:

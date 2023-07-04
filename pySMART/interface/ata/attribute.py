@@ -146,15 +146,22 @@ class Attribute(object):
 
     def __getstate__(self):
         return {
+            'name': self.name,
             'num': self.num,
             'flags': self.flags,
             'raw': self.raw,
             'value': self.value,
             'worst': self.worst,
-            'threshold': self.thresh,
+            'thresh': self.thresh,
             'type': self.type,
             'updated': self.updated,
             'when_failed': self.when_failed,
+            # Raw values
+            '_value': self._value,
+            '_worst': self._worst,
+            '_thresh': self._thresh,
+            'raw_int': self.raw_int,
+
         }
 
 

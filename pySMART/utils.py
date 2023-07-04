@@ -164,6 +164,11 @@ def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool
     if obj is None:
         return None
 
+    if hasattr(obj, '__getstate__'):
+        obj_state = obj.__getstate__()
+        if obj_state is not None:
+            return obj_state
+
     if not hasattr(obj, '__dict__'):
         return obj
 
@@ -172,10 +177,13 @@ def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool
     if deep_copy:
         ret = copy.deepcopy(vars(obj))
     else:
-        ret = vars(obj)
+        ret = copy.copy(vars(obj))
 
     available_types = ['dict', 'str', 'int', 'float', 'list', 'NoneType']
-    recursion_types = ['object', 'NvmeError', 'NvmeSelfTest']
+    recursion_types = ['object',
+                       'NvmeError', 'NvmeSelfTest', 'NvmeAttributes',
+                       'AtaAttributes', 'Attribute',
+                       ]
 
     for prop_name in prop_names:
         prop_val = getattr(obj, prop_name)
@@ -184,6 +192,13 @@ def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool
         if (prop_name[0] != '_'):
             # Get properties from objects
             if (prop_val_type_name in available_types) and (prop_name not in ret):
+                # Check if prop_val has __getstate__ method, if so, call it
+                if hasattr(prop_val, '__getstate__'):
+                    prop_val_state = prop_val.__getstate__()
+                    if prop_val_state is not None:
+                        ret[prop_name] = prop_val
+                        continue  # Do not do recursion
+
                 ret[prop_name] = prop_val
 
             # Do recursion

@@ -40,7 +40,7 @@ def update_device(folder, device_name, interface_name=None):
         dev = Device(device_name, interface=interface_name, smartctl=sf)
         json_dict['interface'] = interface_name
 
-    json_dict['values'] = get_object_properties(dev, deep_copy=False)
+    json_dict['values'] = get_object_properties(dev, deep_copy=True)
 
     # Remove non serializable objects
     to_delete = [
@@ -56,17 +56,6 @@ def update_device(folder, device_name, interface_name=None):
         if todel in json_dict['values']:
             del json_dict['values'][todel]
 
-    # Transform attributes
-    if 'attributes' in json_dict['values']:
-        att_list = []
-        for att in json_dict['values']['attributes']:
-            if att is None:
-                att_list.append(None)
-            else:
-                att_list.append(get_object_properties(att))
-
-        json_dict['values']['attributes'] = att_list
-
     # Transform tests
     if 'tests' in json_dict['values']:
         test_list = []
@@ -79,7 +68,7 @@ def update_device(folder, device_name, interface_name=None):
         json_dict['values']['tests'] = test_list
 
     # Direct transform for other properties
-    to_transform = ['diagnostics', 'if_attributes']
+    to_transform = ['diagnostics']
     for prop in json_dict['values']:
         if prop in to_transform:
             json_dict['values'][prop] = get_object_properties(

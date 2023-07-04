@@ -23,9 +23,13 @@ This package contains the special objects to handle and store data related to di
 This is required as ATA disks and NVMe disks have different attributes and different ways to get them.
 """
 
+from .ata import AtaAttributes
+from .common import CommonIface
 from .nvme import NvmeAttributes, NvmeError
 
 
 __all__ = [
-    'NvmeAttributes'
+    'AtaAttributes',
+    'CommonIface',
+    'NvmeAttributes',
 ]

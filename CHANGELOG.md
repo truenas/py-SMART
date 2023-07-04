@@ -1,9 +1,13 @@
 Version 1.3.0
 =============
 
+- Fixed some special NVMe capacity parsing issues (issue [#73](https://github.com/truenas/py-SMART/issues/73)). Thanks @wolfdate25
 - **Breaking changes**
     - **smartctl.all**:
         - Officially removed support for python 3.7. However, pyproject.toml still allows the 3.7 version. This will be removed in the next release.
+    - **smartctl.interface.ata**:
+        - Now ata interfaces are handled in the same way as NVMe interfaces.
+        - device.attribute references if_attributes.legacyAttributes for backwards compatibility.
 
 Version 1.2.5
 =============
