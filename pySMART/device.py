@@ -1407,7 +1407,7 @@ class Device(object):
             else:
                 # If not obtained Power_On_Hours above, make a direct attempt to extract power on
                 # hours from the background scan results log.
-                if self.diagnostics.Power_On_Hours is None:
+                if self.smart_enabled and self.diagnostics.Power_On_Hours is None:
                     raw, returncode = self.smartctl.generic_call(
                         [
                             '-d',
