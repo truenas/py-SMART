@@ -1,5 +1,5 @@
-smartctl 7.2 2021-01-17 r5171 [x86_64-linux-5.13.4-200.fc34.x86_64] (local build)
-Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
+smartctl 7.3 2022-02-28 r5338 [x86_64-linux-5.15.0-25-generic] (local build)
+Copyright (C) 2002-22, Bruce Allen, Christian Franke, www.smartmontools.org
 
-/dev/nvme0: Device of type 'scsi' [NVMe] detected
-/dev/nvme0: Device of type 'scsi' [NVMe] opened
+/dev/sda: Device of type 'scsi' [SCSI] detected
+/dev/sda: Device of type 'scsi' [SCSI] opened
