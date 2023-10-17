@@ -433,13 +433,14 @@ class NvmeSelfTest(object):
         powerOnHours (int): The power on hours
         failingLBA (Optional[int]): The failing LBA
         nsid (Optional[int]): The namespace ID
+        seg (Optional[int]): Manufacturer-specific self-test segment number
         sct (Optional[str]): The SCT
         code (Optional[str]): The code
         progress (int): The progress of the test. Defaults to 100%
 
     """
 
-    def __init__(self, num: int, description: str, status: str, powerOnHours: int, failingLBA: Optional[int] = None, nsid: Optional[int] = None, sct: Optional[str] = None, code: Optional[str] = None, progress: int = 100):
+    def __init__(self, num: int, description: str, status: str, powerOnHours: int, failingLBA: Optional[int] = None, nsid: Optional[int] = None, seg: Optional[int] = None, sct: Optional[str] = None, code: Optional[str] = None, progress: int = 100):
 
         self.num: int = num
         self.description: str = description
@@ -447,6 +448,7 @@ class NvmeSelfTest(object):
         self.powerOnHours: int = powerOnHours
         self.failingLBA: Optional[int] = failingLBA
         self.nsid: Optional[int] = nsid
+        self.seg: Optional[int] = seg
         self.sct: Optional[str] = sct
         self.code: Optional[str] = code
         self.progress: int = progress
@@ -458,15 +460,16 @@ class NvmeSelfTest(object):
         # Example smartctl output
         # Self-test Log (NVMe Log 0x06)
         # Self-test status: Extended self-test in progress (28% completed)
-        # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID SCT Code
-        #  0   Extended          Completed without error                3441            -     -   -    -
-        return ("{0:>2} {1:18}{2:29}{3:16}{4:13}{5:5}{6:4}{7:4}".format(
+        # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID Seg SCT Code
+        #  0   Extended          Completed without error                3441            -     -   -   -    -
+        return ("{0:>2} {1:18}{2:29}{3:16}{4:13}{5:5}{6:4}{7:4}{8:4}".format(
             self.num,
             self.description,
             self.status,
             self.powerOnHours,
             self.failingLBA,
             self.nsid,
+            self.seg,
             self.sct,
             self.code
         ))
@@ -688,8 +691,8 @@ class NvmeAttributes(CommonIface):
                 # Example smartctl output
                 # Self-test Log (NVMe Log 0x06)
                 # Self-test status: Extended self-test in progress (28% completed)
-                # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID SCT Code
-                #  0   Extended          Completed without error                3441            -     -   -    -
+                # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID Seg SCT Code
+                #  0   Extended          Completed without error                3441            -     -   -   -    -
                 nvme_entry_regex = re.compile(
                     r'^[#\s]*(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*)$')
 
@@ -745,6 +748,10 @@ class NvmeAttributes(CommonIface):
                         if match.group(6) != '-':
                             nsid = int(match.group(6))
 
+                        seg = None
+                        if match.group(7) != '-':
+                            seg = int(match.group(7))
+
                         sct = match.group(8)
                         code = match.group(9)
 
@@ -755,6 +762,7 @@ class NvmeAttributes(CommonIface):
                             powerOnHours=powerOnHours,
                             failingLBA=failingLBA,
                             nsid=nsid,
+                            seg=seg,
                             sct=sct,
                             code=code
                         )
