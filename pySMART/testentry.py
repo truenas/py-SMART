@@ -165,15 +165,16 @@ class TestEntry(object):
             # Example smartctl output
             # Self-test Log (NVMe Log 0x06)
             # Self-test status: Extended self-test in progress (28% completed)
-            # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID SCT Code
-            #  0   Extended          Completed without error                3441            -     -   -    -
-            return ("{0:^4} {1:<18}{2:<29}{3:>14}{4:>13}{5:>6}{6:>4}{7:>5}".format(
+            # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID Seg SCT Code
+            #  0   Extended          Completed without error                3441            -     -   -   -    -
+            return ("{0:^4} {1:<18}{2:<29}{3:>14}{4:>13}{5:>6}{6:>4}{7:>4}{8:>5}".format(
                 self.num,
                 self.type,
                 self.status,
                 self.hours,
                 self.LBA if self.LBA is not None else '-',
                 self.nsid if self.LBA is not None else '-',
+                self.segment if self.segment is not None else '-',
                 self.sct if self.LBA is not None else '-',
                 self.code if self.LBA is not None else '-'
             ))
