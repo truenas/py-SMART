@@ -467,11 +467,11 @@ class NvmeSelfTest(object):
             self.description,
             self.status,
             self.powerOnHours,
-            self.failingLBA,
-            self.nsid,
-            self.seg,
-            self.sct,
-            self.code
+            self.failingLBA if self.failingLBA is not None else '-',
+            self.nsid if self.nsid is not None else '-',
+            self.seg if self.seg is not None else '-',
+            self.sct if self.sct is not None else '-',
+            self.code if self.code is not None else '-'
         ))
 
     def __getstate__(self, all_info=True):
