@@ -462,7 +462,7 @@ class NvmeSelfTest(object):
         # Self-test status: Extended self-test in progress (28% completed)
         # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID Seg SCT Code
         #  0   Extended          Completed without error                3441            -     -   -   -    -
-        return ("{0:>2} {1:18}{2:29}{3:16}{4:13}{5:5}{6:4}{7:4}{8:4}".format(
+        return ("{0:>2} {1:18}{2:29}{3:16}{4:>13}{5:>5}{6:>4}{7:>4}{8:>4}".format(
             self.num,
             self.description,
             self.status,
