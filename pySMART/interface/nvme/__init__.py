@@ -691,7 +691,7 @@ class NvmeAttributes(CommonIface):
                 # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID SCT Code
                 #  0   Extended          Completed without error                3441            -     -   -    -
                 nvme_entry_regex = re.compile(
-                    r'^[#\s]*(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*)$')
+                    r'^[#\s]*(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*)$')
 
                 line = next(data)
 
@@ -745,8 +745,8 @@ class NvmeAttributes(CommonIface):
                         if match.group(6) != '-':
                             nsid = int(match.group(6))
 
-                        sct = match.group(7)
-                        code = match.group(8)
+                        sct = match.group(8)
+                        code = match.group(9)
 
                         test = NvmeSelfTest(
                             num=num,
