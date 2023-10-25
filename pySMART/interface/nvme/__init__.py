@@ -474,7 +474,7 @@ class NvmeSelfTest(object):
                 self.sct,
                 self.code
             ))
-        
+
         return ("{0:>2} {1:18}{2:29}{3:16}{4:>13}{5:>5}{6:>4}{7:>4}{8:>4}".format(
             self.num,
             self.description,
@@ -762,7 +762,7 @@ class NvmeAttributes(CommonIface):
                             nsid = int(match.group(6))
 
                         seg = None
-                        if match.group(7) != '-' and match.group(7) is not None:
+                        if match.group(7) is not None and match.group(7) != '-':
                             seg = int(match.group(7))
 
                         sct = match.group(8)
