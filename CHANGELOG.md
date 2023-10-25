@@ -2,6 +2,7 @@ Version 1.3.0
 =============
 
 - Fixed some special NVMe capacity parsing issues (issue [#73](https://github.com/truenas/py-SMART/issues/73)). Thanks @wolfdate25
+- Fixed nvme test parsing on smartmontools >= 7.4 (issue [#75](https://github.com/truenas/py-SMART/issues/75)). Thanks @NicholasCJL
 - Other minnor fixes with @ulmitov's help
 - **Breaking changes**
     - **smartctl.all**:
