@@ -347,6 +347,7 @@
                     "powerOnHours": 3441,
                     "progress": 28,
                     "sct": null,
+                    "seg": null,
                     "status": "Running"
                 },
                 {
@@ -358,6 +359,7 @@
                     "powerOnHours": 3441,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Completed without error"
                 },
                 {
@@ -369,6 +371,7 @@
                     "powerOnHours": 3441,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Completed without error"
                 },
                 {
@@ -380,6 +383,7 @@
                     "powerOnHours": 1361,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Completed without error"
                 },
                 {
@@ -391,6 +395,7 @@
                     "powerOnHours": 866,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Completed without error"
                 },
                 {
@@ -402,6 +407,7 @@
                     "powerOnHours": 865,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Aborted: Self-test command"
                 },
                 {
@@ -413,6 +419,7 @@
                     "powerOnHours": 340,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Completed without error"
                 }
             ],
