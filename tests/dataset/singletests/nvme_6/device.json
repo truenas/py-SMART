@@ -359,6 +359,7 @@
                     "powerOnHours": 8737,
                     "progress": 100,
                     "sct": "-",
+                    "seg": null,
                     "status": "Completed without error"
                 }
             ],
