@@ -1,3 +1,9 @@
+Version 1.3.1
+=============
+- **Breaking changes**
+    - **smartctl.all**:
+        - Officially removed support for python 3.7.
+
 Version 1.3.0
 =============
 
