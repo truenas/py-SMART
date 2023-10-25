@@ -462,16 +462,29 @@ class NvmeSelfTest(object):
         # Self-test status: Extended self-test in progress (28% completed)
         # Num  Test_Description  Status                       Power_on_Hours  Failing_LBA  NSID Seg SCT Code
         #  0   Extended          Completed without error                3441            -     -   -   -    -
+        if self.seg is not None:
+            # for backwards compatibility
+            return ("{0:>2} {1:18}{2:29}{3:16}{4:13}{5:5}{6:4}{7:4}".format(
+                self.num,
+                self.description,
+                self.status,
+                self.powerOnHours,
+                self.failingLBA,
+                self.nsid,
+                self.sct,
+                self.code
+            ))
+        
         return ("{0:>2} {1:18}{2:29}{3:16}{4:>13}{5:>5}{6:>4}{7:>4}{8:>4}".format(
             self.num,
             self.description,
             self.status,
             self.powerOnHours,
-            self.failingLBA if self.failingLBA is not None else '-',
-            self.nsid if self.nsid is not None else '-',
-            self.seg if self.seg is not None else '-',
-            self.sct if self.sct is not None else '-',
-            self.code if self.code is not None else '-'
+            self.failingLBA,
+            self.nsid,
+            self.seg,
+            self.sct,
+            self.code
         ))
 
     def __getstate__(self, all_info=True):
