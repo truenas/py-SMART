@@ -749,7 +749,7 @@ class NvmeAttributes(CommonIface):
                             nsid = int(match.group(6))
 
                         seg = None
-                        if match.group(7) != '-' or match.group(7) is not None:
+                        if match.group(7) != '-' and match.group(7) is not None:
                             seg = int(match.group(7))
 
                         sct = match.group(8)
