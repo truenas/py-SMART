@@ -181,6 +181,19 @@ class Device(object):
         # Note: The above are just default values and can/will be changed
         # upon update() when the attributes and type of the disk is actually
         # determined.
+        self.test_polling_time = {
+            'short': 10,
+            'long': 1000,
+            'conveyance': 20,
+        }
+        """
+        **(dict): ** This dictionary contains key == 'Test Name' and
+        value == int of approximate times to run each test type that this
+        device is capable of.
+        """
+        # Note: The above are just default values and can/will be changed
+        # upon update() when the attributes and type of the disk is actually
+        # determined.
         self.tests: List[TestEntry] = []
         """
         **(list of `TestEntry`):** Contains the complete SMART self-test log
@@ -962,6 +975,7 @@ class Device(object):
         parse_self_tests = False
         parse_running_test = False
         parse_ascq = False
+        polling_minute_type = None
         message = ''
         self.tests = []
         self._test_running = False
@@ -1205,6 +1219,21 @@ class Device(object):
                 if 'Self_Test' in line:
                     self.test_capabilities['short'] = True
                     self.test_capabilities['long'] = True
+
+            if 'Short self-test routine' in line:
+                polling_minute_type = 'short'
+                continue
+            if 'Extended self-test routine' in line:
+                polling_minute_type = 'long'
+                continue
+            if 'Conveyance self-test routine' in line:
+                polling_minute_type = 'conveyance'
+                continue
+            if 'recommended polling time:' in line:
+                self.test_polling_time[polling_minute_type] = float(
+                    re.sub("[^0-9]", "", line)
+                )
+                continue
 
             # For some reason smartctl does not show a currently running test
             # for 'ATA' in the Test log so I just have to catch it this way i guess!

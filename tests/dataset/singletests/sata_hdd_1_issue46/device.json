@@ -1141,6 +1141,11 @@
             "selective": true,
             "short": true
         },
+        "test_polling_time": {
+            "conveyance": 20,
+            "long": 1822.0,
+            "short": 2.0
+        },
         "tests": [],
         "vendor": "Western"
     }

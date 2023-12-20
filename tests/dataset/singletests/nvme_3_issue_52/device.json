@@ -365,6 +365,11 @@
             "selective": false,
             "short": true
         },
+        "test_polling_time": {
+            "conveyance": 20,
+            "long": 1000,
+            "short": 10
+        },
         "tests": [],
         "vendor": "WDC"
     }
