@@ -1380,6 +1380,11 @@
             "selective": true,
             "short": true
         },
+        "test_polling_time": {
+            "conveyance": 2.0,
+            "long": 85.0,
+            "short": 2.0
+        },
         "tests": [],
         "vendor": "HS"
     }

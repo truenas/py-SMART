@@ -1471,6 +1471,11 @@
             "selective": true,
             "short": true
         },
+        "test_polling_time": {
+            "conveyance": 2.0,
+            "long": 90.0,
+            "short": 2.0
+        },
         "tests": [],
         "vendor": "Apacer"
     }

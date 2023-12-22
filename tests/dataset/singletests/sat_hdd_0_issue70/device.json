@@ -1260,6 +1260,11 @@
             "selective": true,
             "short": true
         },
+        "test_polling_time": {
+            "conveyance": 2.0,
+            "long": 196.0,
+            "short": 1.0
+        },
         "tests": [
             {
                 "asc": null,
