@@ -1,5 +1,6 @@
 Version 1.3.1
 =============
+- Added support for test polling_minutes. Requested in [#77](https://github.com/truenas/py-SMART/issues/77) and [#78](https://github.com/truenas/py-SMART/pull/78). Thanks @Gigahawk
 - **Breaking changes**
     - **smartctl.all**:
         - Officially removed support for python 3.7.
