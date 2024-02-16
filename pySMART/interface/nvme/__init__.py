@@ -533,7 +533,7 @@ class NvmeAttributes(CommonIface):
 
         """
 
-        self.critialWarning: Optional[int] = None
+        self.criticalWarning: Optional[int] = None
         self._temperature: Optional[int] = None
         self.availableSpare: Optional[int] = None
         self.availableSpareThreshold: Optional[int] = None

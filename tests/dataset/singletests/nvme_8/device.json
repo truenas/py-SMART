@@ -324,7 +324,6 @@
             "bytesRead": 0,
             "bytesWritten": 0,
             "controllerBusyTime": 403,
-            "critialWarning": null,
             "criticalTemperatureTime": 0,
             "criticalWarning": 0,
             "dataUnitsRead": 0,

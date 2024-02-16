@@ -324,7 +324,6 @@
             "bytesRead": 32600000000000,
             "bytesWritten": 7180000000000,
             "controllerBusyTime": 1670,
-            "critialWarning": null,
             "criticalTemperatureTime": 0,
             "criticalWarning": 0,
             "dataUnitsRead": 63787598,
