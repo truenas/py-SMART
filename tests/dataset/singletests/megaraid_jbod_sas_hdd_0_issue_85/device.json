@@ -1,5 +1,4 @@
 {
-    "interface": "scsi",
     "name": "/dev/sdd",
     "values": {
         "abridged": false,
