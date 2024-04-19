@@ -481,36 +481,33 @@ class Device(object):
             self.serial
         )
 
-    def __getstate__(self, all_info=True):
+    def __getstate__(self, all_info=True) -> Dict:
         """
         Allows us to send a pySMART Device object over a serializable
         medium which uses json (or the likes of json) payloads
         """
-        return None
+
         state_dict = {
-            'interface': self._interface if self._interface else 'UNKNOWN INTERFACE',
-            'model': self.model,
+            'attributes': [attr.__getstate__() if attr else None for attr in self.attributes],
+            'capacity': self._capacity_human,
+            'diagnostics': self.diagnostics.__getstate__(all_info),
             'firmware': self.firmware,
+            'if_attributes': self.if_attributes.__getstate__() if self.if_attributes else None,
+            'interface': self._interface if self._interface else 'UNKNOWN INTERFACE',
+            'is_ssd': self.is_ssd,
+            'messages': self.messages,
+            'model': self.model,
+            'name': self.name,
+            'path': self.dev_reference,
+            'rotation_rate': self.rotation_rate,
+            'serial': self.serial,
             'smart_capable': self.smart_capable,
             'smart_enabled': self.smart_enabled,
             'smart_status': self.assessment,
-            'messages': self.messages,
+            'temperature': self.temperature,
             'test_capabilities': self.test_capabilities.copy(),
             'tests': [t.__getstate__() for t in self.tests] if self.tests else [],
-            'diagnostics': self.diagnostics.__getstate__(all_info),
-            'temperature': self.temperature,
-            'attributes': [attr.__getstate__() if attr else None for attr in self.attributes],
-            'if_attributes': self.if_attributes.__getstate__(all_info) if self.if_attributes else None,
         }
-        if all_info:
-            state_dict.update({
-                'name': self.name,
-                'path': self.dev_reference,
-                'serial': self.serial,
-                'is_ssd': self.is_ssd,
-                'rotation_rate': self.rotation_rate,
-                'capacity': self._capacity_human
-            })
         return state_dict
 
     def __setstate__(self, state):
