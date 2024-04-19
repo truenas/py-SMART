@@ -3,6 +3,7 @@ Version 1.3.1
 - Added support for test polling_minutes. Requested in [#77](https://github.com/truenas/py-SMART/issues/77) and [#78](https://github.com/truenas/py-SMART/pull/78). Thanks @Gigahawk
 - Minnor typo fixed in NvmeAttributes (issue [#81](https://github.com/truenas/py-SMART/issues/81)).  Thanks @petersulyok
 - Minnor fix for JBOD devices (MR [#85](https://github.com/truenas/py-SMART/pull/85)). Thanks @jackeichen
+- Fixed __getstate__ method in Device class. (issue [#86](https://github.com/truenas/py-SMART/issues/86)). Thanks @f18m
 - **Breaking changes**
     - **smartctl.all**:
         - Officially removed support for python 3.7.

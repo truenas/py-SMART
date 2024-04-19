@@ -64,7 +64,7 @@ class AtaAttributes(CommonIface):
                         self.legacyAttributes[int(tmp['id'])] = Attribute(
                             int(tmp['id']), tmp['name'], int(tmp['flag'], base=16), tmp['value'], tmp['worst'], tmp['thresh'], tmp['type'], tmp['updated'], tmp['whenfailed'], tmp['raw'])
 
-    def __getstate__(self, all_info=True):
+    def __getstate__(self):
         """
         Allows us to send a pySMART diagnostics object over a serializable
         medium which uses json (or the likes of json) payloads
