@@ -164,10 +164,10 @@ def get_object_properties(obj: Any, deep_copy: bool = True, remove_private: bool
     if obj is None:
         return None
 
-    if hasattr(obj, '__getstate__'):
-        obj_state = obj.__getstate__()
-        if obj_state is not None:
-            return obj_state
+    # if hasattr(obj, '__getstate__'):
+    #    obj_state = obj.__getstate__()
+    #    if obj_state is not None:
+    #        return obj_state
 
     if not hasattr(obj, '__dict__'):
         return obj

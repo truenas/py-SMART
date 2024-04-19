@@ -18,6 +18,8 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "value": "082",
+                "value_int": 82,
+                "value_str": "082",
                 "when_failed": "-",
                 "worst": 64
             },
@@ -35,6 +37,8 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "value": "096",
+                "value_int": 96,
+                "value_str": "096",
                 "when_failed": "-",
                 "worst": 96
             },
@@ -51,6 +55,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -67,6 +73,8 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -84,6 +92,8 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "value": "072",
+                "value_int": 72,
+                "value_str": "072",
                 "when_failed": "-",
                 "worst": 60
             },
@@ -101,6 +111,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "099",
+                "value_int": 99,
+                "value_str": "099",
                 "when_failed": "-",
                 "worst": 99
             },
@@ -117,6 +129,8 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -134,6 +148,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -155,6 +171,8 @@
                 "type": "Pre-fail",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -339,6 +357,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -355,6 +375,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -372,6 +394,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "069",
+                "value_int": 69,
+                "value_str": "069",
                 "when_failed": "-",
                 "worst": 66
             },
@@ -389,6 +413,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -405,6 +431,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -421,6 +449,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "031",
+                "value_int": 31,
+                "value_str": "031",
                 "when_failed": "-",
                 "worst": 40
             },
@@ -437,6 +467,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "082",
+                "value_int": 82,
+                "value_str": "082",
                 "when_failed": "-",
                 "worst": 64
             },
@@ -454,6 +486,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -470,6 +504,8 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 100
             },
@@ -486,6 +522,8 @@
                 "type": "Old_age",
                 "updated": "Always",
                 "value": "200",
+                "value_int": 200,
+                "value_str": "200",
                 "when_failed": "-",
                 "worst": 200
             },
@@ -542,6 +580,8 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 253
             },
@@ -558,6 +598,8 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 253
             },
@@ -574,6 +616,8 @@
                 "type": "Old_age",
                 "updated": "Offline",
                 "value": "100",
+                "value_int": 100,
+                "value_str": "100",
                 "when_failed": "-",
                 "worst": 253
             },
@@ -604,10 +648,19 @@
             "Load_Cycle_Spec": null,
             "Non_Medium_Errors": null,
             "Power_On_Hours": null,
+            "Reads_GB": null,
+            "Reads_count": null,
             "Reallocated_Sector_Ct": null,
             "Start_Stop_Cycles": null,
             "Start_Stop_Pct_Left": null,
             "Start_Stop_Spec": null,
+            "Uncorrected_Reads": null,
+            "Uncorrected_Verifies": null,
+            "Uncorrected_Writes": null,
+            "Verifies_GB": null,
+            "Verifies_count": null,
+            "Writes_GB": null,
+            "Writes_count": null,
             "_Reads_GB": null,
             "_Reads_count": null,
             "_Uncorrected_Reads": null,
@@ -617,7 +670,8 @@
             "_Verifies_count": null,
             "_Writes_GB": null,
             "_Writes_count": null,
-            "_block_size": 512
+            "_block_size": 512,
+            "block_size": 512
         },
         "diags": {
             "Corrected_Reads": "-",
@@ -662,6 +716,8 @@
                     "type": "Pre-fail",
                     "updated": "Always",
                     "value": "082",
+                    "value_int": 82,
+                    "value_str": "082",
                     "when_failed": "-",
                     "worst": 64
                 },
@@ -679,6 +735,8 @@
                     "type": "Pre-fail",
                     "updated": "Always",
                     "value": "096",
+                    "value_int": 96,
+                    "value_str": "096",
                     "when_failed": "-",
                     "worst": 96
                 },
@@ -695,6 +753,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -711,6 +771,8 @@
                     "type": "Pre-fail",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -728,6 +790,8 @@
                     "type": "Pre-fail",
                     "updated": "Always",
                     "value": "072",
+                    "value_int": 72,
+                    "value_str": "072",
                     "when_failed": "-",
                     "worst": 60
                 },
@@ -745,6 +809,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "099",
+                    "value_int": 99,
+                    "value_str": "099",
                     "when_failed": "-",
                     "worst": 99
                 },
@@ -761,6 +827,8 @@
                     "type": "Pre-fail",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -778,6 +846,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -799,6 +869,8 @@
                     "type": "Pre-fail",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -983,6 +1055,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -999,6 +1073,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -1016,6 +1092,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "069",
+                    "value_int": 69,
+                    "value_str": "069",
                     "when_failed": "-",
                     "worst": 66
                 },
@@ -1033,6 +1111,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -1049,6 +1129,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -1065,6 +1147,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "031",
+                    "value_int": 31,
+                    "value_str": "031",
                     "when_failed": "-",
                     "worst": 40
                 },
@@ -1081,6 +1165,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "082",
+                    "value_int": 82,
+                    "value_str": "082",
                     "when_failed": "-",
                     "worst": 64
                 },
@@ -1098,6 +1184,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -1114,6 +1202,8 @@
                     "type": "Old_age",
                     "updated": "Offline",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 100
                 },
@@ -1130,6 +1220,8 @@
                     "type": "Old_age",
                     "updated": "Always",
                     "value": "200",
+                    "value_int": 200,
+                    "value_str": "200",
                     "when_failed": "-",
                     "worst": 200
                 },
@@ -1186,6 +1278,8 @@
                     "type": "Old_age",
                     "updated": "Offline",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 253
                 },
@@ -1202,6 +1296,8 @@
                     "type": "Old_age",
                     "updated": "Offline",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 253
                 },
@@ -1218,6 +1314,8 @@
                     "type": "Old_age",
                     "updated": "Offline",
                     "value": "100",
+                    "value_int": 100,
+                    "value_str": "100",
                     "when_failed": "-",
                     "worst": 253
                 },
@@ -1234,7 +1332,8 @@
                 null,
                 null,
                 null
-            ]
+            ],
+            "temperature": 31
         },
         "interface": "sat",
         "is_ssd": false,
@@ -1267,11 +1366,12 @@
         },
         "tests": [
             {
-                "asc": null,
-                "ascq": null,
+                "ASC": null,
+                "ASCQ": null,
+                "LBA": "-",
+                "_format": "ata",
                 "code": null,
                 "hours": "1284",
-                "lba": "-",
                 "nsid": null,
                 "num": 1,
                 "remain": "00%",
@@ -1282,11 +1382,12 @@
                 "type": "Extended offline"
             },
             {
-                "asc": null,
-                "ascq": null,
+                "ASC": null,
+                "ASCQ": null,
+                "LBA": "-",
+                "_format": "ata",
                 "code": null,
                 "hours": "1281",
-                "lba": "-",
                 "nsid": null,
                 "num": 2,
                 "remain": "00%",
