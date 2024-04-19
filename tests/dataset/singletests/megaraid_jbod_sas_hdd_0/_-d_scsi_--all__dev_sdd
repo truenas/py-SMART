@@ -1,0 +1,52 @@
+smartctl 7.1 2020-04-05 r5049 [x86_64-linux-4.18.0-372.9.1.el8.x86_64] (local build)
+Copyright (C) 2002-19, Bruce Allen, Christian Franke, www.smartmontools.org
+
+=== START OF INFORMATION SECTION ===
+Vendor:               XXXXXXXXXXX
+Product:              XXXXXXXXXXX
+Revision:             CA00
+Compliance:           SPC-5
+User Capacity:        800,166,076,416 bytes [800 GB]
+Logical block size:   512 bytes
+Physical block size:  4096 bytes
+LU is resource provisioned, LBPRZ=1
+Rotation Rate:        Solid State Device
+Form Factor:          2.5 inches
+Logical Unit id:      0x50025380725029b0
+Serial number:        XXXXXXXXXXXXXXXX
+Device type:          disk
+Transport protocol:   SAS (SPL-3)
+Local Time is:        Tue Apr  9 08:02:36 2024 EDT
+SMART support is:     Available - device has SMART capability.
+SMART support is:     Enabled
+Temperature Warning:  Enabled
+
+=== START OF READ SMART DATA SECTION ===
+SMART Health Status: OK
+
+Percentage used endurance indicator: 0%
+Current Drive Temperature:     42 C
+Drive Trip Temperature:        65 C
+
+Manufactured in week 07 of year 2022
+Accumulated start-stop cycles:  135
+Specified load-unload count over device lifetime:  0
+Accumulated load-unload cycles:  0
+Elements in grown defect list: 0
+
+Error counter log:
+           Errors Corrected by           Total   Correction     Gigabytes    Total
+               ECC          rereads/    errors   algorithm      processed    uncorrected
+           fast | delayed   rewrites  corrected  invocations   [10^9 bytes]  errors
+read:          0        0         0         0          0      27805.729           0
+write:         0        0         0         0          0       9378.908           0
+verify:        0        0         0         0          0          0.016           0
+
+Non-medium error count:    84893
+
+SMART Self-test log
+Num  Test              Status                 segment  LifeTime  LBA_first_err [SK ASC ASQ]
+     Description                              number   (hours)
+# 1  Background short  Completed                   -     349                 - [-   -    -]
+
+Long (extended) Self-test duration: 3600 seconds [60.0 minutes]
