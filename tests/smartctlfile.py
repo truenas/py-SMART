@@ -56,7 +56,7 @@ class SmartctlFile(Smartctl):
         filename = os.path.join(
             self.smartctl_path, re.sub('[/\\\\:]', '_', filename))
 
-        logger.trace("Opening file: {0}".format(filename))
+        logger.debug("Opening file: {0}".format(filename))
 
         try:
             with open(filename, mode='rb') as f:

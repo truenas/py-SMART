@@ -259,7 +259,7 @@ class Device(object):
         # Lets do this only for the non-abridged case
         # (we can work with no interface for abridged case)
         elif self._interface is None and not self.abridged:
-            logger.trace(
+            logger.debug(
                 "Determining interface of disk: {0}".format(self.name))
             raw, returncode = self.smartctl.generic_call(
                 ['-d', 'test', self.dev_reference])
