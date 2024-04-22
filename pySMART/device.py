@@ -36,7 +36,7 @@ from typing import Tuple, Union, List, Dict, Optional
 
 # pySMART module imports
 from .interface.ata.attribute import Attribute
-from .diagnostics import Diagnostics
+from .interface.scsi.diagnostics import Diagnostics
 from .interface import *
 from .smartctl import Smartctl, SMARTCTL
 from .testentry import TestEntry
@@ -490,7 +490,7 @@ class Device(object):
         state_dict = {
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes],
             'capacity': self._capacity_human,
-            'diagnostics': self.diagnostics.__getstate__(all_info),
+            'diagnostics': self.diagnostics.__getstate__(),
             'firmware': self.firmware,
             'if_attributes': self.if_attributes.__getstate__() if self.if_attributes else None,
             'interface': self._interface if self._interface else 'UNKNOWN INTERFACE',

@@ -205,7 +205,7 @@ class Diagnostics(object):
 
         return ret_dict
 
-    def __getstate__(self, all_info=True):
+    def __getstate__(self):
         """
         Allows us to send a pySMART diagnostics object over a serializable
         medium which uses json (or the likes of json) payloads
