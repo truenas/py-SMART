@@ -28,20 +28,20 @@ The steps are:
 
 - Go where you want to clone the repository, clone it, go there:
 
-```bash
-$ cd <wherever you want to clone the repository>
-$ git clone https://github.com/truenas/py-SMART
+    ```bash
+    $ cd <wherever you want to clone the repository>
+    $ git clone https://github.com/truenas/py-SMART
 
-Cloning into 'py-SMART'...
-remote: Enumerating objects: 2243, done.
-remote: Counting objects: 100% (839/839), done.
-remote: Compressing objects: 100% (362/362), done.
-remote: Total 2243 (delta 544), reused 743 (delta 463), pack-reused 1404
-Receiving objects: 100% (2243/2243), 674.95 KiB | 2.38 MiB/s, done.
-Resolving deltas: 100% (1518/1518), done.
+    Cloning into 'py-SMART'...
+    remote: Enumerating objects: 2243, done.
+    remote: Counting objects: 100% (839/839), done.
+    remote: Compressing objects: 100% (362/362), done.
+    remote: Total 2243 (delta 544), reused 743 (delta 463), pack-reused 1404
+    Receiving objects: 100% (2243/2243), 674.95 KiB | 2.38 MiB/s, done.
+    Resolving deltas: 100% (1518/1518), done.
 
-$ cd py-SMART
-```
+    $ cd py-SMART
+    ```
 
 - Create a virtualenv and activate it
 
