@@ -1,11 +1,16 @@
-Version 1.3.1
+Version 1.4.0
 =============
 - Added support for test polling_minutes. Requested in [#77](https://github.com/truenas/py-SMART/issues/77) and [#78](https://github.com/truenas/py-SMART/pull/78). Thanks @Gigahawk
 - Minnor typo fixed in NvmeAttributes (issue [#81](https://github.com/truenas/py-SMART/issues/81)). Thanks @petersulyok
 - Fixed __getstate__ method in Device class. (issue [#86](https://github.com/truenas/py-SMART/issues/86)). Thanks @f18m
+- Added DEVELOP.md file to help developers to get started with the project. (MR [#87](https://github.com/truenas/py-SMART/pull/87/files)). Thanks @ssteinerx
 - **Breaking changes**
     - **smartctl.all**:
         - Officially removed support for python 3.7.
+    - **smartctl.interface.scsi**:
+        - Now scsi interfaces are handled in the same way as NVMe/ata interfaces.
+        - device.diags/diagnostics references if_attributes.diags/diagnostics for backwards compatibility.
+
 
 Version 1.3.0
 =============
