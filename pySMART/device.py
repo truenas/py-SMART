@@ -213,13 +213,6 @@ class Device(object):
         """
         **(int):** Estimate progress percantage of the running SMART selftest.
         """
-        self.diagnostics: Diagnostics = Diagnostics()
-        """
-        **Diagnostics** Contains parsed and processed diagnostic information
-        extracted from the SMART information. Currently only populated for
-        SAS and SCSI devices, since ATA/SATA SMART attributes are manufacturer
-        proprietary.
-        """
         self._temperature: Optional[int] = None
         """
         **(int or None): Since SCSI disks do not report attributes like ATA ones
@@ -243,7 +236,10 @@ class Device(object):
         """
         **(int):** The physical sector size of the device.
         """
-        self.if_attributes: Union[None, NvmeAttributes, AtaAttributes] = None
+        self.if_attributes: Union[None,
+                                  AtaAttributes,
+                                  NvmeAttributes,
+                                  SCSIAttributes] = None
         """
         **(NvmeAttributes):** This object may vary for each device interface attributes.
         It will store all data obtained from smartctl
@@ -428,10 +424,24 @@ class Device(object):
         return self._capacity_human
 
     @property
+    def diagnostics(self) -> Diagnostics:
+        """Gets the old/deprecated version of SCSI/SAS diagnostics atribute.
+        """
+        if self.if_attributes is None or not isinstance(self.if_attributes, SCSIAttributes):
+            return Diagnostics()
+
+        else:
+            return self.if_attributes.diagnostics
+
+    @property
     def diags(self) -> Dict[str, str]:
         """Gets the old/deprecated version of SCSI/SAS diags atribute.
         """
-        return self.diagnostics.get_classic_format()
+        if self.if_attributes is None or not isinstance(self.if_attributes, SCSIAttributes):
+            return Diagnostics().get_classic_format()
+
+        else:
+            return self.if_attributes.diagnostics.get_classic_format()
 
     @property
     def size_raw(self) -> Optional[str]:
@@ -486,6 +496,10 @@ class Device(object):
         Allows us to send a pySMART Device object over a serializable
         medium which uses json (or the likes of json) payloads
         """
+
+        # Deprecated entries:
+        # - attributes
+        # - diagnostics
 
         state_dict = {
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes],
@@ -1011,6 +1025,16 @@ class Device(object):
                 self._test_running = False
                 self._test_progress = None
 
+        elif SCSIAttributes.has_compatible_data(iter(_stdout)):
+            self.if_attributes = SCSIAttributes(iter(_stdout),
+                                                abridged=self.abridged,
+                                                smartEnabled=self.smart_enabled,
+                                                sm=self.smartctl,
+                                                dev_reference=self.dev_reference)
+
+            # Import (for now) the tests from if_attributes
+            self.tests = self.if_attributes.tests
+
         else:
             self.if_attributes = None
 
@@ -1048,29 +1072,9 @@ class Device(object):
                     r'^[#\s]*(\d+)\s{2,}(.*[^\s])\s{2,}(.*[^\s])\s{1,}(.*[^\s])\s{2,}(.*[^\s])\s{2,}(.*[^\s])$').match(line)
 
                 if format_scsi is not None:
-                    format = 'scsi'
-                    parsed = format_scsi.groups()
-                    num = int(parsed[0])
-                    test_type = parsed[1]
-                    status = parsed[2]
-                    segment = parsed[3]
-                    hours = parsed[4]
-                    lba = parsed[5]
-                    sense = parsed[6]
-                    asc = parsed[7]
-                    ascq = parsed[8]
-                    self.tests.append(TestEntry(
-                        format,
-                        num,
-                        test_type,
-                        status,
-                        hours,
-                        lba,
-                        segment=segment,
-                        sense=sense,
-                        asc=asc,
-                        ascq=ascq
-                    ))
+                    ## SCSI FORMAT ##
+                    pass
+
                 elif format_ata is not None:
                     ## ATA FORMAT ##
                     format = 'ata'
@@ -1269,95 +1273,6 @@ class Device(object):
             #
             # Everything from here on is parsing SCSI information that takes
             # the place of similar ATA SMART information
-            if 'used endurance' in line:
-                pct = int(line.split(':')[1].strip()[:-1])
-                self.diagnostics.Life_Left = 100 - pct
-                continue
-
-            if 'Specified cycle count' in line:
-                self.diagnostics.Start_Stop_Spec = int(
-                    line.split(':')[1].strip())
-                continue
-
-            if 'Accumulated start-stop cycles' in line:
-                self.diagnostics.Start_Stop_Cycles = int(
-                    line.split(':')[1].strip())
-                if self.diagnostics.Start_Stop_Spec and self.diagnostics.Start_Stop_Spec != 0:
-                    self.diagnostics.Start_Stop_Pct_Left = int(round(
-                        100 - (self.diagnostics.Start_Stop_Cycles /
-                               self.diagnostics.Start_Stop_Spec), 0))
-                continue
-
-            if 'Specified load-unload count' in line:
-                self.diagnostics.Load_Cycle_Spec = int(
-                    line.split(':')[1].strip())
-                continue
-
-            if 'Accumulated load-unload cycles' in line:
-                self.diagnostics.Load_Cycle_Count = int(
-                    line.split(':')[1].strip())
-                if self.diagnostics.Load_Cycle_Spec and self.diagnostics.Load_Cycle_Spec != 0:
-                    self.diagnostics.Load_Cycle_Pct_Left = int(round(
-                        100 - (self.diagnostics.Load_Cycle_Count /
-                               self.diagnostics.Load_Cycle_Spec), 0))
-                continue
-
-            if 'Elements in grown defect list' in line:
-                self.diagnostics.Reallocated_Sector_Ct = int(
-                    line.split(':')[1].strip())
-                continue
-
-            if 'read:' in line:
-                line_ = ' '.join(line.split()).split(' ')
-                if line_[1] == '0' and line_[2] == '0' and line_[3] == '0' and line_[4] == '0':
-                    self.diagnostics.Corrected_Reads = 0
-                elif line_[4] == '0':
-                    self.diagnostics.Corrected_Reads = int(
-                        line_[1]) + int(line_[2]) + int(line_[3])
-                else:
-                    self.diagnostics.Corrected_Reads = int(line_[4])
-                self.diagnostics._Reads_GB = float(line_[6].replace(',', '.'))
-                self.diagnostics._Uncorrected_Reads = int(line_[7])
-                continue
-
-            if 'write:' in line:
-                line_ = ' '.join(line.split()).split(' ')
-                if (line_[1] == '0' and line_[2] == '0' and
-                        line_[3] == '0' and line_[4] == '0'):
-                    self.diagnostics.Corrected_Writes = 0
-                elif line_[4] == '0':
-                    self.diagnostics.Corrected_Writes = int(
-                        line_[1]) + int(line_[2]) + int(line_[3])
-                else:
-                    self.diagnostics.Corrected_Writes = int(line_[4])
-                self.diagnostics._Writes_GB = float(line_[6].replace(',', '.'))
-                self.diagnostics._Uncorrected_Writes = int(line_[7])
-                continue
-
-            if 'verify:' in line:
-                line_ = ' '.join(line.split()).split(' ')
-                if (line_[1] == '0' and line_[2] == '0' and
-                        line_[3] == '0' and line_[4] == '0'):
-                    self.diagnostics.Corrected_Verifies = 0
-                elif line_[4] == '0':
-                    self.diagnostics.Corrected_Verifies = int(
-                        line_[1]) + int(line_[2]) + int(line_[3])
-                else:
-                    self.diagnostics.Corrected_Verifies = int(line_[4])
-                self.diagnostics._Verifies_GB = float(
-                    line_[6].replace(',', '.'))
-                self.diagnostics._Uncorrected_Verifies = int(line_[7])
-                continue
-
-            if 'non-medium error count' in line:
-                self.diagnostics.Non_Medium_Errors = int(
-                    line.split(':')[1].strip())
-                continue
-
-            if 'Accumulated power on time' in line:
-                self.diagnostics.Power_On_Hours = int(
-                    line.split(':')[1].split(' ')[1])
-                continue
 
             if 'Current Drive Temperature' in line or ('Temperature:' in
                                                        line and interface == 'nvme'):
@@ -1430,23 +1345,6 @@ class Device(object):
                 # Parse the SMART table for below-threshold attributes and create
                 # corresponding warnings for non-SCSI disks
                 self._make_smart_warnings()
-            else:
-                # If not obtained Power_On_Hours above, make a direct attempt to extract power on
-                # hours from the background scan results log.
-                if self.smart_enabled and self.diagnostics.Power_On_Hours is None:
-                    raw, returncode = self.smartctl.generic_call(
-                        [
-                            '-d',
-                            'scsi',
-                            '-l',
-                            'background',
-                            self.dev_reference
-                        ])
-
-                    for line in raw:
-                        if 'power on time' in line:
-                            self.diagnostics.Power_On_Hours = int(
-                                line.split(':')[1].split(' ')[1])
 
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress

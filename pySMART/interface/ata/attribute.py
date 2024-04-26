@@ -1,3 +1,4 @@
+# Copyright (C) 2021 Rafael Leira, Naudit HPCN S.L.
 # Copyright (C) 2014 Marc Herndon
 #
 # This program is free software; you can redistribute it and/or

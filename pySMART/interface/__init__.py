@@ -26,10 +26,12 @@ This is required as ATA disks and NVMe disks have different attributes and diffe
 from .ata import AtaAttributes
 from .common import CommonIface
 from .nvme import NvmeAttributes, NvmeError
+from .scsi import SCSIAttributes
 
 
 __all__ = [
     'AtaAttributes',
     'CommonIface',
     'NvmeAttributes',
+    'SCSIAttributes',
 ]
