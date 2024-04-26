@@ -328,6 +328,7 @@
         "family": null,
         "firmware": "A907",
         "if_attributes": {
+            "_temperature": null,
             "diagnostics": {
                 "Corrected_Reads": 8,
                 "Corrected_Verifies": 73,

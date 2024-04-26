@@ -53,6 +53,11 @@ class SCSIAttributes(CommonIface):
             dev_reference (Optional[str], optional): The device reference. Defaults to None.
         """
 
+        self._temperature: Optional[int] = None
+        """
+        **(int):** The current temperature of the device in Celsius.
+        """
+
         self.tests: List[TestEntry] = []
         """
         **(list of `TestEntry`):** Contains the complete SMART self-test log
@@ -170,9 +175,9 @@ class SCSIAttributes(CommonIface):
                 parse_self_tests = True  # Set flag to capture test entries
                 continue
 
-        #######################################
-        #    Global / generic  attributes     #
-        #######################################
+            #######################################
+            #    Global / generic  attributes     #
+            #######################################
             if 'used endurance' in line:
                 pct = int(line.split(':')[1].strip()[:-1])
                 self.diagnostics.Life_Left = 100 - pct
@@ -280,6 +285,11 @@ class SCSIAttributes(CommonIface):
                 self.diagnostics._block_size = self.logical_sector_size
                 continue
 
+            # Temperature detection
+            if 'Current temperature' in line:
+                self._temperature = int(line.split('=')[1].strip())
+                continue
+
         if sm is not None and not abridged:
             # If not obtained Power_On_Hours above, make a direct attempt to extract power on
             # hours from the background scan results log.
@@ -303,6 +313,10 @@ class SCSIAttributes(CommonIface):
         # if self._test_running is False:
         #     self._test_ECD = None
         #     self._test_progress = None
+
+    @property
+    def temperature(self) -> Optional[int]:
+        return self._temperature
 
 
 __all__ = ['Device', 'smart_health_assement']

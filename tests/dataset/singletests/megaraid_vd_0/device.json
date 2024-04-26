@@ -327,6 +327,7 @@
         "family": null,
         "firmware": "4.23",
         "if_attributes": {
+            "_temperature": null,
             "diagnostics": {
                 "Corrected_Reads": null,
                 "Corrected_Verifies": null,

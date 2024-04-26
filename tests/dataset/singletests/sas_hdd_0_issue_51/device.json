@@ -328,6 +328,7 @@
         "family": null,
         "firmware": "C3D0",
         "if_attributes": {
+            "_temperature": null,
             "diagnostics": {
                 "Corrected_Reads": 34,
                 "Corrected_Verifies": 16,
