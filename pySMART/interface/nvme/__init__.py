@@ -628,7 +628,7 @@ class NvmeAttributes(CommonIface):
                                 value.replace(',', '').replace('.', '').replace('’', ''))
                         elif name == 'Controller Busy Time':
                             self.controllerBusyTime = int(
-                                value.replace(',', '').replace('.', ''))
+                                value.replace(',', '').replace('.', '').replace('’', ''))
                         elif name == 'Power Cycles':
                             self.powerCycles = int(
                                 value.replace(',', '').replace('.', ''))
