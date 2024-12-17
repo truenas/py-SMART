@@ -644,7 +644,7 @@ class Device(object):
                 '-l',
                 'sasphy',
                 self.dev_reference])
-            if returncode == 0 and 'SAS SSP' in raw[4]:
+            if returncode == 0 and len(raw) > 4 and 'SAS SSP' in raw[4]:
                 fine_interface = 'sas'
             # Some older SAS devices do not support the SAS PHY log command.
             # For these, see if smartmontools reports a transport protocol.
