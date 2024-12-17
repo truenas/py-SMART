@@ -328,6 +328,8 @@
         "family": null,
         "firmware": "C3D0",
         "if_attributes": {
+            "_logical_sector_size": 4096,
+            "_physical_sector_size": null,
             "_temperature": null,
             "diagnostics": {
                 "Corrected_Reads": 34,
@@ -338,7 +340,7 @@
                 "Load_Cycle_Pct_Left": 100,
                 "Load_Cycle_Spec": 600000,
                 "Non_Medium_Errors": null,
-                "Power_On_Hours": null,
+                "Power_On_Hours": 3687,
                 "Reads_GB": 38280.029,
                 "Reads_count": 10034879922,
                 "Reallocated_Sector_Ct": 0,
@@ -365,6 +367,7 @@
                 "block_size": 4096
             },
             "logical_sector_size": 4096,
+            "physical_sector_size": 4096,
             "temperature": null,
             "tests": []
         },

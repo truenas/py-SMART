@@ -327,6 +327,8 @@
         "family": null,
         "firmware": "4.23",
         "if_attributes": {
+            "_logical_sector_size": 512,
+            "_physical_sector_size": 4096,
             "_temperature": null,
             "diagnostics": {
                 "Corrected_Reads": null,
@@ -364,6 +366,7 @@
                 "block_size": 512
             },
             "logical_sector_size": 512,
+            "physical_sector_size": 4096,
             "temperature": null,
             "tests": []
         },

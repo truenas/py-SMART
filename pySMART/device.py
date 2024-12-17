@@ -32,7 +32,7 @@ import os
 import re
 import warnings
 from time import time, strptime, mktime, sleep
-from typing import Tuple, Union, List, Dict, Optional
+from typing import Iterator, Tuple, Union, List, Dict, Optional
 
 # pySMART module imports
 from .interface.ata.attribute import Attribute
@@ -424,11 +424,11 @@ class Device(object):
         return self._capacity_human
 
     @property
-    def diagnostics(self) -> Diagnostics:
+    def diagnostics(self) -> Optional[Diagnostics]:
         """Gets the old/deprecated version of SCSI/SAS diagnostics atribute.
         """
         if self.if_attributes is None or not isinstance(self.if_attributes, SCSIAttributes):
-            return Diagnostics()
+            return None
 
         else:
             return self.if_attributes.diagnostics
@@ -438,7 +438,8 @@ class Device(object):
         """Gets the old/deprecated version of SCSI/SAS diags atribute.
         """
         if self.if_attributes is None or not isinstance(self.if_attributes, SCSIAttributes):
-            return Diagnostics().get_classic_format()
+            # Return an empty dict if the device is not SCSI/SAS
+            return {}
 
         else:
             return self.if_attributes.diagnostics.get_classic_format()
@@ -504,7 +505,7 @@ class Device(object):
         state_dict = {
             'attributes': [attr.__getstate__() if attr else None for attr in self.attributes],
             'capacity': self._capacity_human,
-            'diagnostics': self.diagnostics.__getstate__(),
+            'diagnostics': self.diagnostics.__getstate__() if self.diagnostics else None,
             'firmware': self.firmware,
             'if_attributes': self.if_attributes.__getstate__() if self.if_attributes else None,
             'interface': self._interface if self._interface else 'UNKNOWN INTERFACE',
@@ -705,6 +706,37 @@ class Device(object):
                     self.messages.append(warn_str)
                     if not self.assessment == 'FAIL':
                         self.assessment = 'WARN'
+
+    def __get_smart_status(self, raw_iterator:Iterator[str]):
+        """
+        A quick function to get the SMART status of the device.
+        This is required prior to scsi parsing.
+        """
+        
+        for line in raw_iterator:
+            if 'SMART support' in line:
+                # self.smart_capable = 'Available' in line
+                # self.smart_enabled = 'Enabled' in line
+                # Since this line repeats twice the above method is flawed
+                # Lets try the following instead, it is a bit redundant but
+                # more robust.
+                if any_in(line, 'Unavailable', 'device lacks SMART capability'):
+                    self.smart_capable = False
+                    self.smart_enabled = False
+                elif 'Enabled' in line:
+                    self.smart_enabled = True
+                elif 'Disabled' in line:
+                    self.smart_enabled = False
+                elif any_in(line, 'Available', 'device has SMART capability'):
+                    self.smart_capable = True
+                continue
+
+            if 'does not support SMART' in line:
+                self.smart_capable = False
+                self.smart_enabled = False
+                continue
+
+        
 
     def get_selftest_result(self, output=None):
         """
@@ -1026,6 +1058,7 @@ class Device(object):
                 self._test_progress = None
 
         elif SCSIAttributes.has_compatible_data(iter(_stdout)):
+            self.__get_smart_status(iter(_stdout))
             self.if_attributes = SCSIAttributes(iter(_stdout),
                                                 abridged=self.abridged,
                                                 smartEnabled=self.smart_enabled,
@@ -1321,14 +1354,10 @@ class Device(object):
                 if m:
                     self.logical_sector_size = int(m.group(1))
                     self.physical_sector_size = int(m.group(2))
-                    # set diagnostics block size to physical sector size
-                    self.diagnostics._block_size = self.physical_sector_size
                 continue
             if 'Logical block size:' in line:  # SCSI 1/2
                 self.logical_sector_size = int(
                     line.split(':')[1].strip().split(' ')[0])
-                # set diagnostics block size to logical sector size
-                self.diagnostics._block_size = self.logical_sector_size
                 continue
             if 'Physical block size:' in line:  # SCSI 2/2
                 self.physical_sector_size = int(

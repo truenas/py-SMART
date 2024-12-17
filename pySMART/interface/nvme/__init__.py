@@ -543,7 +543,11 @@ class NvmeAttributes(CommonIface):
         warningTemperatureTime   : Time in minutes at warning temperature
         criticalTemperatureTime  : Time in minutes at critical temperature
 
+        _logical_sector_size     : Logical sector size
+        _physical_sector_size    : Physical sector size
+
         errors                   : List of errors
+        tests                    : List of self-tests
     """
 
     def __init__(self, data: Optional[Iterator[str]] = None):
@@ -574,6 +578,9 @@ class NvmeAttributes(CommonIface):
         self.warningTemperatureTime: Optional[int] = None
         self.criticalTemperatureTime: Optional[int] = None
 
+        self._logical_sector_size: Optional[int] = None
+        self._physical_sector_size: Optional[int] = None
+
         self.errors: List[NvmeError] = []
         self.tests: List[NvmeSelfTest] = []
 
@@ -586,6 +593,28 @@ class NvmeAttributes(CommonIface):
 
         # Advance data until detect Nvme Log
         for line in data:
+
+            # Sector sizes
+            if 'Sector Sizes' in line:  # ATA
+                m = re.match(
+                    r'.* (\d+) bytes logical,\s*(\d+) bytes physical', line)
+                if m:
+                    self._logical_sector_size = int(m.group(1))
+                    self._physical_sector_size = int(m.group(2))
+                continue
+            if 'Logical block size:' in line:  # SCSI 1/2
+                self._logical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
+                continue
+            if 'Physical block size:' in line:  # SCSI 2/2
+                self._physical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
+                continue
+            if 'Namespace 1 Formatted LBA Size' in line:  # NVMe
+                # Note: we will assume that there is only one namespace
+                self._logical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
+                continue
 
             # Smart section: 'SMART/Health Information (NVMe Log 0x02)'
             if line.startswith('SMART/Health Information (NVMe Log 0x02)'):
@@ -825,3 +854,16 @@ class NvmeAttributes(CommonIface):
     @property
     def temperature(self) -> Optional[int]:
         return self._temperature
+
+    @property
+    def physical_sector_size(self) -> int:
+        if self._physical_sector_size is not None:
+            return self._physical_sector_size
+        elif self._logical_sector_size is not None:
+            return self._logical_sector_size
+        else:
+            return 512
+
+    @property
+    def logical_sector_size(self) -> int:
+        return self._logical_sector_size if self._logical_sector_size is not None else self.physical_sector_size

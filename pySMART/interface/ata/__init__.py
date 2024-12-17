@@ -58,6 +58,20 @@ class AtaAttributes(CommonIface):
         """
 
         self.legacyAttributes: List[Optional[Attribute]] = [None] * 256
+        """
+        **(List[Optional[Attribute]]):** List of the ATA attributes. The index is the attribute ID.
+        This is the legacy attribute list for ATA devices. It is strongly recommended to other properties when possible.
+        """
+
+        self._logical_sector_size: Optional[int] = None
+        """
+        **(int):** The logical sector size of the device (or LBA).
+        """
+        self._physical_sector_size: Optional[int] = None
+        """
+        **(int):** The physical sector size of the device.
+        """
+
         if data is not None:
             self.parse(data)
 
@@ -85,6 +99,22 @@ class AtaAttributes(CommonIface):
                         self.legacyAttributes[int(tmp['id'])] = Attribute(
                             int(tmp['id']), tmp['name'], int(tmp['flag'], base=16), tmp['value'], tmp['worst'], tmp['thresh'], tmp['type'], tmp['updated'], tmp['whenfailed'], tmp['raw'])
 
+            # Sector sizes
+            if 'Sector Sizes' in line:  # ATA
+                m = re.match(
+                    r'.* (\d+) bytes logical,\s*(\d+) bytes physical', line)
+                if m:
+                    self._logical_sector_size = int(m.group(1))
+                    self._physical_sector_size = int(m.group(2))
+
+                else:
+                    m = re.match(r'.* (\d+) bytes logical/physical', line)
+                    if m:
+                        self._logical_sector_size = int(m.group(1))
+                        self._physical_sector_size = int(m.group(1))
+
+                continue
+
     def __getstate__(self):
         """
         Allows us to send a pySMART diagnostics object over a serializable
@@ -111,3 +141,16 @@ class AtaAttributes(CommonIface):
                 return temp_attr.raw_int
 
         return None
+
+    @property
+    def physical_sector_size(self) -> int:
+        if self._physical_sector_size is not None:
+            return self._physical_sector_size
+        elif self._logical_sector_size is not None:
+            return self._logical_sector_size
+        else:
+            return 512
+
+    @property
+    def logical_sector_size(self) -> int:
+        return self._logical_sector_size if self._logical_sector_size is not None else self.physical_sector_size

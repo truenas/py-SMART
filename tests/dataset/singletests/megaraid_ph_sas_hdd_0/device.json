@@ -328,6 +328,8 @@
         "family": null,
         "firmware": "A907",
         "if_attributes": {
+            "_logical_sector_size": 512,
+            "_physical_sector_size": 4096,
             "_temperature": null,
             "diagnostics": {
                 "Corrected_Reads": 8,
@@ -365,6 +367,7 @@
                 "block_size": 512
             },
             "logical_sector_size": 512,
+            "physical_sector_size": 4096,
             "temperature": null,
             "tests": [
                 {

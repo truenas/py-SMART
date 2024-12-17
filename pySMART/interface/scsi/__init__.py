@@ -57,13 +57,19 @@ class SCSIAttributes(CommonIface):
         """
         **(int):** The current temperature of the device in Celsius.
         """
-
+        self._logical_sector_size: Optional[int] = None
+        """
+        **(int):** The logical sector size of the device (or LBA).
+        """
+        self._physical_sector_size: Optional[int] = None
+        """
+        **(int):** The physical sector size of the device.
+        """
         self.tests: List[TestEntry] = []
         """
         **(list of `TestEntry`):** Contains the complete SMART self-test log
         for this device, as provided by smartctl.
         """
-
         self.diagnostics: Diagnostics = Diagnostics()
         """
         **Diagnostics** Contains parsed and processed diagnostic information
@@ -273,16 +279,20 @@ class SCSIAttributes(CommonIface):
                 m = re.match(
                     r'.* (\d+) bytes logical,\s*(\d+) bytes physical', line)
                 if m:
-                    self.logical_sector_size = int(m.group(1))
-                    self.physical_sector_size = int(m.group(2))
+                    self._logical_sector_size = int(m.group(1))
+                    self._physical_sector_size = int(m.group(2))
                     # set diagnostics block size to physical sector size
-                    self.diagnostics._block_size = self.physical_sector_size
+                    self.diagnostics._block_size = self._physical_sector_size
                 continue
             if 'Logical block size:' in line:  # SCSI 1/2
-                self.logical_sector_size = int(
+                self._logical_sector_size = int(
                     line.split(':')[1].strip().split(' ')[0])
                 # set diagnostics block size to logical sector size
-                self.diagnostics._block_size = self.logical_sector_size
+                self.diagnostics._block_size = self._logical_sector_size
+                continue
+            if 'Physical block size:' in line:  # SCSI 2/2
+                self._physical_sector_size = int(
+                    line.split(':')[1].strip().split(' ')[0])
                 continue
 
             # Temperature detection
@@ -294,19 +304,24 @@ class SCSIAttributes(CommonIface):
             # If not obtained Power_On_Hours above, make a direct attempt to extract power on
             # hours from the background scan results log.
             if smartEnabled and self.diagnostics.Power_On_Hours is None:
-                raw, returncode = sm.generic_call(
-                    [
-                        '-d',
-                        'scsi',
-                        '-l',
-                        'background',
-                        dev_reference
-                    ])
+                try:
+                    raw, returncode = sm.generic_call(
+                        [
+                            '-d',
+                            'scsi',
+                            '-l',
+                            'background',
+                            dev_reference
+                        ])
 
-                for line in raw:
-                    if 'power on time' in line:
-                        self.diagnostics.Power_On_Hours = int(
-                            line.split(':')[1].split(' ')[1])
+                    for line in raw:
+                        if 'power on time' in line:
+                            self.diagnostics.Power_On_Hours = int(
+                                line.split(':')[1].split(' ')[1])
+                            
+                except Exception as e:
+                    logging.error(
+                        f'Failed to extract power on hours from background scan results: {e}')
 
         # Now that we have finished the update routine, if we did not find a runnning selftest
         # nuke the self._test_ECD and self._test_progress
@@ -317,6 +332,19 @@ class SCSIAttributes(CommonIface):
     @property
     def temperature(self) -> Optional[int]:
         return self._temperature
+
+    @property
+    def physical_sector_size(self) -> int:
+        if self._physical_sector_size is not None:
+            return self._physical_sector_size
+        elif self._logical_sector_size is not None:
+            return self._logical_sector_size
+        else:
+            return 512
+
+    @property
+    def logical_sector_size(self) -> int:
+        return self._logical_sector_size if self._logical_sector_size is not None else self.physical_sector_size
 
 
 __all__ = ['Device', 'smart_health_assement']

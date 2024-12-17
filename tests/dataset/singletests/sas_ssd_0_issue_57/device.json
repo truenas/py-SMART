@@ -328,6 +328,8 @@
         "family": null,
         "firmware": "GXA0",
         "if_attributes": {
+            "_logical_sector_size": 512,
+            "_physical_sector_size": 4096,
             "_temperature": 25,
             "diagnostics": {
                 "Corrected_Reads": 0,
@@ -365,6 +367,7 @@
                 "block_size": 512
             },
             "logical_sector_size": 512,
+            "physical_sector_size": 4096,
             "temperature": 25,
             "tests": [
                 {
