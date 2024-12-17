@@ -4,6 +4,7 @@ Version 1.4.0
 - Minnor typo fixed in NvmeAttributes (issue [#81](https://github.com/truenas/py-SMART/issues/81)). Thanks @petersulyok
 - Fixed __getstate__ method in Device class. (issue [#86](https://github.com/truenas/py-SMART/issues/86)). Thanks @f18m
 - Added DEVELOP.md file to help developers to get started with the project. (MR [#87](https://github.com/truenas/py-SMART/pull/87/files)). Thanks @ssteinerx
+- Fixed listing devices on MACOS (issue [#84](https://github.com/truenas/py-SMART/issues/84)). Thanks @evanrich
 - **Breaking changes**
     - **smartctl.all**:
         - Officially removed support for python 3.7.
@@ -14,7 +15,6 @@ Version 1.4.0
 
 Version 1.3.0
 =============
-
 - Fixed some special NVMe capacity parsing issues (issue [#73](https://github.com/truenas/py-SMART/issues/73)). Thanks @wolfdate25
 - Fixed nvme test parsing on smartmontools >= 7.4 (issue [#75](https://github.com/truenas/py-SMART/issues/75)). Thanks @NicholasCJL
 - Other minnor fixes with @ulmitov's help
