@@ -6,6 +6,7 @@ Version 1.4.0
 - Fixed __getstate__ method in Device class. (issue [#86](https://github.com/truenas/py-SMART/issues/86)). Thanks @f18m
 - Added DEVELOP.md file to help developers to get started with the project. (MR [#87](https://github.com/truenas/py-SMART/pull/87/files)). Thanks @ssteinerx
 - Fixed listing devices on MACOS (issue [#84](https://github.com/truenas/py-SMART/issues/84)). Thanks @evanrich
+- Fixed get_selftest_result (issue [#88](https://github.com/truenas/py-SMART/issues/88)). Thanks @guanfeix
 - **Breaking changes**
     - **smartctl.all**:
         - Officially removed support for python 3.7.

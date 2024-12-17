@@ -791,7 +791,7 @@ class Device(object):
         if (
                 (len(self.tests) != _len) or
                 (
-                    len == maxlog and
+                    _len == maxlog and
                     (
                         _first_entry.type != self.tests[0].type or
                         _first_entry.hours != self.tests[0].hours or
