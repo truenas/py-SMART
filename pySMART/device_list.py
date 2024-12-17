@@ -82,6 +82,11 @@ class DeviceList(object):
         to_delete = []
         # Enumerate the list to get tuples containing indeces and values
         for index, device in enumerate(self.devices):
+            # Allow well-known devices
+            if device.interface in ['nvme']:
+                continue
+            
+            # Check for duplicate ATA devices with CSMI devices
             if device.interface == 'csmi':
                 for otherindex, otherdevice in enumerate(self.devices):
                     if (otherdevice.interface == 'ata' or
