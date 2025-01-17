@@ -1,3 +1,7 @@
+Version 1.4.1
+=============
+- Hotfixes [#91](https://github.com/truenas/py-SMART/issues/91). There was an issue regarding the logging.trace custom handler. This has been **patched**. Better fix will be provided in the next release. Thanks @henryptung @weastur @danpodeanu @f18m for reporting.
+
 Version 1.4.0
 =============
 - Added support for test polling_minutes. Requested in [#77](https://github.com/truenas/py-SMART/issues/77) and [#78](https://github.com/truenas/py-SMART/pull/78). Thanks @Gigahawk
