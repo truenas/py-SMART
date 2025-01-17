@@ -83,6 +83,17 @@ def configure_trace_logging():
     if getattr(logging.handlers.logging.getLoggerClass(), 'trace', None) is None:
         logging.setLoggerClass(TraceLogger)
 
+def get_trace_logger(name:str='pySMART') -> TraceLogger:
+    configure_trace_logging()
+    return logging.getLogger(name)
+
+def log_trace(msg: str, *args, **kwargs):
+    try:
+        get_trace_logger().trace(msg, *args, **kwargs)
+    except Exception as e:
+        get_trace_logger().debug(f"Exception while logging trace info: {e}")
+        get_trace_logger().debug(msg, *args, **kwargs)
+
 
 def any_in(search_in, *searched_items):
     """

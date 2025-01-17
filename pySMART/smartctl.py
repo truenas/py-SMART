@@ -16,14 +16,13 @@
 #
 ################################################################
 from subprocess import Popen, PIPE
-from .utils import SMARTCTL_PATH
+from .utils import SMARTCTL_PATH, get_trace_logger
 from typing import List, Tuple, Union, Optional
 
 import chardet
-import logging
 import os
 
-logger = logging.getLogger('pySMART')
+logger = get_trace_logger()
 
 os.environ["LANG"] = "C"
 
@@ -113,7 +112,11 @@ class Smartctl:
 
         popen_list.extend(params)
 
-        logger.trace("Executing the following cmd: {0}".format(popen_list))
+        try:
+            logger.trace("Executing the following cmd: {0}".format(popen_list))
+        except Exception as e:
+            logger.debug("Executing the following cmd: {0}".format(popen_list))
+            logger.debug(f"Exception while printing trace: {e}")
 
         return self._exec(popen_list)
 
