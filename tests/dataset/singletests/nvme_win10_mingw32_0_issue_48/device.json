@@ -297,7 +297,7 @@
             "warningTemperatureTime": 2
         },
         "interface": "nvme",
-        "is_ssd": false,
+        "is_ssd": true,
         "logical_sector_size": 512,
         "messages": [],
         "model": "WDS100T3X0C-00SJG0",
