@@ -298,7 +298,7 @@
             "warningTemperatureTime": null
         },
         "interface": "nvme",
-        "is_ssd": false,
+        "is_ssd": true,
         "logical_sector_size": 512,
         "messages": [],
         "model": "Netac NVMe SSD 2TB",
@@ -309,8 +309,8 @@
         "serial": "RN202303092TB677720",
         "size": 2000398934016,
         "size_raw": "2.00 TB",
-        "smart_capable": false,
-        "smart_enabled": false,
+        "smart_capable": true,
+        "smart_enabled": true,
         "smartctl_interface": "nvme",
         "temperature": 54,
         "temperatures": {

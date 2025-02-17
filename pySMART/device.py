@@ -134,12 +134,12 @@ class Device(object):
         """**(str):** Device's user capacity (human readable) as reported directly by smartctl (RAW)."""
         self.firmware: Optional[str] = None
         """**(str):** Device's firmware version."""
-        self.smart_capable: bool = 'nvme' in self.name
+        self.smart_capable: bool = self._interface == 'nvme'
         """
         **(bool):** True if the device has SMART Support Available.
         False otherwise. This is useful for VMs amongst other things.
         """
-        self.smart_enabled: bool = 'nvme' in self.name
+        self.smart_enabled: bool = self._interface == 'nvme'
         """
         **(bool):** True if the device supports SMART (or SCSI equivalent) and
         has the feature set enabled. False otherwise.
@@ -153,7 +153,7 @@ class Device(object):
         **(list of str):** Contains any SMART warnings or other error messages
         reported by the device (ie: ascq codes).
         """
-        self.is_ssd: bool = True if 'nvme' in self.name else False
+        self.is_ssd: bool = self._interface == 'nvme'
         """
         **(bool):** True if this device is a Solid State Drive.
         False otherwise.
@@ -280,6 +280,7 @@ class Device(object):
                             if self._interface == "nvme":  # if nvme set SMART to true
                                 self.smart_capable = True
                                 self.smart_enabled = True
+                                self.is_ssd = True
 
                             break
                 except:
