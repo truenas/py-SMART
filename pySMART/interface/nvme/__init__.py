@@ -617,7 +617,7 @@ class NvmeAttributes(CommonIface):
                 continue
 
             # Smart section: 'SMART/Health Information (NVMe Log 0x02)'
-            if line.startswith('SMART/Health Information (NVMe Log 0x02)'):
+            if line.startswith('SMART/Health Information (NVMe Log 0x02'):
 
                 # Parse attributes
                 for line in data:
