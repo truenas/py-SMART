@@ -150,6 +150,13 @@ version can be obtained from the project's homepage, http://www.smartmontools.or
 Note that after installing smartmontools on Windows, the directory containing
 ``smartctl.exe`` must be added to the system path, if it is not already.
 
+Release Notes
+=============
+
+Version 1.4.2 (Unreleased)
+--------------------------
+- Fix NVMe SMART detection for ASMedia bridges (issue [#97](https://github.com/truenas/py-SMART/issues/97)). Thanks @hille721.
+
 Documentation
 =============
 API documentation for ``pySMART`` was generated using ``pdoc`` and can be

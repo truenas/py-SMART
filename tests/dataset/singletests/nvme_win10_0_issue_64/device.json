@@ -383,7 +383,7 @@
             "warningTemperatureTime": null
         },
         "interface": "nvme",
-        "is_ssd": false,
+        "is_ssd": true,
         "logical_sector_size": 512,
         "messages": [],
         "model": "Samsung SSD 980 PRO 1TB",
@@ -394,8 +394,8 @@
         "serial": "S5P2NG0NB05964V",
         "size": 1000204886016,
         "size_raw": "1.00 TB",
-        "smart_capable": false,
-        "smart_enabled": false,
+        "smart_capable": true,
+        "smart_enabled": true,
         "smartctl_interface": "nvme",
         "temperature": 62,
         "temperatures": {

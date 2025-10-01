@@ -13,3 +13,4 @@ dist/
 cov.xml
 htmlcov
 version.py
+.venv

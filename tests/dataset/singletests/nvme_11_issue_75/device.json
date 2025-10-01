@@ -347,7 +347,7 @@
             "warningTemperatureTime": null
         },
         "interface": "nvme",
-        "is_ssd": false,
+        "is_ssd": true,
         "logical_sector_size": 512,
         "messages": [],
         "model": "KBG30ZMV256G TOSHIBA",
@@ -358,8 +358,8 @@
         "serial": "68APC048P12P",
         "size": 256060514304,
         "size_raw": "256 GB",
-        "smart_capable": false,
-        "smart_enabled": false,
+        "smart_capable": true,
+        "smart_enabled": true,
         "smartctl_interface": "nvme",
         "temperature": 48,
         "temperatures": {
