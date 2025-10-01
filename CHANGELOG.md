@@ -1,6 +1,7 @@
 Version 1.4.2 (Unreleased)
 ==========================
-- Fix NVMe SMART detection for ASMedia bridges (issue [#97](https://github.com/truenas/py-SMART/issues/97)). Thanks @hille721
+- Fixed issue with NVMe devices parsing on some systems with newer smartctl (issue [#96](https://github.com/truenas/py-SMART/issues/96)). Thanks @drake7707 for reporting.
+- Fix NVMe SMART detection for ASMedia bridges (issue [#97](https://github.com/truenas/py-SMART/issues/97)). Thanks @hille721 for reporting.
 
 Version 1.4.1
 =============
