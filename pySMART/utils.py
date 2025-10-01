@@ -121,7 +121,8 @@ smartctl_type_dict = {
     'sat': 'sat',
     'sata': 'ata',
     'scsi': 'scsi',
-    'atacam': 'atacam'
+    'atacam': 'atacam',
+    'sntasmedia': 'nvme'
 }
 """
 **(dict of str):** Contains actual interface types (ie: sas, csmi) as keys and
