@@ -1,3 +1,7 @@
+Unreleased
+=========
+- Fix NVMe SMART detection for ASMedia bridges (issue [#97](https://github.com/truenas/py-SMART/issues/97)). Thanks @hille721
+
 Version 1.4.1
 =============
 - Hotfixes [#91](https://github.com/truenas/py-SMART/issues/91). There was an issue regarding the logging.trace custom handler. This has been **patched**. Better fix will be provided in the next release. Thanks @henryptung @weastur @danpodeanu @f18m for reporting.
