@@ -1,0 +1,5 @@
+smartctl 7.5 2025-04-30 r5714 [aarch64-linux-6.16.8-200.fc42.aarch64] (local build)
+Copyright (C) 2002-25, Bruce Allen, Christian Franke, www.smartmontools.org
+
+/dev/sda: Device of type 'sntasmedia' [USB NVMe ASMedia] detected
+/dev/sda: Device of type 'sntasmedia' [USB NVMe ASMedia] opened
