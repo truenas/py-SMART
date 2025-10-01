@@ -1042,7 +1042,7 @@ class Device(object):
         if AtaAttributes.has_compatible_data(iter(_stdout)):
             self.if_attributes = AtaAttributes(iter(_stdout))
 
-        elif self.dev_interface == 'nvme':
+        elif self.dev_interface in ['nvme', 'sntasmedia']:
             self.if_attributes = NvmeAttributes(iter(_stdout))
 
             # Get Tests
