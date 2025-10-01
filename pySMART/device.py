@@ -134,12 +134,12 @@ class Device(object):
         """**(str):** Device's user capacity (human readable) as reported directly by smartctl (RAW)."""
         self.firmware: Optional[str] = None
         """**(str):** Device's firmware version."""
-        self.smart_capable: bool = self._interface == 'nvme'
+        self.smart_capable: bool = False
         """
         **(bool):** True if the device has SMART Support Available.
         False otherwise. This is useful for VMs amongst other things.
         """
-        self.smart_enabled: bool = self._interface == 'nvme'
+        self.smart_enabled: bool = False
         """
         **(bool):** True if the device supports SMART (or SCSI equivalent) and
         has the feature set enabled. False otherwise.
@@ -153,7 +153,7 @@ class Device(object):
         **(list of str):** Contains any SMART warnings or other error messages
         reported by the device (ie: ascq codes).
         """
-        self.is_ssd: bool = self._interface == 'nvme'
+        self.is_ssd: bool = False
         """
         **(bool):** True if this device is a Solid State Drive.
         False otherwise.
@@ -276,11 +276,6 @@ class Device(object):
                     for line in reversed(raw):
                         if "opened" in line:
                             self._interface = line.split("'")[1]
-
-                            if self._interface == "nvme":  # if nvme set SMART to true
-                                self.smart_capable = True
-                                self.smart_enabled = True
-                                self.is_ssd = True
 
                             break
                 except:
@@ -631,6 +626,9 @@ class Device(object):
         """
 
         fine_interface = self._interface or ''
+
+        if fine_interface == 'sntasmedia':
+            return 'nvme'
         # SCSI devices might be SCSI, SAS or SAT
         # ATA device might be ATA or SATA
         if fine_interface in ['scsi', 'ata'] or 'megaraid' in fine_interface:
@@ -1015,6 +1013,12 @@ class Device(object):
             interface = smartctl_type(self._interface)
             raw = self.smartctl.all(
                 self.dev_reference, interface)
+
+        canonical_interface = self.dev_interface
+        if canonical_interface == 'nvme':
+            self.smart_capable = True
+            self.smart_enabled = True
+            self.is_ssd = True
 
         parse_self_tests = False
         parse_running_test = False
