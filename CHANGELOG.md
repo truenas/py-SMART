@@ -1,3 +1,7 @@
+Version 1.4.3
+==========================
+- Clarify project licensing as LGPL-2.1-or-later and add SPDX metadata to source and test fixtures (issue [#101](https://github.com/truenas/py-SMART/issues/101)). Thanks @limburgher for reporting and tracking.
+
 Version 1.4.2
 ==========================
 - Fixed issue with NVMe devices parsing on some systems with newer smartctl (issue [#96](https://github.com/truenas/py-SMART/issues/96)). Thanks @drake7707 for reporting.
@@ -124,4 +128,3 @@ Version 1.0.0
 =============
 - This release contains all the commits on TRUENAS/pySMART from 11/6/2015 to 9/8/2019.
 - This mostly adds multiplatform support for freebsd and many other interesting improvements
-

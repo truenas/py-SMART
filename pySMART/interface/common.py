@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2023-2024 Rafael Leira, Naudit HPCN S.L.
+# SPDX-License-Identifier: LGPL-2.1-or-later
+
 from typing import Optional
 from abc import ABC, abstractmethod
 

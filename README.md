@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2021-2026 Rafael Leira -->
+<!-- SPDX-FileCopyrightText: 2021 Truenas team -->
+<!-- SPDX-FileCopyrightText: 2015 Marc Herndon -->
+<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
+
 pySMART
 ===========
 
@@ -9,7 +14,7 @@ pySMART
 ![](https://img.shields.io/github/issues-pr/truenas/py-smart)
 ![](https://img.shields.io/pypi/dm/pysmart)
 
-Copyright (C) 2021-2025 [Rafael Leira](https://github.com/ralequi)\
+Copyright (C) 2021-2026 [Rafael Leira](https://github.com/ralequi)\
 Copyright (C) 2021 [Truenas team](https://www.truenas.com/)\
 Copyright (C) 2015 Marc Herndon
 
@@ -153,9 +158,9 @@ Note that after installing smartmontools on Windows, the directory containing
 Release Notes
 =============
 
-Version 1.4.2 (Unreleased)
+Version 1.4.3 (Unreleased)
 --------------------------
-- Fix NVMe SMART detection for ASMedia bridges (issue [#97](https://github.com/truenas/py-SMART/issues/97)). Thanks @hille721.
+- Clarify project licensing as LGPL-2.1-or-later and add SPDX metadata to source and test fixtures (issue [#101](https://github.com/truenas/py-SMART/issues/101)). Thanks @limburgher.
 
 Documentation
 =============

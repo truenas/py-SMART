@@ -1,3 +1,6 @@
+<!-- SPDX-FileCopyrightText: 2021-2026 pySMART contributors -->
+<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
+
 **Setting Up Single Tests**
 ===========================
 

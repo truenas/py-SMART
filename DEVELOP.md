@@ -1,3 +1,8 @@
+<!-- SPDX-FileCopyrightText: 2021-2025 Rafael Leira -->
+<!-- SPDX-FileCopyrightText: 2021 Truenas team -->
+<!-- SPDX-FileCopyrightText: 2015 Marc Herndon -->
+<!-- SPDX-License-Identifier: LGPL-2.1-or-later -->
+
 pySMART
 ===========
 
