@@ -151,19 +151,21 @@ class Smartctl:
         """
         # Detect the encoding
         encoding: Optional[str] = None
-        try:
-            encoding = chardet.detect(raw_output)['encoding']
-        except:
-            pass
+        decoded_output: Optional[str] = None
+        try_encoding = (
+            chardet.detect(raw_output).get('encoding'),
+            'utf-8',
+            'iso-8859-1',
+        )
 
-        if not encoding:
-            encoding = 'utf-8'
-
-        if encoding not in ['utf-8', 'ascii']:
-            logger.warning(f"Detected encoding: {encoding}")
-
-        # Decode the output
-        decoded_output = raw_output.decode(encoding)
+        for encoding in filter(None, try_encoding):
+            try:
+                decoded_output = raw_output.decode(encoding)
+                break
+            except Exception as err:
+                logger.warning("failed to decode using %s", encoding, exc_info=err)
+        else:
+            raise ValueError("unable to decode data")
 
         if encoding != 'utf-8':
             decoded_output = decoded_output.encode(
